@@ -16,68 +16,18 @@
 
 "use strict;"
 
-var numCharacters = 5; // "COOL!"
+var str = "COOL!";
+var strLength = str.length;
 
-// create grid of circles
-var createGrid = function(height, width) {
-  var grid = document.createElement('table');
-  grid.setAttribute('class', 'grid');
-
-  for (var i = 1; i <= height; i++) {
-    var tr = document.createElement('tr');
-    for (var j = 1; j <= width; j++) {
-      var td = document.createElement('td');
-      var circle = document.createElement('div');
-      if (j != 1 && j != width) {
-        circle.setAttribute('class', 'circle');
-      } else {
-        circle.setAttribute('class', 'divider');
-      }
-      td.appendChild(circle);
-      tr.appendChild(td);
-    }
-    grid.appendChild(tr);
-  }
-  
-  return grid;
-};
-
-// create character animation
-var createCharacter = function(color, i, indices) {
-  var charGrid = document.getElementById('charGrid'+i);
-  var circles = charGrid.querySelectorAll('div');
-  var seqGroup = new SeqGroup([], {delay: 0.08});
-  var circle;
-  
-  for (i = 0, circle; circle = circles[indices[i]]; i++) {
-    var animation = new Animation(circle, 
-      {backgroundColor: color, visibility: 'visible'}, 
-      {duration: 0.008});
-    seqGroup.append(animation);
-  }
-  
-  return seqGroup;
-};
-
-// put all the characters in a div
-var text = document.createElement('div');
-text.setAttribute('class', 'text');
-for (var i = 1; i <= numCharacters; i++) {
-  var charGrid = createGrid(12, 10);
-  charGrid.setAttribute('id', 'charGrid'+i);
-  text.appendChild(charGrid);
-}
-document.body.appendChild(text);
-
-var colors = {
-  'blue': 'rgb(51, 105, 232)',
-  'red': 'rgb(213, 15, 37)',
-  'yellow': 'rgb(238, 178, 17)',
-  'green': 'rgb(0, 153, 57)'
-};
+var colors = [
+  'rgb(51, 105, 232)', // blue
+  'rgb(213, 15, 37)', // red
+  'rgb(238, 178, 17)', // yellow
+  'rgb(0, 153, 57)' // green
+];
 
 // the sequence of dot coordinates to light up for the animation (yuck!)
-var indices = {
+var coords = {
   'C': [37, 38, 28, 17, 27, 16, 26, 15, 25, 14, 24, 13, 23, 12, 22, 21, 31, 32, 
         41, 42, 51, 52, 61, 62, 71, 72, 81, 82, 91, 92, 102, 93, 103, 94, 104, 
         95, 105, 96, 106, 97, 107, 98, 87, 88],
@@ -97,16 +47,60 @@ var indices = {
   '!': [11, 12, 21, 22, 31, 32, 41, 42, 51, 52, 61, 62, 91, 92, 101, 102],
 };
 
-var charCount = 1; // animation won't work if charCount exceeds numCharacters
-var logoAnimation = new SeqGroup([
-  createCharacter(colors['blue'], charCount++, indices['C']),
-  createCharacter(colors['green'], charCount++, indices['O']),
-  createCharacter(colors['yellow'], charCount++, indices['O']),
-  createCharacter(colors['red'], charCount++, indices['L']),
-  createCharacter(colors['blue'], charCount++, indices['!']),
-]);
+var createGrid = function(height, width) {
+  var grid = document.createElement('table');
+  grid.classList.add('grid');
 
-document.querySelector('#playerControls').player 
-  = document.timeline.play(logoAnimation);
+  for (var i = 1; i <= height; i++) {
+    var tr = document.createElement('tr');
+    for (var j = 1; j <= width; j++) {
+      var td = document.createElement('td');
+      var circle = document.createElement('div');
+      if (j != 1 && j != width) {
+        circle.classList.add('circle');
+      } else {
+        circle.classList.add('divider');
+      }
+      td.appendChild(circle);
+      tr.appendChild(td);
+    }
+    grid.appendChild(tr);
+  }
+  
+  return grid;
+};
 
+var createCharacter = function(color, index, coords) {
+  var charGrid = document.getElementById('charGrid' + index);
+  var circles = charGrid.querySelectorAll('div');
+  var seqGroup = new SeqGroup([], {delay: 0.08});
+  var circle;
+  
+  for (var i = 0, circle; circle = circles[coords[i]]; i++) {
+    var animation = new Animation(circle, 
+      {backgroundColor: color, visibility: 'visible'}, 
+      {duration: 0.06, delay: -0.052});
+    seqGroup.append(animation);
+  }
+  
+  return seqGroup;
+};
+
+var text = document.createElement('div');
+text.classList.add('text');
+for (var i = 0; i < strLength; i++) {
+  var charGrid = createGrid(12, 10);
+  charGrid.setAttribute('id', 'charGrid' + i);
+  text.appendChild(charGrid);
+}
+document.body.appendChild(text);
+
+var logoAnimation = new SeqGroup([]);
+for (var i = 0; i < strLength; i++) {
+  logoAnimation.append(createCharacter(
+    colors[i % colors.length], i, coords[str[i]]));
+}
+
+document.querySelector('#playerControls').player =
+    document.timeline.play(logoAnimation);
 
