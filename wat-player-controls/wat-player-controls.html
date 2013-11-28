@@ -19,7 +19,7 @@
 <!DOCTYPE html>
 
 <body>
-  <polymer-element name="player-controls" attributes="step">
+  <polymer-element name="wat-player-controls" attributes="step">
     <template>
       <input id="playPauseButton" type="button" value="{{playPauseText}}" 
         on-click="{{playPause}}" style="width: 30px; height: 30px; 
@@ -31,7 +31,7 @@
     </template>
     
     <script>
-      Polymer('player-controls', {
+      Polymer('wat-player-controls', {
         value: 0,
         min: 0,
         max: 1,
