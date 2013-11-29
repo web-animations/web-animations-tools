@@ -2,6 +2,7 @@
   "name": "web-animations-tools",
   "private": true,
   "dependencies": {
-    "polymer": "Polymer/polymer#~0.1.0"
+    "polymer": "Polymer/polymer#~0.1.0",
+    "web-animations-js": "web-animations/web-animations-js"
   }
 }
