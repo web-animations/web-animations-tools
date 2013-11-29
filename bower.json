@@ -1,0 +1,7 @@
+{
+  "name": "web-animations-tools",
+  "private": true,
+  "dependencies": {
+    "polymer": "Polymer/polymer#~0.1.0"
+  }
+}
