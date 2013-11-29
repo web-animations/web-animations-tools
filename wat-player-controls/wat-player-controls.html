@@ -17,61 +17,57 @@ limitations under the License.
 
 <!DOCTYPE html>
 
-<head>
-  <link rel="import" href="../../polymer/polymer.html">
-</head>
+<link rel="import" href="../../polymer/polymer.html">
 
-<body>
-  <polymer-element name="wat-player-controls" attributes="step">
-    <template>
-      <style>
-        #playPauseButton {
-          width: 30px;
-          height: 30px;
-          align: center;
-          vertical-align: middle;
-          padding: 0
-        }
-                
-        #slider {
-          vertical-align: middle;
-        }
-      </style>
-      
-      <input id="playPauseButton" type="button" value="{{playPauseText}}" 
-        on-click="{{playPause}}">
-      <input id="slider" type="range" value="{{player.currentTime}}" 
-        min="{{player.source.startTime}}" max="{{player.source.endTime}}" 
-        step="{{step}}" on-pointerdown="{{pauseWhileSeeking}}" 
-        on-pointerup="{{resume}}">
-    </template>
+<polymer-element name="wat-player-controls" attributes="step">
+  <template>
+    <style>
+      #playPauseButton {
+        width: 30px;
+        height: 30px;
+        align: center;
+        vertical-align: middle;
+        padding: 0
+      }
+              
+      #slider {
+        vertical-align: middle;
+      }
+    </style>
     
-    <script>
-      Polymer('wat-player-controls', {
-        value: 0,
-        min: 0,
-        max: 0,
-        step: 0,
-        paused: false,
-        playPauseText: '❚❚',
-        player: document.timeline.play(new Animation(null, null, 0)),
-        playPause: function() {
-          this.paused = !this.paused;
-          this.player.paused = this.paused;
-          if (this.paused) {
-            this.playPauseText = '▶';
-          } else {
-            this.playPauseText = '❚❚';
-          }
-        },
-        pauseWhileSeeking: function() {
-          this.player.paused = true;
-        },
-        resume: function() {
-          this.player.paused = this.paused;
+    <input id="playPauseButton" type="button" value="{{playPauseText}}" 
+      on-click="{{playPause}}">
+    <input id="slider" type="range" value="{{player.currentTime}}" 
+      min="{{player.source.startTime}}" max="{{player.source.endTime}}" 
+      step="{{step}}" on-pointerdown="{{pauseWhileSeeking}}" 
+      on-pointerup="{{resume}}">
+  </template>
+  
+  <script>
+    Polymer('wat-player-controls', {
+      value: 0,
+      min: 0,
+      max: 0,
+      step: 0,
+      paused: false,
+      playPauseText: '❚❚',
+      player: document.timeline.play(new Animation(null, null, 0)),
+      playPause: function() {
+        this.paused = !this.paused;
+        this.player.paused = this.paused;
+        if (this.paused) {
+          this.playPauseText = '▶';
+        } else {
+          this.playPauseText = '❚❚';
         }
-      });
-    </script>
-  </polymer-element>
-</body>
+      },
+      pauseWhileSeeking: function() {
+        this.player.paused = true;
+      },
+      resume: function() {
+        this.player.paused = this.paused;
+      }
+    });
+  </script>
+</polymer-element>
 
