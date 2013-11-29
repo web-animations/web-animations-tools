@@ -6,6 +6,7 @@
   margin: 10px;
   height: 60px;
   width: 60px;
+  border-radius: 5px;
   display: table;
 }
 
@@ -14,26 +15,20 @@
   text-align: center;
   vertical-align: middle;
   color: white;
-  font-size: 100%;
+  font-size: 90%;
+  font-family: helvetica;
 }
 
 #boxContainer {
   position: relative;
-  top: 0px;
   left: 0px;
+  top: 10px;
   margin: 10px;
   padding: 0px;
   height: 130px;
   width: 560px;
   border-style: solid;
   border-width: 1px;
-}
-
-#canvasContainer {
-  position: relative;
-  left: 0px;
-  top: 10px;
-  margin: 10px;
-  padding: 0px;
+  border-radius: 6px;
 }
 
