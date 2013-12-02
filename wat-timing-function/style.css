@@ -19,7 +19,7 @@
   font-family: helvetica;
 }
 
-#boxContainer {
+#box-container {
   position: relative;
   left: 0px;
   top: 10px;
@@ -32,3 +32,6 @@
   border-radius: 6px;
 }
 
+#timing-function {
+  position: relative;
+}

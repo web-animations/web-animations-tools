@@ -20,20 +20,20 @@ var P2x = 1;
 var P2y = 1;
 var cb = 'cubic-bezier(' + P1x + ', ' + P1y + ', ' + P2x + ', ' + P2y + ')';
 
-var linear = new Animation(document.querySelector('#boxLinear'),
+var linear = new Animation(document.querySelector('#box-linear'),
     {left: '490px'},
     {duration: 2.5, easing: 'linear'}
 );
 
-var custom = new Animation(document.querySelector('#boxCustom'),
+var custom = new Animation(document.querySelector('#box-custom'),
     {left: '490px'},
     {duration: 2.5, easing: cb}
 );
 
 var animation = new ParGroup([linear, custom]);
 
-document.querySelector('#timingFunction').target = custom;
+document.querySelector('#timing-function').target = custom;
 
-document.querySelector('#playerControls').player =
+document.querySelector('#player-controls').player =
     document.timeline.play(animation);
 
