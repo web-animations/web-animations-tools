@@ -43,6 +43,7 @@ limitations under the License.
       top: 20px;
       margin: 0px;
       padding: 0px;
+      display: table;
     }
     
     .control-point {
@@ -53,25 +54,36 @@ limitations under the License.
       border: 1px solid rgba(0,0,0,.3);
       margin: -10px 0 0 -10px;
       outline: none;
+      padding: 0px;
       box-sizing: border-box;
       border-radius: 10px;
+      font-size: 60%;
+      font-family: helvetica;
+      display: table-cell;
+      text-align: center;
+      vertical-align: middle;
+      line-height: 15px;
     }
     
     #P0 {
       background: white;
       left: 0;
       top: 75%;
+      color: black;
     }
     
     #P3 {
       background: white;
       left: 100%;
       top: 25%;
+      color: black;
+
     }
     
     #P1 {
       background: blue;
       cursor: pointer;
+      color: white;
     }
     
     #P1:focus {
@@ -81,15 +93,29 @@ limitations under the License.
     #P2 {
       background: red;
       cursor: pointer;
+      color: white;
     }
     
     #P2:focus {
       box-shadow: 0 0 5px 2px red;
     }
+    
+    #P1x,
+    #P1y,
+    #P2x,
+    #P2y {
+      width: 5em;
+      margin-right: 10px;
+    }
+    
+    label {
+      font-family: helvetica;
+      font-style: strong;
+    }
   </style>
   
   <template>
-    <div>
+    <div id="number-container">
       <label for="P1x">P1x:</label>
       <input id="P1x" type="number" min="0" max="1" step="0.01" value="{{P1x}}">  
       <label for="P1y">P1y:</label>
@@ -100,10 +126,10 @@ limitations under the License.
       <input id="P2y" type="number" step="0.01" value="{{P2y}}">
     </div>
     <div id="canvas-container">
-      <span class="control-point" id="P0"></span>
-      <!--<button class="control-point" id="P1"></button>
-      <button class="control-point" id="P2"></button>-->
-      <span class="control-point" id="P3"></span>            
+      <div class="control-point" id="P0">P0</div>
+      <button class="control-point" id="P1">P1</button>
+      <button class="control-point" id="P2">P2</button>
+      <div class="control-point" id="P3">P3</div>            
       <canvas id="canvas" height="600" width="300"></canvas>
     </div>
   </template>
