@@ -20,101 +20,126 @@ limitations under the License.
 <link rel="import" href="../../polymer/polymer.html">
 
 <polymer-element name="wat-timing-function" attributes="P1x P1y P2x P2y">
-  <style>
-    #canvas {
-      border: 1px solid black;
-      border-radius: 6px;
-      background: #f0f0f0;
-      background: linear-gradient(-45deg, transparent 49%, rgba(0,0,0,.2) 49.5%,
-          rgba(0,0,0,.2) 50.5%, transparent 51%) center no-repeat,
-		      repeating-linear-gradient(white, white 20px, transparent 20px, 
-		          transparent 40px) no-repeat,
-		      linear-gradient(transparent, rgba(0,0,0,.1) 25%, rgba(0,0,0,.1) 75%, 
-		          transparent);
-	    background-size: 100% 50%, 100% 50%, auto;
-	    background-position: 25%, 0, 0;
-    }
-    
-    #canvas-container {
-      position: absolute;
-      height: 600;
-      width: 300;
-      left: 0px;
-      top: 20px;
-      margin: 0px;
-      padding: 0px;
-      display: table;
-    }
-    
-    .control-point {
-      position: absolute;
-      z-index: 1;
-      height: 20px;
-      width: 20px;
-      border: 1px solid rgba(0,0,0,.3);
-      margin: -10px 0 0 -10px;
-      outline: none;
-      padding: 0px;
-      box-sizing: border-box;
-      border-radius: 10px;
-      font-size: 60%;
-      font-family: helvetica;
-      display: table-cell;
-      text-align: center;
-      vertical-align: middle;
-      line-height: 15px;
-    }
-    
-    #P0 {
-      background: white;
-      left: 0;
-      top: 75%;
-      color: black;
-    }
-    
-    #P3 {
-      background: white;
-      left: 100%;
-      top: 25%;
-      color: black;
-
-    }
-    
-    #P1 {
-      background: blue;
-      cursor: pointer;
-      color: white;
-    }
-    
-    #P1:focus {
-      box-shadow: 0 0 5px 2px blue;
-    }
-    
-    #P2 {
-      background: red;
-      cursor: pointer;
-      color: white;
-    }
-    
-    #P2:focus {
-      box-shadow: 0 0 5px 2px red;
-    }
-    
-    #P1x,
-    #P1y,
-    #P2x,
-    #P2y {
-      width: 5em;
-      margin-right: 10px;
-    }
-    
-    label {
-      font-family: helvetica;
-      font-style: strong;
-    }
-  </style>
-  
   <template>
+    <style>
+      #canvas {
+        border: 1px solid black;
+        border-radius: 6px;
+        background: #f0f0f0;
+        background: linear-gradient(-45deg, transparent 49.5%, rgba(0,0,0,.2) 
+            49.5%, rgba(0,0,0,.2) 50.5%, transparent 50.5%) center no-repeat, 
+            repeating-linear-gradient(white, white 20px, transparent 20px, 
+            transparent 40px) no-repeat, linear-gradient(transparent, 
+            rgba(0,0,0,.1) 25%, rgba(0,0,0,.1) 75%, transparent);
+	      background-size: 100% 50%, 100% 50%, auto;
+	      background-position: 25%, 0, 0;
+      }
+      
+      #canvas-container {
+        position: absolute;
+        height: 600;
+        width: 300;
+        left: 0px;
+        top: 20px;
+        margin: 0px;
+        padding: 0px;
+      }
+      
+      .control-point {
+        position: absolute;
+        z-index: 1;
+        height: 20px;
+        width: 20px;
+        border: 1px solid rgba(0,0,0,.3);
+        margin: -10px 0 0 -10px;
+        outline: none;
+        padding: 0px;
+        box-sizing: border-box;
+        border-radius: 10px;
+        font-size: 55%;
+        font-family: helvetica;
+      }
+      
+      #P0,
+      #P3 {
+        background-color: white;
+        display: table;
+      }
+      
+      #P0 span,
+      #P3 span {
+        display: table-cell;
+        text-align: center;
+        vertical-align: middle;
+      }
+      
+      #P0 {
+        left: 0;
+        top: 75%;
+      }
+      
+      #P3 {
+        left: 100%;
+        top: 25%;
+      }
+
+      #P1,
+      #P2 {
+        color: white;
+        cursor: pointer;
+      }
+
+      #P1 {
+        background: blue;
+      }
+      
+      #P2 {
+        background: red;
+        left: 100%;
+      }
+      
+      #P1:focus {
+        box-shadow: 0 0 5px 2px blue;
+      }
+        
+      #P2:focus {
+        box-shadow: 0 0 5px 2px red;
+      }
+      
+      #P1x,
+      #P1y,
+      #P2x,
+      #P2y {
+        width: 5em;
+        margin-right: 10px;
+      }
+      
+      label {
+        font-family: helvetica;
+        font-style: strong;
+      }
+
+      #outer {
+        display: table;
+      }
+      
+      #inner {
+        height: 20px;
+        width: 20px;
+        border: 1px solid rgba(0,0,0,.3);
+        margin: -10px 0 0 -10px;
+        outline: none;
+        padding: 0px;
+        box-sizing: border-box;
+        border-radius: 10px;
+        font-size: 55%;
+        font-family: helvetica;
+        display: table-cell;
+        text-align: center;
+        vertical-align: middle;
+      }
+    </style>
+
     <div id="number-container">
       <label for="P1x">P1x:</label>
       <input id="P1x" type="number" min="0" max="1" step="0.01" value="{{P1x}}">  
@@ -126,10 +151,10 @@ limitations under the License.
       <input id="P2y" type="number" step="0.01" value="{{P2y}}">
     </div>
     <div id="canvas-container">
-      <div class="control-point" id="P0">P0</div>
+      <div class="control-point" id="P0"><span>P0</span></div>
       <button class="control-point" id="P1">P1</button>
       <button class="control-point" id="P2">P2</button>
-      <div class="control-point" id="P3">P3</div>            
+      <div class="control-point" id="P3"><span>P3</span></div>            
       <canvas id="canvas" height="600" width="300"></canvas>
     </div>
   </template>
@@ -150,9 +175,10 @@ limitations under the License.
       },
       
       enteredView: function() {
-        var context = this.$.canvas.getContext('2d');
+        var canvas = this.$.canvas;
+        var context = canvas.getContext('2d');
 
-        context.scale(300, -300);
+        context.scale(canvas.width, -0.5 * canvas.height);
         context.translate(0, -1.5);
         this.drawControlHandles(context);
         this.drawTimingFunction(context);
