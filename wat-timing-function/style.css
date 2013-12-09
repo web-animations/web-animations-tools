@@ -8,6 +8,8 @@
   width: 60px;
   border-radius: 5px;
   display: table;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
 }
 
 .box span {
@@ -19,7 +21,7 @@
   font-family: helvetica;
 }
 
-#box-container {
+.box-container {
   position: relative;
   left: 0px;
   top: 10px;

@@ -2,7 +2,9 @@
   "name": "web-animations-tools",
   "private": true,
   "dependencies": {
-    "polymer": "Polymer/polymer#~0.1.0",
+    "polymer": "Polymer/polymer#master",
+    "x-inspector": "Polymer/x-inspector#master",
+    "polymer-animation": "Polymer/polymer-animation#master",
     "web-animations-js": "web-animations/web-animations-js"
   }
 }

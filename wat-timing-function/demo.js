@@ -14,26 +14,32 @@
  * limitations under the License.
  */
 
-var P1x = 0;
-var P1y = 0;
-var P2x = 1;
-var P2y = 1;
-var cb = 'cubic-bezier(' + P1x + ', ' + P1y + ', ' + P2x + ', ' + P2y + ')';
+"use strict";
 
-var linear = new Animation(document.querySelector('#box-linear'),
-    {left: '490px'},
-    {duration: 2.5, easing: 'linear'}
-);
+document.addEventListener('WebComponentsReady', function() {
+  var P1x = 0;
+  var P1y = 0;
+  var P2x = 1;
+  var P2y = 1;
+  var cb = 'cubic-bezier(' + P1x + ', ' + P1y + ', ' + P2x + ', ' + P2y + ')';
 
-var custom = new Animation(document.querySelector('#box-custom'),
-    {left: '490px'},
-    {duration: 2.5, easing: cb}
-);
+  var linear = new Animation(document.querySelector('#box-linear'),
+      {left: '490px'},
+      {duration: 2.5, easing: 'linear'}
+  );
 
-var animation = new ParGroup([linear, custom]);
+  var custom = new Animation(document.querySelector('#box-custom'),
+      {left: '490px'},
+      {duration: 2.5, easing: cb}
+  );
 
-document.querySelector('#timing-function').target = custom;
+  var animation = new ParGroup([linear, custom]);
 
-document.querySelector('#player-controls').player =
-    document.timeline.play(animation);
+  document.querySelector('#timing-function').target = custom;
 
+  document.querySelector('#player-controls').addEventListener(
+      'initialize-player',
+      function(event) {
+        event.detail.player = document.timeline.play(animation);  
+      });
+});

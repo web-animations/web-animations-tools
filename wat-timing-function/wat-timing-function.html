@@ -18,6 +18,7 @@ limitations under the License.
 <!DOCTYPE html>
 
 <link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../polymer-animation/web-animations.html">
 
 <polymer-element name="wat-timing-function" attributes="P1x P1y P2x P2y">
   <template>
@@ -152,8 +153,8 @@ limitations under the License.
     </div>
     <div id="canvas-container">
       <div class="control-point" id="P0"><span>P0</span></div>
-      <button class="control-point" id="P1">P1</button>
-      <button class="control-point" id="P2">P2</button>
+<!--      <button class="control-point" id="P1">P1</button>-->
+<!--      <button class="control-point" id="P2">P2</button>-->
       <div class="control-point" id="P3"><span>P3</span></div>            
       <canvas id="canvas" height="600" width="300"></canvas>
     </div>
@@ -166,7 +167,7 @@ limitations under the License.
       P2x: 1,
       P2y: 1,
       target: new Animation(null, null, 0),
-      
+         
       observe: {
         P1x: 'updateTimingFunction',
         P1y: 'updateTimingFunction',
@@ -174,7 +175,7 @@ limitations under the License.
         P2y: 'updateTimingFunction'
       },
       
-      enteredView: function() {
+      ready: function() {
         var canvas = this.$.canvas;
         var context = canvas.getContext('2d');
 
@@ -185,7 +186,7 @@ limitations under the License.
         this.updateEasing();
       },
       
-      drawTimingFunction: function(context) {
+     drawTimingFunction: function(context) {
         context.beginPath();
         context.moveTo(0, 0);
         context.bezierCurveTo(this.P1x, this.P1y, this.P2x, this.P2y, 1, 1);
@@ -200,8 +201,12 @@ limitations under the License.
         context.beginPath();
         context.moveTo(0, 0);
         context.lineTo(this.P1x, this.P1y);
+        //this.$.P1.style.left = this.P1x + 'px';
+        //this.$.P1.style.top = this.P1y + 'px';
         context.moveTo(1, 1);
         context.lineTo(this.P2x, this.P2y);
+        //this.$.P2.style.left = this.P2x + 'px';
+        //this.$.P2.style.top = this.P2y + 'px';
         context.fillStyle = 'rgba(0,0,0,.4)';
         context.lineWidth = 0.01;
         context.strokeStyle = 'gray';
