@@ -17,17 +17,14 @@ limitations under the License.
 
 <!DOCTYPE html>
 
-<head>
-  <link rel="stylesheet" type="text/css" href="style.css">
-  <script src="../../platform/platform.js"></script>
-  <link rel="import" href="wat-player-controls.html">
-  <script src="../../web-animations-js/web-animations.js"></script>
-</head>
+<link rel="stylesheet" type="text/css" href="style.css">
+<script src="../../platform-dev/platform.js"></script>
+<link rel="import" href="wat-player-controls.html">
+<link rel="import" href="../../polymer-animation/web-animations.html">
 
-<body>
-  <div style="padding: 8px">
-    <wat-player-controls id="playerControls" step="0.001"></wat-player-controls>
-  </div>
-  <script src="demo.js"></script>
-</body>
+<div style="padding: 5px">
+  <wat-player-controls id="player-controls" step="0.001"></wat-player-controls>
+</div>
+
+<script src="demo.js"></script>
 
