@@ -22,37 +22,93 @@ limitations under the License.
 <polymer-element name="wat-player-controls" attributes="step">
   <template>
     <style>
-      #playPauseButton {
+      .button,
+      .not-looping,
+      .looping {
         width: 30px;
         height: 30px;
-        align: center;
+        padding: 0px;
+        margin: 2px;
+        text-align: center;
         vertical-align: middle;
-        padding: 0
+        outline: none;
+        color: white;
+        background-color: rgba(66,133,244,1);
+        border: 1px solid rgba(66,133,244,0.84);
+        border-radius: 10%;
+        cursor: pointer;
       }
-              
-      #slider {
+      
+      .looping {
+        color: rgba(66,133,244,1);
+        background-color: white;
+      }
+
+      .slider {
+        -webkit-appearance: none;
+        margin: 2px;
+        width: 150px;
         vertical-align: middle;
+	      outline: none;
+	      overflow: hidden;
+	      border: 1px solid rgba(221,221,221,1);
+	      background-color: white;
+	      border-radius: 99px;
+	      box-shadow: 1px 1px 3px rgba(0,0,0,.21) inset;
+	      cursor: pointer;
       }
+      
+      
+      .slider::-webkit-slider-thumb {
+		    -webkit-appearance: none;
+		    background: rgba(66, 133, 244, 1);
+		    height: 13px;
+		    width: 13px;
+		    border-radius: 50%;
+		    box-shadow: -1px -1px 5px rgba(0,0,0,.42) inset,
+			      -1px -1px 4px 3px rgba(66,133,244,.84) inset,
+			      1px 1px 3px rgba(0,0,0,.3),
+			      -203px 0 0 198px rgba(66,133,244,.42);
+			  cursor: pointer;
+	    }
     </style>
     
-    <input id="playPauseButton" type="button" value="{{playPauseText}}" 
-      on-click="{{playPause}}">
-    <input id="slider" type="range" value="{{player.currentTime}}" 
-      min="{{player.source.startTime}}" max="{{player.source.endTime}}" 
-      step="{{step}}" on-pointerdown="{{pauseWhileSeeking}}" 
-      on-pointerup="{{resume}}">
+    <input class="button" type="button" value="{{playPauseText}}" 
+        on-click="{{playPause}}">
+    <input class="button" type="button" value="⏮" on-click="{{skipToStart}}">
+    <input class="button" type="button" value="⏭" on-click="{{skipToEnd}}">
+    <input class="not-looping" id="loopButton" type="button" value="🔁" 
+        on-click="{{toggleLoop}}">
+    <input class="slider" type="range" value="{{player.currentTime}}" 
+        step="{{step}}" min="{{player.source.startTime || 0}}" 
+        max="{{player.source.endTime || 0}}" on-pointerup="{{resume}}"
+        on-pointerdown="{{pauseWhileSeeking}}">
   </template>
   
   <script>
     Polymer('wat-player-controls', {
-      value: 0,
-      min: 0,
-      max: 0,
-      step: 0,
-      paused: false,
-      playPauseText: '❚❚',
-      player: document.timeline.play(new Animation(null, null, 0)),
+      step: 0.001,
+      paused: true,
+      looping: false,
+      playPauseText: '▶',
+      
+      observe: {
+        'player.currentTime': 'restart'
+      },
+      
+      ensurePlayerIsInitialized: function() {
+        if (!this.player) {
+          var initializer = {};
+          this.fire('initialize-player', initializer);
+          if (!initializer.player) {
+            return;
+          }
+          this.player = initializer.player;
+        }
+      },
+      
       playPause: function() {
+        this.ensurePlayerIsInitialized();
         this.paused = !this.paused;
         this.player.paused = this.paused;
         if (this.paused) {
@@ -61,11 +117,44 @@ limitations under the License.
           this.playPauseText = '❚❚';
         }
       },
+      
       pauseWhileSeeking: function() {
+        this.ensurePlayerIsInitialized();
         this.player.paused = true;
       },
+      
       resume: function() {
+        this.ensurePlayerIsInitialized();
         this.player.paused = this.paused;
+      },
+      
+      skipToStart: function() {
+        this.ensurePlayerIsInitialized();
+        this.player.currentTime = this.player.source.startTime;
+      },
+      
+      skipToEnd: function() {
+        this.ensurePlayerIsInitialized();
+        this.player.currentTime = this.player.source.endTime;
+      }, 
+      
+      restart: function() {
+        if (this.player.currentTime >= this.player.source.endTime) {
+          if (this.looping) {
+            this.skipToStart();
+          } else if (!this.paused) {
+            this.playPause();
+          }
+        }
+      },
+      
+      toggleLoop: function() {
+        this.looping = !this.looping;
+        if (this.looping) {
+          this.$.loopButton.className = 'looping';
+        } else {
+          this.$.loopButton.className = 'not-looping';
+        }
       }
     });
   </script>
