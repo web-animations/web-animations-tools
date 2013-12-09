@@ -24,7 +24,9 @@ limitations under the License.
     <style>
       .button,
       .not-looping,
-      .looping {
+      .looping, 
+      .not-reversed,
+      .reversed {
         width: 30px;
         height: 30px;
         padding: 0px;
@@ -39,7 +41,8 @@ limitations under the License.
         cursor: pointer;
       }
       
-      .looping {
+      .looping,
+      .reversed {
         color: rgba(66,133,244,1);
         background-color: white;
       }
@@ -79,6 +82,8 @@ limitations under the License.
     <input class="button" type="button" value="⏭" on-click="{{skipToEnd}}">
     <input class="not-looping" id="loopButton" type="button" value="🔁" 
         on-click="{{toggleLoop}}">
+    <input class="not-reversed" id="reverseButton" type="button" value="⬅" 
+        on-click="{{toggleReversed}}">
     <input class="slider" type="range" value="{{player.currentTime}}" 
         step="{{step}}" min="{{player.source.startTime || 0}}" 
         max="{{player.source.endTime || 0}}" on-pointerup="{{resume}}"
@@ -139,12 +144,20 @@ limitations under the License.
       }, 
       
       restart: function() {
-        if (this.player.currentTime >= this.player.source.endTime) {
+        if (this.player.playbackRate > 0 && 
+            this.player.currentTime >= this.player.source.endTime) {
           if (this.looping) {
             this.skipToStart();
           } else if (!this.paused) {
             this.playPause();
           }
+        } else if (this.player.playbackRate <= 0 && 
+            this.player.currentTime <= this.player.source.startTime) {
+          if (this.looping) {
+            this.skipToEnd();
+          } else if (!this.paused) {
+            this.playPause();
+          }       
         }
       },
       
@@ -154,6 +167,19 @@ limitations under the License.
           this.$.loopButton.className = 'looping';
         } else {
           this.$.loopButton.className = 'not-looping';
+        }
+      },
+      
+      toggleReversed: function() {
+        this.ensurePlayerIsInitialized();
+        this.player.playbackRate = -this.player.playbackRate;
+        if (this.player.playbackRate < 0) {
+          if (this.player.currentTime > this.player.source.endTime) {
+            this.player.currentTime = this.player.source.endTime;
+          }
+          this.$.reverseButton.className = 'reversed';
+        } else {
+          this.$.reverseButton.className = 'not-reversed';
         }
       }
     });
