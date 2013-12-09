@@ -23,7 +23,7 @@
 
 .box-container {
   position: relative;
-  left: 0px;
+  left: 10px;
   top: 10px;
   margin: 10px;
   padding: 0px;
@@ -34,6 +34,12 @@
   border-radius: 6px;
 }
 
+#player-controls {
+  position: relative;
+  left: 10px;
+}
+
 #timing-function {
   position: relative;
+  left: 10px;
 }
