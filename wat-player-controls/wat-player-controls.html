@@ -23,8 +23,8 @@ limitations under the License.
   <template>
     <style>
       .button,
-      .not-looping,
-      .looping, 
+      .not-repeating,
+      .repeating, 
       .not-reversed,
       .reversed {
         width: 30px;
@@ -41,7 +41,7 @@ limitations under the License.
         cursor: pointer;
       }
       
-      .looping,
+      .repeating,
       .reversed {
         color: rgba(66,133,244,1);
         background-color: white;
@@ -77,24 +77,26 @@ limitations under the License.
     </style>
     
     <input class="button" type="button" value="{{playPauseText}}" 
-        on-click="{{playPause}}">
-    <input class="button" type="button" value="⏮" on-click="{{skipToStart}}">
-    <input class="button" type="button" value="⏭" on-click="{{skipToEnd}}">
-    <input class="not-looping" id="loopButton" type="button" value="🔁" 
-        on-click="{{toggleLoop}}">
+        on-click="{{playPause}}" title="Play / Pause">
+    <input class="button" type="button" value="⏮" on-click="{{skipToStart}}"
+        title="Skip To Start">
+    <input class="button" type="button" value="⏭" on-click="{{skipToEnd}}"
+        title="Skip To End">
+    <input class="not-repeating" id="repeatButton" type="button" value="🔁" 
+        on-click="{{toggleRepeat}}" title="Repeat On / Off">
     <input class="not-reversed" id="reverseButton" type="button" value="⬅" 
-        on-click="{{toggleReversed}}">
+        on-click="{{toggleReversed}}" title="Reverse On / Off">
     <input class="slider" type="range" value="{{player.currentTime}}" 
         step="{{step}}" min="{{player.source.startTime || 0}}" 
         max="{{player.source.endTime || 0}}" on-pointerup="{{resume}}"
-        on-pointerdown="{{pauseWhileSeeking}}">
+        on-pointerdown="{{pauseWhileSeeking}}" title="Adjust Current Time">
   </template>
   
   <script>
     Polymer('wat-player-controls', {
       step: 0.001,
       paused: true,
-      looping: false,
+      repeating: false,
       playPauseText: '▶',
       
       observe: {
@@ -146,14 +148,14 @@ limitations under the License.
       restart: function() {
         if (this.player.playbackRate > 0 && 
             this.player.currentTime >= this.player.source.endTime) {
-          if (this.looping) {
+          if (this.repeating) {
             this.skipToStart();
           } else if (!this.paused) {
             this.playPause();
           }
         } else if (this.player.playbackRate <= 0 && 
             this.player.currentTime <= this.player.source.startTime) {
-          if (this.looping) {
+          if (this.repeating) {
             this.skipToEnd();
           } else if (!this.paused) {
             this.playPause();
@@ -161,12 +163,12 @@ limitations under the License.
         }
       },
       
-      toggleLoop: function() {
-        this.looping = !this.looping;
-        if (this.looping) {
-          this.$.loopButton.className = 'looping';
+      toggleRepeat: function() {
+        this.repeating = !this.repeating;
+        if (this.repeating) {
+          this.$.repeatButton.className = 'repeating';
         } else {
-          this.$.loopButton.className = 'not-looping';
+          this.$.repeatButton.className = 'not-repeating';
         }
       },
       
