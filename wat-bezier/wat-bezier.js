@@ -1,4 +1,4 @@
-Polymer('wat-timing-function', {
+Polymer('wat-bezier', {
   P1x: 0,
   P1y: 0,
   P2x: 1,
