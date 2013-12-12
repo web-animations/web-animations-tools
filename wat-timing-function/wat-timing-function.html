@@ -28,8 +28,8 @@ limitations under the License.
         background: #f0f0f0;
         background: linear-gradient(-45deg, transparent 49.5%, rgba(0,0,0,.2) 
             49.5%, rgba(0,0,0,.2) 50.5%, transparent 50.5%) center no-repeat, 
-            repeating-linear-gradient(white, white 20px, transparent 20px, 
-            transparent 40px) no-repeat, linear-gradient(transparent, 
+            repeating-linear-gradient(white, white 200px, transparent 200px, 
+            transparent 200px) no-repeat, linear-gradient(transparent, 
             rgba(0,0,0,.1) 25%, rgba(0,0,0,.1) 75%, transparent);
 	      background-size: 100% 50%, 100% 50%, auto;
 	      background-position: 25%, 0, 0;
@@ -37,7 +37,7 @@ limitations under the License.
             
       .coordinate-plane { 
 	      position: absolute;
-	      top: 1em;
+	      top: 0;
 	      left: 0;
 	      line-height: 0;
 	      font-family: helvetica;
@@ -49,7 +49,7 @@ limitations under the License.
 		    bottom: 25%;
 		    left: 0;
 		    width: 100%;
-		    padding: .3em .5em;
+		    padding: 0;
 		    -moz-box-sizing: border-box;
 		    box-sizing: border-box;		
 		    color: rgba(0,0,0,.6);
@@ -58,7 +58,7 @@ limitations under the License.
 	    }
 	
 	    .coordinate-plane:before {
-		    content: '\00a0 \00a0 PROGRESSION';
+		    content: '\00a0';
 		    border-bottom: 1px solid;
 		    -moz-transform: rotate(-90deg);
 		    -moz-transform-origin: bottom left;
@@ -73,9 +73,9 @@ limitations under the License.
 	    }
 	
 	    .coordinate-plane:after {
-		    content: '\00a0 \00a0 TIME';
+		    content: '\00a0';
 		    border-top: 1px solid;
-		    margin-bottom: -1.5em;
+        margin-bottom: -1em;
 	    }
         
       .control-point {
@@ -117,20 +117,20 @@ limitations under the License.
       }
 
       #P1 {
-        background: blue;
+        background: rgba(133,66,244,1);
       }
       
       #P2 {
-        background: red;
+        background: rgba(0,170,187,1);
         left: 100%;
       }
       
       #P1:focus {
-        box-shadow: 0 0 5px 2px blue;
+        box-shadow: 0 0 5px 2px rgba(133,66,244,1);
       }
         
       #P2:focus {
-        box-shadow: 0 0 5px 2px red;
+        box-shadow: 0 0 5px 2px rgba(0,170,187,1);
       }
       
       #P1x,
@@ -181,7 +181,8 @@ limitations under the License.
       <button class="control-point" id="P0">
         P0
       </button>
-      <button class="control-point" id="P1" on-mousedown="{{moveP1}}">
+      <button class="control-point" id="P1" on-mousedown="{{captureP1}}" 
+          on-mousemove="{{moveP1}}" on-mouseup="{{releaseP1}}">
         P1
       </button>
       <button class="control-point" id="P2" on-mousedown="{{moveP2}}">
@@ -201,6 +202,8 @@ limitations under the License.
       P2x: 1,
       P2y: 1,
       target: new Animation(null, null, 0),
+      movingP1: false,
+      movingP2: false,
          
       observe: {
         P1x: 'updateTimingFunction',
@@ -235,18 +238,34 @@ limitations under the License.
         var width = this.$.canvas.width;
         var height = this.$.canvas.height;
         
+        context.fillStyle = 'rgba(0,0,0,.4)';
+        context.lineWidth = 0.01;
+
         context.beginPath();
         context.moveTo(0, 0);
         context.lineTo(this.P1x, this.P1y);
         this.$.P1.style.left = this.P1x * width + 'px';
         this.$.P1.style.top = (this.P1y - 1.5) * height * -0.5 + 'px';
+        if (this.P1y < -0.5 || this.P1y > 1.5) {
+          this.$.P1.style.visibility = 'hidden';
+        } else {
+          this.$.P1.style.visibility = 'visible';
+        }
+        context.strokeStyle = 'rgba(133,66,244,1)';
+        context.stroke();
+        context.closePath();
+        
+        context.beginPath();
         context.moveTo(1, 1);
         context.lineTo(this.P2x, this.P2y);
         this.$.P2.style.left = this.P2x * width + 'px';
         this.$.P2.style.top = (this.P2y - 1.5) * height * -0.5 + 'px';
-        context.fillStyle = 'rgba(0,0,0,.4)';
-        context.lineWidth = 0.01;
-        context.strokeStyle = 'gray';
+        if (this.P2y < -0.5 || this.P2y > 1.5) {
+          this.$.P2.style.visibility = 'hidden';
+        } else {
+          this.$.P2.style.visibility = 'visible';
+        }
+        context.strokeStyle = 'rgba(0,170,187,1)';
         context.stroke();
         context.closePath();
       },
@@ -270,36 +289,41 @@ limitations under the License.
             this.P1y + ', ' + this.P2x + ', ' + this.P2y + ')';
       },
       
-      moveP1: function() {
-        var curveBoundingBox = this.$.canvas.getBoundingClientRect();
-        	      
-	      this.onmousemove = function drag(e) {
-	      	var x = e.pageX / curveBoundingBox.width;
-		      var y = e.pageY / curveBoundingBox.height;
-		      
-	        this.P1x = Math.round(x * 100) / 100;
-          this.P1y = Math.round(y * 100) / 100;
-		    };
-	      
-	      this.onmouseup = function() {
-          this.$.P1.focus();
-		      this.onmousemove = this.onmouseup = null;
+      captureP1: function(e) {
+        //this.setPointerCapture(e.pointerId);
+        this.movingP1 = true;
+      },
+      
+      moveP1: function(e) {
+        if (this.movingP1) {
+          var curveBoundingBox = this.$.canvas.getBoundingClientRect();
+        	var x = (e.pageX - this.offsetLeft) / curveBoundingBox.width;
+	        var y = -2 * (e.pageY - this.offsetTop - 25) / curveBoundingBox.height + 1.5;
+	        
+	        this.P1x = Math.max(Math.min(x.toFixed(2), 1), 0);
+	        this.P1y = y.toFixed(2);
 	      }
       }, 
+      
+      releaseP1: function(e) {
+        //this.releasePointerCapture(e.pointerId);
+        this.movingP1 = false;
+      },
       
       moveP2: function() {
         var curveBoundingBox = this.$.canvas.getBoundingClientRect();
         	      
 	      this.onmousemove = function drag(e) {
-          var x = e.pageX / curveBoundingBox.width;
-		      var y = e.pageY / curveBoundingBox.height;
+   	      //this.setPointerCapture(e.pointerId);
+	      	var x = (e.pageX - this.offsetLeft) / curveBoundingBox.width;
+		      var y = -2 * (e.pageY - this.offsetTop - 25) / curveBoundingBox.height + 1.5;
 		      
-	        this.P2x = Math.round(x * 100) / 100;
-          this.P2y = Math.round(y * 100) / 100;
+		      this.P2x = Math.max(Math.min(x.toFixed(2), 1), 0);
+		      this.P2y = y.toFixed(2);
 		    };
 	      
 	      this.onmouseup = function() {
-          this.$.P2.focus();
+          //this.releasePointerCapture(e.pointerId);
 		      this.onmousemove = this.onmouseup = null;
 	      }
       }
