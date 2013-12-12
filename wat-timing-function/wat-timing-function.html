@@ -40,7 +40,6 @@ limitations under the License.
 	      top: 0;
 	      left: 0;
 	      line-height: 0;
-	      font-family: helvetica;
       }
 	
 	    .coordinate-plane:before,
@@ -50,7 +49,6 @@ limitations under the License.
 		    left: 0;
 		    width: 100%;
 		    padding: 0;
-		    -moz-box-sizing: border-box;
 		    box-sizing: border-box;		
 		    color: rgba(0,0,0,.6);
 		    font-size: 75%;
@@ -60,12 +58,6 @@ limitations under the License.
 	    .coordinate-plane:before {
 		    content: '\00a0';
 		    border-bottom: 1px solid;
-		    -moz-transform: rotate(-90deg);
-		    -moz-transform-origin: bottom left;
-		    -ms-transform: rotate(-90deg);
-		    -ms-transform-origin: bottom left;
-		    -o-transform: rotate(-90deg);
-		    -o-transform-origin: bottom left;
 		    -webkit-transform: rotate(-90deg);
 		    -webkit-transform-origin: bottom left;
 		    transform: rotate(-90deg);
@@ -89,7 +81,6 @@ limitations under the License.
         box-sizing: border-box;
         border-radius: 10px;
         font-size: 55%;
-        font-family: helvetica;
       }
       
       #P0,
@@ -137,15 +128,10 @@ limitations under the License.
       #P1y,
       #P2x,
       #P2y {
-        width: 5em;
+        width: 4em;
         margin-right: 10px;
       }
       
-      label {
-        font-family: helvetica;
-        font-style: strong;
-      }
-
       #outer {
         display: table;
       }
@@ -165,6 +151,11 @@ limitations under the License.
         text-align: center;
         vertical-align: middle;
       }
+      
+      * {
+        font-family: arial;
+        font-style: strong;
+      }
     </style>
 
     <div>
@@ -176,6 +167,15 @@ limitations under the License.
       <input id="P2x" type="number" min="0" max="1" step="0.01" value="{{P2x}}">  
       <label for="P2y">P2y:</label>
       <input id="P2y" type="number" step="0.01" value="{{P2y}}">
+      <label for="preset">Preset:</label>
+      <select id="preset" name="select" value="{{preset}}">
+        <option value="custom">custom</option>
+        <option value="linear">linear</option>
+        <option value="ease">ease</option>
+        <option value="ease-in">ease-in</option>
+        <option value="ease-out">ease-out</option>
+        <option value="ease-in-out">ease-in-out</option>
+      </select>
     </div>
     <div class="coordinate-plane">
       <button class="control-point" id="P0">
@@ -204,12 +204,15 @@ limitations under the License.
       target: new Animation(null, null, 0),
       movingP1: false,
       movingP2: false,
+      custom: true,
+      preset: 'custom',
          
       observe: {
         P1x: 'updateTimingFunction',
         P1y: 'updateTimingFunction',
         P2x: 'updateTimingFunction',
-        P2y: 'updateTimingFunction'
+        P2y: 'updateTimingFunction',
+        preset: 'presetEasing',
       },
       
       ready: function() {
@@ -285,13 +288,64 @@ limitations under the License.
       },
       
       updateEasing: function() {
-        this.target.specified.easing = 'cubic-bezier(' + this.P1x + ', ' +
-            this.P1y + ', ' + this.P2x + ', ' + this.P2y + ')';
+        if (this.custom) {
+          this.target.specified.easing = 'cubic-bezier(' + this.P1x + ', ' +
+              this.P1y + ', ' + this.P2x + ', ' + this.P2y + ')';
+        } else {
+          this.target.specified.easing = this.preset;
+        }
+      },
+        
+      presetEasing: function() {
+        var preset = this.$.preset;
+        
+        switch (this.preset) {
+          case 'custom':
+            this.custom = true;
+            this.$.P1x.disabled = this.$.P1y.disabled = this.$.P2x.disabled 
+               = this.$.P2y.disabled = false;
+            break;
+          case 'linear':
+            this.custom = false;
+            this.P1x = this.P1y = 0;
+            this.P2x = this.P2y = 1;
+            break;
+          case 'ease':
+            this.custom = false;
+            this.P1x = this.P2x = 0.25;
+            this.P1y = 0.1
+            this.P2y = 1;
+            break;
+          case 'ease-in':
+            this.custom = false;
+            this.P1x = 0.4;
+            this.P1y = 0;
+            this.P2x = this.P2y = 1;
+            break;
+          case 'ease-out':
+            this.custom = false;
+            this.P1x = this.P1y = 0;
+            this.P2x = 0.58;
+            this.P2y = 1;
+            break;
+          case 'ease-in-out':
+            this.custom = false;
+            this.P1x = 0.42;
+            this.P1y = 0;
+            this.P2x = 0.58;
+            this.P2y = 1;
+            break;
+        }
+        if (!this.custom) {
+          this.$.P1x.disabled = this.$.P1y.disabled = this.$.P2x.disabled 
+              = this.$.P2y.disabled = true;
+        }
       },
       
       captureP1: function(e) {
         //this.setPointerCapture(e.pointerId);
         this.movingP1 = true;
+        this.preset = 'custom';
       },
       
       moveP1: function(e) {
@@ -313,7 +367,9 @@ limitations under the License.
       
       moveP2: function() {
         var curveBoundingBox = this.$.canvas.getBoundingClientRect();
-        	      
+        
+        this.preset = 'custom';	      
+
 	      this.onmousemove = function drag(e) {
    	      //this.setPointerCapture(e.pointerId);
 	      	var x = (e.pageX - this.offsetLeft) / curveBoundingBox.width;
