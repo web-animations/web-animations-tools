@@ -43,3 +43,4 @@ document.addEventListener('WebComponentsReady', function() {
         event.detail.player = document.timeline.play(animation);  
       });
 });
+
