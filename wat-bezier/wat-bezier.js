@@ -14,6 +14,7 @@ Polymer('wat-bezier', {
     P2x: 'updateTimingFunction',
     P2y: 'updateTimingFunction',
     preset: 'presetEasing',
+    target: 'updateEasing',
   },
   
   ready: function() {
@@ -89,11 +90,13 @@ Polymer('wat-bezier', {
   },
   
   updateEasing: function() {
-    if (this.preset == 'custom') {
-      this.target.specified.easing = 'cubic-bezier(' + this.P1x + ', ' +
-          this.P1y + ', ' + this.P2x + ', ' + this.P2y + ')';
-    } else {
-      this.target.specified.easing = this.preset;
+    if (this.target && this.target.specified) {
+      if (this.preset == 'custom') {
+        this.target.specified.easing = 'cubic-bezier(' + this.P1x + ', ' +
+            this.P1y + ', ' + this.P2x + ', ' + this.P2y + ')';
+      } else {
+        this.target.specified.easing = this.preset;
+      }
     }
   },
     
