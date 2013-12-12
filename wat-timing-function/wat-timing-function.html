@@ -298,7 +298,8 @@ limitations under the License.
         if (this.movingP1) {
           var curveBoundingBox = this.$.canvas.getBoundingClientRect();
         	var x = (e.pageX - this.offsetLeft) / curveBoundingBox.width;
-	        var y = -2 * (e.pageY - this.offsetTop - 25) / curveBoundingBox.height + 1.5;
+	        var y = 1.5 - 2 * (e.pageY - this.offsetTop - 25) 
+	            / curveBoundingBox.height;
 	        
 	        this.P1x = Math.max(Math.min(x.toFixed(2), 1), 0);
 	        this.P1y = y.toFixed(2);
@@ -316,7 +317,8 @@ limitations under the License.
 	      this.onmousemove = function drag(e) {
    	      //this.setPointerCapture(e.pointerId);
 	      	var x = (e.pageX - this.offsetLeft) / curveBoundingBox.width;
-		      var y = -2 * (e.pageY - this.offsetTop - 25) / curveBoundingBox.height + 1.5;
+		      var y = 1.5 - 2 * (e.pageY - this.offsetTop - 25) 
+	            / curveBoundingBox.height;
 		      
 		      this.P2x = Math.max(Math.min(x.toFixed(2), 1), 0);
 		      this.P2y = y.toFixed(2);
