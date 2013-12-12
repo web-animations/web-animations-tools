@@ -133,7 +133,7 @@ div#canvas {
   vertical-align: middle;
 }
 
-* {
+:host {
   font-family: arial;
   font-style: strong;
 }
