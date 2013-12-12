@@ -31,44 +31,44 @@ limitations under the License.
             repeating-linear-gradient(white, white 200px, transparent 200px, 
             transparent 200px) no-repeat, linear-gradient(transparent, 
             rgba(0,0,0,.1) 25%, rgba(0,0,0,.1) 75%, transparent);
-	      background-size: 100% 50%, 100% 50%, auto;
-	      background-position: 25%, 0, 0;
+        background-size: 100% 50%, 100% 50%, auto;
+        background-position: 25%, 0, 0;
       }
             
       .coordinate-plane { 
-	      position: absolute;
-	      top: 0;
-	      left: 0;
-	      line-height: 0;
+        position: absolute;
+        top: 0;
+        left: 0;
+        line-height: 0;
       }
-	
-	    .coordinate-plane:before,
-	    .coordinate-plane:after {
-		    position: absolute;
-		    bottom: 25%;
-		    left: 0;
-		    width: 100%;
-		    padding: 0;
-		    box-sizing: border-box;		
-		    color: rgba(0,0,0,.6);
-		    font-size: 75%;
-		    line-height: 1;
-	    }
-	
-	    .coordinate-plane:before {
-		    content: '\00a0';
-		    border-bottom: 1px solid;
-		    -webkit-transform: rotate(-90deg);
-		    -webkit-transform-origin: bottom left;
-		    transform: rotate(-90deg);
-		    transform-origin: bottom left;
-	    }
-	
-	    .coordinate-plane:after {
-		    content: '\00a0';
-		    border-top: 1px solid;
+  
+      .coordinate-plane:before,
+      .coordinate-plane:after {
+        position: absolute;
+        bottom: 25%;
+        left: 0;
+        width: 100%;
+        padding: 0;
+        box-sizing: border-box;    
+        color: rgba(0,0,0,.6);
+        font-size: 75%;
+        line-height: 1;
+      }
+  
+      .coordinate-plane:before {
+        content: '\00a0';
+        border-bottom: 1px solid;
+        -webkit-transform: rotate(-90deg);
+        -webkit-transform-origin: bottom left;
+        transform: rotate(-90deg);
+        transform-origin: bottom left;
+      }
+  
+      .coordinate-plane:after {
+        content: '\00a0';
+        border-top: 1px solid;
         margin-bottom: -1em;
-	    }
+      }
         
       .control-point {
         position: absolute;
@@ -181,8 +181,7 @@ limitations under the License.
       <button class="control-point" id="P0">
         P0
       </button>
-      <button class="control-point" id="P1" on-mousedown="{{captureP1}}" 
-          on-mousemove="{{moveP1}}" on-mouseup="{{releaseP1}}">
+      <button class="control-point" id="P1" on-mousedown="{{moveP1}}">
         P1
       </button>
       <button class="control-point" id="P2" on-mousedown="{{moveP2}}">
@@ -191,7 +190,8 @@ limitations under the License.
       <button class="control-point" id="P3">
         P3
       </button>            
-      <canvas id="canvas" height="600" width="300"></canvas>
+      <canvas id="canvas" height="600" width="300" on-click="{{selectPoint}}">
+      </canvas>
     </div>
   </template>
   
@@ -204,7 +204,6 @@ limitations under the License.
       target: new Animation(null, null, 0),
       movingP1: false,
       movingP2: false,
-      custom: true,
       preset: 'custom',
          
       observe: {
@@ -288,7 +287,7 @@ limitations under the License.
       },
       
       updateEasing: function() {
-        if (this.custom) {
+        if (this.preset == 'custom') {
           this.target.specified.easing = 'cubic-bezier(' + this.P1x + ', ' +
               this.P1y + ', ' + this.P2x + ', ' + this.P2y + ')';
         } else {
@@ -301,89 +300,102 @@ limitations under the License.
         
         switch (this.preset) {
           case 'custom':
-            this.custom = true;
             this.$.P1x.disabled = this.$.P1y.disabled = this.$.P2x.disabled 
                = this.$.P2y.disabled = false;
             break;
           case 'linear':
-            this.custom = false;
             this.P1x = this.P1y = 0;
             this.P2x = this.P2y = 1;
             break;
           case 'ease':
-            this.custom = false;
             this.P1x = this.P2x = 0.25;
             this.P1y = 0.1
             this.P2y = 1;
             break;
           case 'ease-in':
-            this.custom = false;
             this.P1x = 0.4;
             this.P1y = 0;
             this.P2x = this.P2y = 1;
             break;
           case 'ease-out':
-            this.custom = false;
             this.P1x = this.P1y = 0;
             this.P2x = 0.58;
             this.P2y = 1;
             break;
           case 'ease-in-out':
-            this.custom = false;
             this.P1x = 0.42;
             this.P1y = 0;
             this.P2x = 0.58;
             this.P2y = 1;
             break;
         }
-        if (!this.custom) {
+        if (this.preset != 'custom') {
           this.$.P1x.disabled = this.$.P1y.disabled = this.$.P2x.disabled 
               = this.$.P2y.disabled = true;
         }
       },
       
-      captureP1: function(e) {
-        //this.setPointerCapture(e.pointerId);
-        this.movingP1 = true;
-        this.preset = 'custom';
-      },
-      
-      moveP1: function(e) {
-        if (this.movingP1) {
-          var curveBoundingBox = this.$.canvas.getBoundingClientRect();
-        	var x = (e.pageX - this.offsetLeft) / curveBoundingBox.width;
-	        var y = 1.5 - 2 * (e.pageY - this.offsetTop - 25) 
-	            / curveBoundingBox.height;
-	        
-	        this.P1x = Math.max(Math.min(x.toFixed(2), 1), 0);
-	        this.P1y = y.toFixed(2);
-	      }
-      }, 
-      
-      releaseP1: function(e) {
-        //this.releasePointerCapture(e.pointerId);
-        this.movingP1 = false;
+      moveP1: function() {
+        var boundingBox = this.$.canvas.getBoundingClientRect();
+        
+        this.preset = 'custom';        
+
+        this.onmousemove = function drag(e) {
+          var x = (e.pageX - boundingBox.left) / boundingBox.width;
+          var y = 1.5 - 2 * (e.pageY - boundingBox.top) / boundingBox.height;
+          
+          this.movingP1 = true;
+          this.P1x = Math.max(Math.min(x.toFixed(2), 1), 0);
+          this.P1y = y.toFixed(2);
+        };
+        
+        this.onmouseup = function() {
+          this.movingP1 = false;
+          this.$.P1.blur();
+          this.onmousemove = this.onmouseup = null;
+        }
       },
       
       moveP2: function() {
-        var curveBoundingBox = this.$.canvas.getBoundingClientRect();
+        var boundingBox = this.$.canvas.getBoundingClientRect();
         
-        this.preset = 'custom';	      
+        this.preset = 'custom';        
 
-	      this.onmousemove = function drag(e) {
-   	      //this.setPointerCapture(e.pointerId);
-	      	var x = (e.pageX - this.offsetLeft) / curveBoundingBox.width;
-		      var y = 1.5 - 2 * (e.pageY - this.offsetTop - 25) 
-	            / curveBoundingBox.height;
-		      
-		      this.P2x = Math.max(Math.min(x.toFixed(2), 1), 0);
-		      this.P2y = y.toFixed(2);
-		    };
-	      
-	      this.onmouseup = function() {
-          //this.releasePointerCapture(e.pointerId);
-		      this.onmousemove = this.onmouseup = null;
-	      }
+        this.onmousemove = function drag(e) {
+          var x = (e.pageX - boundingBox.left) / boundingBox.width;
+          var y = 1.5 - 2 * (e.pageY - boundingBox.top) / boundingBox.height;
+          
+          this.movingP2 = true;
+          this.P2x = Math.max(Math.min(x.toFixed(2), 1), 0);
+          this.P2y = y.toFixed(2);
+        };
+        
+        this.onmouseup = function() {
+          this.movingP2 = false;
+          this.$.P2.blur();
+          this.onmousemove = this.onmouseup = null;
+        }
+      },
+      
+      selectPoint: function(e) {
+        var distance = function(x1, y1, x2, y2) {
+          return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+        };
+        var boundingBox = this.$.canvas.getBoundingClientRect();
+        var x = (e.pageX - boundingBox.left) / boundingBox.width;
+        var y = 1.5 - 2 * (e.pageY - boundingBox.top) / boundingBox.height;
+        
+        // determine which point is closer to (x, y)
+        var distP1 = distance(x, y, this.P1x, this.P1y);
+        var distP2 = distance(x, y, this.P2x, this.P2y);
+        
+        if (distP1 <= distP2) {
+          this.P1x = Math.max(Math.min(x.toFixed(2), 1), 0);
+          this.P1y = y.toFixed(2);
+        } else {
+          this.P2x = Math.max(Math.min(x.toFixed(2), 1), 0);
+          this.P2y = y.toFixed(2);        
+        }
       }
     });
   </script>
