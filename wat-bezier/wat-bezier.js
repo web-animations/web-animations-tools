@@ -54,7 +54,7 @@ Polymer('wat-bezier', {
     if (this.P1y < -0.5 || this.P1y > 1.5) {
       this.$.P1.style.visibility = 'hidden';
     } else {
-      this.$.P1.style.visibility = 'visible';
+      this.$.P1.style.visibility = 'inherit';
     }
     context.strokeStyle = 'rgba(133,66,244,1)';
     context.stroke();
@@ -68,7 +68,7 @@ Polymer('wat-bezier', {
     if (this.P2y < -0.5 || this.P2y > 1.5) {
       this.$.P2.style.visibility = 'hidden';
     } else {
-      this.$.P2.style.visibility = 'visible';
+      this.$.P2.style.visibility = 'inherit';
     }
     context.strokeStyle = 'rgba(0,170,187,1)';
     context.stroke();

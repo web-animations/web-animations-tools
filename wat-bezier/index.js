@@ -34,7 +34,7 @@ document.addEventListener('WebComponentsReady', function() {
   );
 
   var animation = new ParGroup([linear, custom]);
-
+  
   document.querySelector('#bezier').target = custom;
 
   document.querySelector('#player-controls').addEventListener(
