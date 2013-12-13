@@ -1,20 +1,23 @@
 Polymer('wat-bezier', {
-  P1x: 0,
-  P1y: 0,
-  P2x: 1,
-  P2y: 1,
+  xy: [0, 0, 1, 1], // [P1x, P1y, P2x, P2y]
   target: new Animation(null, null, 0),
   movingP1: false,
   movingP2: false,
   preset: 'custom',
+  
+  easing: {
+    'linear': [0, 0, 1, 1],
+    'ease': [0.25, 0.1, 0.25, 1],
+    'ease-in': [0.42, 0, 1, 1],
+    'ease-out': [0, 0, 0.58, 1],
+    'ease-in-out': [0.42, 0, 0.58, 1],
+  },
      
   observe: {
-    P1x: 'updateTimingFunction',
-    P1y: 'updateTimingFunction',
-    P2x: 'updateTimingFunction',
-    P2y: 'updateTimingFunction',
+    xy: 'updateTimingFunction',
     preset: 'presetEasing',
     target: 'updateEasing',
+    'target.specified.easing': 'updateControlPoints',
   },
   
   ready: function() {
@@ -25,18 +28,36 @@ Polymer('wat-bezier', {
     context.translate(0, -1.5);
     this.drawControlHandles(context);
     this.drawTimingFunction(context);
-    this.updateEasing();
   },
   
  drawTimingFunction: function(context) {
     context.beginPath();
     context.moveTo(0, 0);
-    context.bezierCurveTo(this.P1x, this.P1y, this.P2x, this.P2y, 1, 1);
+    context.bezierCurveTo(this.xy[0], this.xy[1], this.xy[2], this.xy[3], 1, 1);
     context.fillStyle = 'rgba(0,0,0,.6)';
     context.lineWidth = 0.02;
     context.strokeStyle = 'black';
     context.stroke();
     context.closePath();
+  },
+  
+  stringToCoords: function(str) {
+    if (str.indexOf('cubic-bezier(') != -1) {
+      return str.substring(
+          str.indexOf('(')+1, str.indexOf(')')).split(',').map(Number);  
+    } else {
+      return this.easing[str];
+    }
+  },
+  
+  coordsToString: function(coords) {
+    for (var t in this.easing) {
+      if (this.easing[t].toString() == coords.toString()) {
+        return t;  
+      }
+    }
+    return 'cubic-bezier(' + coords[0] + ',' + coords[1] + ',' + coords[2] + 
+        ',' + coords[3] + ')';
   },
   
   drawControlHandles: function(context) {
@@ -48,10 +69,10 @@ Polymer('wat-bezier', {
 
     context.beginPath();
     context.moveTo(0, 0);
-    context.lineTo(this.P1x, this.P1y);
-    this.$.P1.style.left = this.P1x * width + 'px';
-    this.$.P1.style.top = (this.P1y - 1.5) * height * -0.5 + 'px';
-    if (this.P1y < -0.5 || this.P1y > 1.5) {
+    context.lineTo(this.xy[0], this.xy[1]);
+    this.$.P1.style.left = this.xy[0] * width + 'px';
+    this.$.P1.style.top = (this.xy[1] - 1.5) * height * -0.5 + 'px';
+    if (this.xy[1] < -0.5 || this.xy[1] > 1.5) {
       this.$.P1.style.visibility = 'hidden';
     } else {
       this.$.P1.style.visibility = 'inherit';
@@ -62,10 +83,10 @@ Polymer('wat-bezier', {
     
     context.beginPath();
     context.moveTo(1, 1);
-    context.lineTo(this.P2x, this.P2y);
-    this.$.P2.style.left = this.P2x * width + 'px';
-    this.$.P2.style.top = (this.P2y - 1.5) * height * -0.5 + 'px';
-    if (this.P2y < -0.5 || this.P2y > 1.5) {
+    context.lineTo(this.xy[2], this.xy[3]);
+    this.$.P2.style.left = this.xy[2] * width + 'px';
+    this.$.P2.style.top = (this.xy[3] - 1.5) * height * -0.5 + 'px';
+    if (this.xy[3] < -0.5 || this.xy[3] > 1.5) {
       this.$.P2.style.visibility = 'hidden';
     } else {
       this.$.P2.style.visibility = 'inherit';
@@ -91,67 +112,39 @@ Polymer('wat-bezier', {
   
   updateEasing: function() {
     if (this.target && this.target.specified) {
-      if (this.preset == 'custom') {
-        this.target.specified.easing = 'cubic-bezier(' + this.P1x + ', ' +
-            this.P1y + ', ' + this.P2x + ', ' + this.P2y + ')';
-      } else {
-        this.target.specified.easing = this.preset;
-      }
+      this.target.specified.easing = 
+          this.coordsToString(this.xy);
     }
   },
+  
+  updateControlPoints: function() {
+    this.$.P1.visibility = 'hidden';
+    this.xy = this.stringToCoords(this.target.specified.easing).slice();
+  },
     
-  presetEasing: function() {
-    var preset = this.$.preset;
-    
-    switch (this.preset) {
-      case 'custom':
-        this.$.P1x.disabled = this.$.P1y.disabled = this.$.P2x.disabled 
-           = this.$.P2y.disabled = false;
-        break;
-      case 'linear':
-        this.P1x = this.P1y = 0;
-        this.P2x = this.P2y = 1;
-        break;
-      case 'ease':
-        this.P1x = this.P2x = 0.25;
-        this.P1y = 0.1
-        this.P2y = 1;
-        break;
-      case 'ease-in':
-        this.P1x = 0.4;
-        this.P1y = 0;
-        this.P2x = this.P2y = 1;
-        break;
-      case 'ease-out':
-        this.P1x = this.P1y = 0;
-        this.P2x = 0.58;
-        this.P2y = 1;
-        break;
-      case 'ease-in-out':
-        this.P1x = 0.42;
-        this.P1y = 0;
-        this.P2x = 0.58;
-        this.P2y = 1;
-        break;
-    }
-    if (this.preset != 'custom') {
+  presetEasing: function() {   
+    if (this.preset == 'custom') {
       this.$.P1x.disabled = this.$.P1y.disabled = this.$.P2x.disabled 
-          = this.$.P2y.disabled = true;
+          = this.$.P2y.disabled = false;
+    } else {
+      this.xy = this.easing[this.preset].slice();
+      this.$.P1x.disabled = this.$.P1y.disabled = this.$.P2x.disabled 
+          = this.$.P2y.disabled = true;      
     }
   },
   
   moveP1: function() {
-    var boundingBox = this.$.canvas.getBoundingClientRect();
-    
-    this.preset = 'custom';        
+    var boundingBox = this.$.canvas.getBoundingClientRect();       
 
+    this.preset = 'custom';
+    
     this.onmousemove = function drag(e) {
       var x = (e.pageX - boundingBox.left) / boundingBox.width;
       var y = 1.5 - 2 * (e.pageY - boundingBox.top) / boundingBox.height;
       
       this.movingP1 = true;
-      this.P1x = Math.max(Math.min(x.toFixed(2), 1), 0);
-      this.P1y = y.toFixed(2);
+      this.xy[0] = Math.max(Math.min(x.toFixed(2), 1), 0);
+      this.xy[1] = parseFloat(y.toFixed(2));
     };
     
     this.onmouseup = function() {
@@ -162,17 +155,17 @@ Polymer('wat-bezier', {
   },
   
   moveP2: function() {
-    var boundingBox = this.$.canvas.getBoundingClientRect();
-    
-    this.preset = 'custom';        
+    var boundingBox = this.$.canvas.getBoundingClientRect();      
+
+    this.preset = 'custom';
 
     this.onmousemove = function drag(e) {
       var x = (e.pageX - boundingBox.left) / boundingBox.width;
       var y = 1.5 - 2 * (e.pageY - boundingBox.top) / boundingBox.height;
       
       this.movingP2 = true;
-      this.P2x = Math.max(Math.min(x.toFixed(2), 1), 0);
-      this.P2y = y.toFixed(2);
+      this.xy[2] = Math.max(Math.min(x.toFixed(2), 1), 0);
+      this.xy[3] = parseFloat(y.toFixed(2));
     };
     
     this.onmouseup = function() {
@@ -190,17 +183,18 @@ Polymer('wat-bezier', {
     var x = (e.pageX - boundingBox.left) / boundingBox.width;
     var y = 1.5 - 2 * (e.pageY - boundingBox.top) / boundingBox.height;
     
-    // determine which point is closer to (x, y)
-    var distP1 = distance(x, y, this.P1x, this.P1y);
-    var distP2 = distance(x, y, this.P2x, this.P2y);
+    var distP1 = distance(x, y, this.xy[0], this.xy[1]);
+    var distP2 = distance(x, y, this.xy[2], this.xy[3]);
     
     if (distP1 <= distP2) {
-      this.P1x = Math.max(Math.min(x.toFixed(2), 1), 0);
-      this.P1y = y.toFixed(2);
+      this.xy[0] = Math.max(Math.min(x.toFixed(2), 1), 0);
+      this.xy[1] = parseFloat(y.toFixed(2));
     } else {
-      this.P2x = Math.max(Math.min(x.toFixed(2), 1), 0);
-      this.P2y = y.toFixed(2);        
+      this.xy[2] = Math.max(Math.min(x.toFixed(2), 1), 0);
+      this.xy[3] = parseFloat(y.toFixed(2));   
     }
+    
+    this.preset = 'custom';
   }
 });
 
