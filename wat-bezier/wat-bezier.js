@@ -118,7 +118,6 @@ Polymer('wat-bezier', {
   },
   
   updateControlPoints: function() {
-    this.$.P1.visibility = 'hidden';
     this.xy = this.stringToCoords(this.target.specified.easing).slice();
   },
     
