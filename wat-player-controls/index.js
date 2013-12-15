@@ -80,8 +80,8 @@ document.addEventListener('WebComponentsReady', function() {
     
     for (var i = 0, circle; circle = circles[coords[i]]; i++) {
       var animation = new Animation(circle, 
-        {backgroundColor: color, visibility: 'visible'}, 
-        {duration: 0.06, delay: -0.052});
+          {backgroundColor: color, visibility: 'visible'}, 
+          {duration: 0.06, delay: -0.052});
       seqGroup.append(animation);
     }
     
@@ -100,7 +100,7 @@ document.addEventListener('WebComponentsReady', function() {
   var logoAnimation = new SeqGroup([]);
   for (var i = 0; i < strLength; i++) {
     logoAnimation.append(createCharacter(
-      colors[i % colors.length], i, coords[str[i]]));
+        colors[i % colors.length], i, coords[str[i]]));
   }
 
   document.querySelector('#player-controls').addEventListener(
