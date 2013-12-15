@@ -3,7 +3,7 @@ Polymer('wat-bezier', {
   target: new Animation(null, null, 0),
   movingP1: false,
   movingP2: false,
-  preset: 'custom',
+  preset: 'linear',
   
   easing: {
     'linear': [0, 0, 1, 1],
