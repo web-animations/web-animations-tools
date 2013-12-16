@@ -1,8 +1,6 @@
 Polymer('wat-bezier', {
-  xy: [0, 0, 1, 1], // [P1x, P1y, P2x, P2y]
+  controlPoints: [0, 0, 1, 1], // [P1x, P1y, P2x, P2y]
   target: new Animation(null, null, 0),
-  movingP1: false,
-  movingP2: false,
   preset: 'linear',
   
   easing: {
@@ -14,10 +12,7 @@ Polymer('wat-bezier', {
   },
      
   observe: {
-    xy: 'updateTimingFunction',
-    preset: 'presetEasing',
-    target: 'updateEasing',
-    'target.specified.easing': 'updateControlPoints',
+    'target.specified.easing': 'targetEasingChanged',
   },
   
   ready: function() {
@@ -33,7 +28,8 @@ Polymer('wat-bezier', {
  drawTimingFunction: function(context) {
     context.beginPath();
     context.moveTo(0, 0);
-    context.bezierCurveTo(this.xy[0], this.xy[1], this.xy[2], this.xy[3], 1, 1);
+    context.bezierCurveTo(this.controlPoints[0], this.controlPoints[1], 
+        this.controlPoints[2], this.controlPoints[3], 1, 1);
     context.fillStyle = 'rgba(0,0,0,.6)';
     context.lineWidth = 0.02;
     context.strokeStyle = 'black';
@@ -69,10 +65,10 @@ Polymer('wat-bezier', {
 
     context.beginPath();
     context.moveTo(0, 0);
-    context.lineTo(this.xy[0], this.xy[1]);
-    this.$.P1.style.left = this.xy[0] * width + 'px';
-    this.$.P1.style.top = (this.xy[1] - 1.5) * height * -0.5 + 'px';
-    if (this.xy[1] < -0.5 || this.xy[1] > 1.5) {
+    context.lineTo(this.controlPoints[0], this.controlPoints[1]);
+    this.$.P1.style.left = this.controlPoints[0] * width + 'px';
+    this.$.P1.style.top = (this.controlPoints[1] - 1.5) * height * -0.5 + 'px';
+    if (this.controlPoints[1] < -0.5 || this.controlPoints[1] > 1.5) {
       this.$.P1.style.visibility = 'hidden';
     } else {
       this.$.P1.style.visibility = 'inherit';
@@ -83,10 +79,10 @@ Polymer('wat-bezier', {
     
     context.beginPath();
     context.moveTo(1, 1);
-    context.lineTo(this.xy[2], this.xy[3]);
-    this.$.P2.style.left = this.xy[2] * width + 'px';
-    this.$.P2.style.top = (this.xy[3] - 1.5) * height * -0.5 + 'px';
-    if (this.xy[3] < -0.5 || this.xy[3] > 1.5) {
+    context.lineTo(this.controlPoints[2], this.controlPoints[3]);
+    this.$.P2.style.left = this.controlPoints[2] * width + 'px';
+    this.$.P2.style.top = (this.controlPoints[3] - 1.5) * height * -0.5 + 'px';
+    if (this.controlPoints[3] < -0.5 || this.controlPoints[3] > 1.5) {
       this.$.P2.style.visibility = 'hidden';
     } else {
       this.$.P2.style.visibility = 'inherit';
@@ -96,7 +92,7 @@ Polymer('wat-bezier', {
     context.closePath();
   },
   
-  updateTimingFunction: function() {
+  controlPointsChanged: function() {
     this.updateCanvas();
     this.updateEasing();
   },
@@ -106,69 +102,83 @@ Polymer('wat-bezier', {
     var context = canvas.getContext('2d');
 
     context.clearRect(0, -1.5, canvas.width, canvas.height);
+    this.drawLinearEasing(context);
     this.drawControlHandles(context);
     this.drawTimingFunction(context);
+  },
+  
+  drawLinearEasing: function(context) {
+    context.lineWidth = 0.02;
+    context.beginPath();
+    context.moveTo(0, 0);
+    context.lineTo(1, 1);
+    context.strokeStyle = 'rgba(0,0,0,.2)';
+    context.stroke();
+    context.closePath();
   },
   
   updateEasing: function() {
     if (this.target && this.target.specified) {
       this.target.specified.easing = 
-          this.coordsToString(this.xy);
+          this.coordsToString(this.controlPoints);
     }
   },
   
-  updateControlPoints: function() {
-    this.xy = this.stringToCoords(this.target.specified.easing).slice();
+  targetEasingChanged: function() {
+    this.controlPoints = 
+        this.stringToCoords(this.target.specified.easing).slice();
   },
     
-  presetEasing: function() {   
+  presetChanged: function() {   
     if (this.preset == 'custom') {
-      this.$.P1x.disabled = this.$.P1y.disabled = this.$.P2x.disabled 
-          = this.$.P2y.disabled = false;
+      this.$.P1x.disabled = this.$.P1y.disabled = this.$.P2x.disabled =
+          this.$.P2y.disabled = false;
     } else {
-      this.xy = this.easing[this.preset].slice();
-      this.$.P1x.disabled = this.$.P1y.disabled = this.$.P2x.disabled 
-          = this.$.P2y.disabled = true;      
+      this.controlPoints = this.easing[this.preset].slice();
+      this.$.P1x.disabled = this.$.P1y.disabled = this.$.P2x.disabled =
+          this.$.P2y.disabled = true;      
     }
   },
   
   moveP1: function() {
     var boundingBox = this.$.canvas.getBoundingClientRect();       
+    var root = document.documentElement;
 
     this.preset = 'custom';
     
     this.onmousemove = function drag(e) {
-      var x = (e.pageX - boundingBox.left) / boundingBox.width;
-      var y = 1.5 - 2 * (e.pageY - boundingBox.top) / boundingBox.height;
+      var x = (e.pageX - boundingBox.left - root.scrollLeft) / 
+          boundingBox.width;
+      var y = 1.5 - 2 * (e.pageY - boundingBox.top - root.scrollTop) / 
+          boundingBox.height;
       
-      this.movingP1 = true;
-      this.xy[0] = Math.max(Math.min(x.toFixed(2), 1), 0);
-      this.xy[1] = parseFloat(y.toFixed(2));
+      this.controlPoints[0] = Math.max(Math.min(x.toFixed(2), 1), 0);
+      this.controlPoints[1] = parseFloat(y.toFixed(2));
     };
     
     this.onmouseup = function() {
-      this.movingP1 = false;
       this.$.P1.blur();
       this.onmousemove = this.onmouseup = null;
     }
   },
   
   moveP2: function() {
-    var boundingBox = this.$.canvas.getBoundingClientRect();      
+    var boundingBox = this.$.canvas.getBoundingClientRect();
+    var root = document.documentElement;     
 
     this.preset = 'custom';
 
     this.onmousemove = function drag(e) {
-      var x = (e.pageX - boundingBox.left) / boundingBox.width;
-      var y = 1.5 - 2 * (e.pageY - boundingBox.top) / boundingBox.height;
+      var x = (e.pageX - boundingBox.left - root.scrollLeft) / 
+          boundingBox.width;
+      var y = 1.5 - 2 * (e.pageY - boundingBox.top - root.scrollTop) / 
+          boundingBox.height;
       
-      this.movingP2 = true;
-      this.xy[2] = Math.max(Math.min(x.toFixed(2), 1), 0);
-      this.xy[3] = parseFloat(y.toFixed(2));
+      this.controlPoints[2] = Math.max(Math.min(x.toFixed(2), 1), 0);
+      this.controlPoints[3] = parseFloat(y.toFixed(2));
     };
     
     this.onmouseup = function() {
-      this.movingP2 = false;
       this.$.P2.blur();
       this.onmousemove = this.onmouseup = null;
     }
@@ -182,15 +192,15 @@ Polymer('wat-bezier', {
     var x = (e.pageX - boundingBox.left) / boundingBox.width;
     var y = 1.5 - 2 * (e.pageY - boundingBox.top) / boundingBox.height;
     
-    var distP1 = distance(x, y, this.xy[0], this.xy[1]);
-    var distP2 = distance(x, y, this.xy[2], this.xy[3]);
+    var distP1 = distance(x, y, this.controlPoints[0], this.controlPoints[1]);
+    var distP2 = distance(x, y, this.controlPoints[2], this.controlPoints[3]);
     
     if (distP1 <= distP2) {
-      this.xy[0] = Math.max(Math.min(x.toFixed(2), 1), 0);
-      this.xy[1] = parseFloat(y.toFixed(2));
+      this.controlPoints[0] = Math.max(Math.min(x.toFixed(2), 1), 0);
+      this.controlPoints[1] = parseFloat(y.toFixed(2));
     } else {
-      this.xy[2] = Math.max(Math.min(x.toFixed(2), 1), 0);
-      this.xy[3] = parseFloat(y.toFixed(2));   
+      this.controlPoints[2] = Math.max(Math.min(x.toFixed(2), 1), 0);
+      this.controlPoints[3] = parseFloat(y.toFixed(2));   
     }
     
     this.preset = 'custom';
