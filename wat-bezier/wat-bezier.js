@@ -93,7 +93,6 @@ Polymer('wat-bezier', {
   },
   
   controlPointsChanged: function() {
-    this.preset = 'custom';
     this.updateCanvas();
     this.updateEasing();
   },
@@ -145,6 +144,8 @@ Polymer('wat-bezier', {
     var boundingBox = this.$.canvas.getBoundingClientRect();       
     var root = document.documentElement;
  
+    this.preset = 'custom';
+ 
     this.onmousemove = function drag(e) {
       var x = (e.pageX - boundingBox.left - root.scrollLeft) / 
           boundingBox.width;
@@ -164,6 +165,8 @@ Polymer('wat-bezier', {
   moveP2: function() {
     var boundingBox = this.$.canvas.getBoundingClientRect();
     var root = document.documentElement;     
+
+    this.preset = 'custom';
 
     this.onmousemove = function drag(e) {
       var x = (e.pageX - boundingBox.left - root.scrollLeft) / 
