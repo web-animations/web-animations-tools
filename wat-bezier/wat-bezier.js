@@ -49,6 +49,7 @@ Polymer('wat-bezier', {
   coordsToString: function(coords) {
     for (var t in this.easing) {
       if (this.easing[t].toString() == coords.toString()) {
+        this.preset = t;
         return t;  
       }
     }
