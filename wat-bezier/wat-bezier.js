@@ -49,9 +49,11 @@ Polymer('wat-bezier', {
   coordsToString: function(coords) {
     for (var t in this.easing) {
       if (this.easing[t].toString() == coords.toString()) {
+        this.preset = t;
         return t;  
       }
     }
+    this.preset = 'custom';
     return 'cubic-bezier(' + coords[0] + ',' + coords[1] + ',' + coords[2] + 
         ',' + coords[3] + ')';
   },
@@ -130,13 +132,8 @@ Polymer('wat-bezier', {
   },
     
   presetChanged: function() {   
-    if (this.preset == 'custom') {
-      this.$.P1x.disabled = this.$.P1y.disabled = this.$.P2x.disabled =
-          this.$.P2y.disabled = false;
-    } else {
+    if (this.preset != 'custom') {
       this.controlPoints = this.easing[this.preset].slice();
-      this.$.P1x.disabled = this.$.P1y.disabled = this.$.P2x.disabled =
-          this.$.P2y.disabled = true;      
     }
   },
   
