@@ -17,30 +17,23 @@
 "use strict";
 
 document.addEventListener('WebComponentsReady', function() {
-  var P1x = 0;
-  var P1y = 0;
-  var P2x = 1;
-  var P2y = 1;
-  var cb = 'cubic-bezier(' + P1x + ', ' + P1y + ', ' + P2x + ', ' + P2y + ')';
-
-  var linear = new Animation(document.querySelector('#box-linear'),
-      {left: '490px'},
-      {duration: 2.5, easing: 'linear'}
+  var anim1 = new Animation(document.querySelector('#box1'),
+      {left: '500px'},
+      {duration: 2.5, easing: 'ease-in'}
   );
 
-  var custom = new Animation(document.querySelector('#box-custom'),
-      {left: '490px'},
-      {duration: 2.5, easing: cb}
+  var anim2 = new Animation(document.querySelector('#box2'),
+      {left: '500px'},
+      {duration: 2.5, easing: 'ease-out'}
   );
 
-  var animation = new ParGroup([linear, custom]);
-  
-  document.querySelector('#bezier').target = custom;
+  var animation = new ParGroup([anim1, anim2]);
 
-  document.querySelector('#player-controls').addEventListener(
-      'initialize-player',
-      function(event) {
-        event.detail.player = document.timeline.play(animation);  
-      });
+  document.querySelectorAll('wat-bezier')[0].target = anim1;
+  document.querySelectorAll('wat-bezier')[1].target = anim2;
+
+  var player = document.timeline.play(animation);
+  player.paused = true;
+  document.querySelector('wat-player-controls').player = player;
 });
 
