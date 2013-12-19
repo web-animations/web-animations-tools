@@ -108,6 +108,10 @@ Polymer('wat-bezier', {
   },
   
   controlPointsChanged: function() {
+    this.controlPoints[0] = Math.max(Math.min(
+        parseFloat(this.controlPoints[0]).toFixed(3), 1), 0);
+    this.controlPoints[2] = Math.max(Math.min(
+        parseFloat(this.controlPoints[2]).toFixed(3), 1), 0);
     this.updateCanvas();
     this.updateEasing();
   },
