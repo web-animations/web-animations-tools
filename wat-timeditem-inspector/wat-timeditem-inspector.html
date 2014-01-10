@@ -17,6 +17,8 @@ limitations under the License.
 
 <link rel="import" href="../../polymer/polymer.html">
 <link rel="import" href="../../polymer-animation/web-animations.html">
+<link rel="import" href="../wat-bezier/wat-bezier.html">
+<link rel="import" href="../wat-step/wat-step.html">
 
 <polymer-element name="wat-timeditem-inspector" attributes="target">
   <template>
@@ -36,12 +38,10 @@ limitations under the License.
       <div class="property">
         <label for="direction">direction:</label>
         <select class="field" id="direction" 
-            selected="{{target.specified.direction}}" 
             value="{{target.specified.direction}}">
-          <option value="normal">normal</option>
-          <option value="reverse">reverse</option>
-          <option value="alternate">alternate</option>
-          <option value="alternate-">alternate-reverse</option>
+          <template repeat="{{direction in ['normal', 'reverse', 'alternate', 'alternate-reverse']}}">
+            <option value="{{direction}}">{{direction}}</option>
+          </template>
         </select>
       </div>
       <div class="property">
@@ -51,32 +51,25 @@ limitations under the License.
       </div>
       <div class="property">
         <label for="easing">easing:</label>
-        <select class="field" id="easing" selected="{{easing}}" 
-            value="{{easing}}">
-          <option value="ease">ease</option>
-          <option value="ease-in">ease-in</option>
-          <option value="ease-out">ease-out</option>
-          <option value="ease-in-out">ease-in-out</option>
-          <option value="linear">linear</option>
-          <option value="step-start">step-start</option>
-          <option value="step-middle">step-middle</option>
-          <option value="step-end">step-end</option>
-          <option value="{{custom}}">{{custom}}</option>
+        <select class="field" id="easing" value="{{easing}}">
+          <template repeat="{{preset in presetEasings}}">
+            <option value="{{preset}}">{{preset}}</option>
+          </template>
+          <option value="custom">custom</option>
         </select>
       </div>
-      <div class="{{easing == 'custom' ? 'property' : 'property hidden'}}">
-        <label for="custom-easing"></label>
+      <div class="{{easing == 'custom' ? 'property' : 'hidden'}}">
+        <input class="button" id="launch-button" type="button" 
+            value="Easing Editor" title="Launch Easing Editor">
         <input class="field" id="custom-easing" 
             placeholder="custom easing string" value="{{customEasing}}">
       </div>
       <div class="property">
         <label for="fill">fill:</label>
-        <select class="field" id="fill" selected="{{target.specified.fill}}" 
-            value="{{target.specified.fill}}">
-          <option value="none">none</option>
-          <option value="forwards">forwards</option>
-          <option value="backwards">backwards</option>
-          <option value="both">both</option>
+        <select class="field" id="fill" value="{{target.specified.fill}}">
+          <template repeat="{{fill in ['none', 'forwards', 'backwards', 'both']}}">
+            <option value="{{fill}}">{{fill}}</option>
+          </template>
         </select>
       </div>
       <div class="property">

@@ -18,7 +18,6 @@ Polymer('wat-timeditem-inspector', {
   target: new Animation(null, null, 0),
   easing: 'target.specifed.easing',
   customEasing: '',
-  custom: 'custom',
   presetEasings: ['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear', 
       'step-start', 'step-middle', 'step-end'],
 
@@ -27,7 +26,7 @@ Polymer('wat-timeditem-inspector', {
   },
 
   easingChanged: function() {
-    if (this.easing != this.custom) {
+    if (this.easing != 'custom') {
       this.target.specified.easing = this.easing;
     } else {
       this.customEasing = '';
@@ -42,7 +41,7 @@ Polymer('wat-timeditem-inspector', {
     if (this.presetEasings.indexOf(this.target.specified.easing) >= 0) {
       this.easing = this.target.specified.easing;
     } else {
-      this.easing = this.custom;
+      this.easing = 'custom';
       this.customEasing = this.target.specified.easing;
     }
   }
