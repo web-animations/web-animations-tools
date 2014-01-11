@@ -108,9 +108,7 @@ limitations under the License.
       timedItemChanged: function() {
         // Remove all the children and rebuild the view.
         var timeline = this.$['timeline-container'];
-        while (timeline.firstChild) {
-          timeline.removeChild(timeline.firstChild);
-        }
+        timeline.innerHTML = '';
 
         // Get the visual attributes of the timeline container so that
         // the axis and the scrubber will have the same width with it.

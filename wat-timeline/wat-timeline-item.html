@@ -124,7 +124,7 @@ limitations under the License.
           }
 
           var timespan = (this.timedItem.duration * iterationLength) / Math.abs(playbackRate);
-          box.style.width = box.style.minWidth = box.style.maxWidth = (timespan * pixelsPerSecond) + 'px';
+          box.style.minWidth = (timespan * pixelsPerSecond) + 'px';
 
           this.$['group-container'].appendChild(box);
 
