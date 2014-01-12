@@ -18,15 +18,14 @@ limitations under the License.
 <!DOCTYPE html>
 
 <link rel="import" href="../../polymer/polymer.html">
+<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 
 <polymer-element name="wat-player-controls" attributes="step">
   <template>
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
     <style>
-      .button,
-      .not-repeating,
-      .repeating, 
-      .not-reversed,
-      .reversed {
+      button {
         width: 30px;
         height: 30px;
         padding: 0px;
@@ -41,8 +40,7 @@ limitations under the License.
         cursor: pointer;
       }
       
-      .repeating,
-      .reversed {
+      .repeating {
         color: rgba(66,133,244,1);
         background-color: white;
       }
@@ -89,18 +87,26 @@ limitations under the License.
         outline: 1px solid rgba(66,133,244,1);
       }
     </style>
-    
-    <input class="button" type="button" on-click="{{playPause}}" 
-        value="{{!player || player.paused ? '▶' : '❚❚'}}" title="Play / Pause">
-    <input class="button" type="button" value="⏮" on-click="{{skipToStart}}"
-        title="Skip To Start">
-    <input class="button" type="button" value="⏭" on-click="{{skipToEnd}}"
-        title="Skip To End">
-    <input class="not-repeating" id="repeatButton" type="button" value="🔁" 
-        on-click="{{toggleRepeat}}" title="Repeat On / Off">
-    <input class="{{player.playbackRate < 0 ? 'reversed' : 'not-reversed'}}" 
-        id="reverseButton" type="button" value="⬅" 
-        on-click="{{toggleReversed}}" title="Reverse On / Off">
+
+    <button on-click="{{playPause}}" title="Play / Pause">
+      <i class="{{!player || player.paused ? 'fa fa-play' : 'fa fa-pause'}}">
+      </i>
+    </button>
+    <button on-click="{{skipToStart}}" title="Skip To Start">
+      <i class="fa fa-fast-backward"></i>
+    </button>
+    <button on-click="{{skipToEnd}}" title="Skip To End">
+      <i class="fa fa-fast-forward"></i>
+    </button>
+    <button class="not-repeating" id="repeatButton" on-click="{{toggleRepeat}}" 
+        title="Repeat On / Off">
+      <i class="fa fa-repeat"></i>
+    </button>
+    <button id="reverseButton" on-click="{{toggleReversed}}" 
+        title="Reverse On / Off">
+      <i class="{{!player || player.playbackRate < 0 ? 'fa fa-long-arrow-left' : 'fa fa-long-arrow-right'}}">
+      </i>
+    </button>
     <input class="number" type="Number" value="{{player.playbackRate}}"
         step="0.1" title="Playback Rate">
     <input class="scrubber" type="range" value="{{player.currentTime}}" 
