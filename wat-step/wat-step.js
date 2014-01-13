@@ -3,6 +3,8 @@ Polymer('wat-step', {
   position: 'end',
   target: new Animation(null, null, 0),
   preset: 'custom',
+  stepEasings: ['step-start', 'step-middle', 'step-end', 'steps'],
+  disabled: false,
   
   easing: {
     'step-start': {steps: 1, position: 'start'},
@@ -13,7 +15,7 @@ Polymer('wat-step', {
   observe: {
     'steps': 'updateTimingFunction',
     'position': 'updateTimingFunction',
-    'target.specified.easing': 'updateCanvasFromTarget',
+    'target.specified.easing': 'targetEasingChanged',
   },
   
   ready: function() {
@@ -24,6 +26,26 @@ Polymer('wat-step', {
     context.scale(canvas.width - 25, 25 - canvas.height);
     this.drawTimingFunction(context);
     this.updateEasing();
+  },
+
+  disabledChanged: function() {
+    if (this.disabled) {
+      var vanas = this.$.canvas;
+      var context = canvas.getContext('2d');
+
+      this.$.steps.disabled = true;
+      this.$.position.disabled = true;
+      this.$.preset.disabled = true;
+      this.preset = custom;
+      context.save();
+      context.setTransform(1, 0, 0, 1, 0, 0);
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      context.restore();
+    } else {
+      this.$.steps.disabled = false;
+      this.$.position.disabled = false;
+      this.$.preset.disabled = false;
+    }
   },
   
   drawTimingFunction: function(context) {
@@ -147,6 +169,7 @@ Polymer('wat-step', {
     if (str.indexOf('steps(') != -1) {
       var array = str.substring(
           str.indexOf('(')+1, str.indexOf(')')).split(',');
+      this.preset = 'custom';
       return {steps: parseInt(array[0]), position: array[1].trim()};  
     } else {
       return this.easing[str];
@@ -188,11 +211,17 @@ Polymer('wat-step', {
     }
   },
   
-  updateCanvasFromTarget: function() {
-    var stepsPos = this.stringToProps(this.target.specified.easing);
-    
-    this.steps = stepsPos.steps;
-    this.position = stepsPos.position;
+  targetEasingChanged: function() {
+    if (this.stepEasings.indexOf(this.target.specified.easing) >= 0 ||
+        this.target.specified.easing.indexOf('steps') >= 0) {
+      var stepsPos = this.stringToProps(this.target.specified.easing);
+      
+      this.disabled = false;
+      this.steps = stepsPos.steps;
+      this.position = stepsPos.position;
+    } else {
+      this.disabled = true;
+    }
   },
     
   presetChanged: function() {   
