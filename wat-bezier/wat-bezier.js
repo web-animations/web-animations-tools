@@ -2,6 +2,8 @@ Polymer('wat-bezier', {
   controlPoints: [0, 0, 1, 1], // [P1x, P1y, P2x, P2y]
   target: new Animation(null, null, 0),
   preset: 'linear',
+  bezierEasings: ['linear', 'ease', 'ease-in', 'ease-out', 'ease-in-out',],
+  disabled: false,
   
   easing: {
     'linear': [0, 0, 1, 1],
@@ -22,6 +24,26 @@ Polymer('wat-bezier', {
     context.scale(canvas.width - 30, -0.5 * canvas.height);
     this.updateCanvas();
     this.updateEasing();
+  },
+
+  disabledChanged: function() {
+    if (this.disabled) {
+      var canvas = this.$.canvas;
+      var context = canvas.getContext('2d');
+
+      this.$.P1x.disabled = this.$.P1y.disabled = this.$.P2x.disabled = 
+          this.$.P2y.disabled = true;
+      this.$.preset.disabled = true;
+      this.preset = 'custom';
+      context.save();
+      context.setTransform(1, 0, 0, 1, 0, 0);
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      context.restore();
+    } else {
+      this.$.P1x.disabled = this.$.P1y.disabled = this.$.P2x.disabled = 
+          this.$.P2y.disabled = false;
+      this.$.preset.disabled = false;
+    }
   },
   
   stringToCoords: function(str) {
@@ -147,15 +169,21 @@ Polymer('wat-bezier', {
   },
   
   targetEasingChanged: function() {
-    this.controlPoints = 
-        this.stringToCoords(this.target.specified.easing).slice();
-    for (var t in this.easing) {
-      if (this.easing[t].toString() == this.controlPoints.toString()) {
-        this.preset = t;
-        return;
+    if (this.bezierEasings.indexOf(this.target.specified.easing) >= 0 || 
+          this.target.specified.easing.indexOf('cubic-bezier') >= 0) {
+      this.disabled = false;
+      this.controlPoints = 
+          this.stringToCoords(this.target.specified.easing).slice();
+      for (var t in this.easing) {
+        if (this.easing[t].toString() == this.controlPoints.toString()) {
+          this.preset = t;
+          return;
+        }
       }
+      this.preset = 'custom';
+    } else {
+      this.disabled = true;
     }
-    this.preset = 'custom';
   },
     
   presetChanged: function() {   
@@ -166,10 +194,12 @@ Polymer('wat-bezier', {
 
   pointers: {},
   pointerDown: function(e) {
-    e.target.setPointerCapture(e.pointerId);
-    this.pointers[e.pointerId] = true;
-    this.pointerMove(e);
-    e.preventDefault();
+    if (!this.disabled) {
+      e.target.setPointerCapture(e.pointerId);
+      this.pointers[e.pointerId] = true;
+      this.pointerMove(e);
+      e.preventDefault();
+    }
   },
   
   pointerUp: function(e) {
