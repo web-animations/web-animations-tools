@@ -30,13 +30,13 @@ Polymer('wat-step', {
 
   disabledChanged: function() {
     if (this.disabled) {
-      var vanas = this.$.canvas;
+      var canvas = this.$.canvas;
       var context = canvas.getContext('2d');
 
       this.$.steps.disabled = true;
       this.$.position.disabled = true;
       this.$.preset.disabled = true;
-      this.preset = custom;
+      this.preset = 'custom';
       context.save();
       context.setTransform(1, 0, 0, 1, 0, 0);
       context.clearRect(0, 0, canvas.width, canvas.height);
