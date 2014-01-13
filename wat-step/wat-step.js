@@ -29,10 +29,10 @@ Polymer('wat-step', {
   },
 
   disabledChanged: function() {
-    if (this.disabled) {
-      var canvas = this.$.canvas;
-      var context = canvas.getContext('2d');
+    var canvas = this.$.canvas;
+    var context = canvas.getContext('2d');
 
+    if (this.disabled) {
       this.$.steps.disabled = true;
       this.$.position.disabled = true;
       this.$.preset.disabled = true;
@@ -45,6 +45,8 @@ Polymer('wat-step', {
       this.$.steps.disabled = false;
       this.$.position.disabled = false;
       this.$.preset.disabled = false;
+      this.drawTimingFunction(context);
+      this.updateEasing();
     }
   },
   
