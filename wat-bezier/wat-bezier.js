@@ -181,7 +181,7 @@ Polymer('wat-bezier', {
         }
       }
       this.preset = 'custom';
-    } else {
+    } else if (this.target.specified.easing != '') {
       this.disabled = true;
     }
   },
