@@ -1,0 +1,94 @@
+<!--
+Copyright 2014 Google Inc. All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+
+limitations under the License.
+-->
+
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../polymer-animation/web-animations.html">
+<link rel="import" href="../wat-bezier/wat-bezier.html">
+<link rel="import" href="../wat-step/wat-step.html">
+
+<polymer-element name="wat-timeditem-inspector" attributes="target">
+  <template>
+    <link rel="stylesheet" type="text/css" href="wat-timeditem-inspector.css">
+    
+    <div class="container">
+      <div class="property">
+        <label for="delay">delay:</label>
+        <input class="field" id="delay" type="number" 
+            value="{{target.specified.delay}}">
+      </div>
+      <div class="property">
+        <label for="endDelay">endDelay:</label>
+        <input class="field" id="endDelay" type="number" 
+            value="{{target.specified.endDelay}}">
+      </div>
+      <div class="property">
+        <label for="direction">direction:</label>
+        <select class="field" id="direction" 
+            value="{{target.specified.direction}}">
+          <template repeat="{{direction in ['normal', 'reverse', 'alternate', 'alternate-reverse']}}">
+            <option value="{{direction}}">{{direction}}</option>
+          </template>
+        </select>
+      </div>
+      <div class="property">
+        <label for="duration">duration:</label>
+        <input class="field" id="duration" type="number" 
+            value="{{target.specified.duration}}">
+      </div>
+      <div class="property">
+        <label for="easing">easing:</label>
+        <select class="field" id="easing" value="{{easing}}">
+          <template repeat="{{preset in presetEasings}}">
+            <option value="{{preset}}">{{preset}}</option>
+          </template>
+          <option value="custom">custom</option>
+        </select>
+      </div>
+      <div class="{{easing == 'custom' ? 'property' : 'hidden'}}">
+        <input class="button" id="launch-button" type="button" 
+            value="Easing Editor" title="Launch Easing Editor">
+        <input class="field" id="custom-easing" 
+            placeholder="custom easing string" value="{{customEasing}}">
+      </div>
+      <div class="property">
+        <label for="fill">fill:</label>
+        <select class="field" id="fill" value="{{target.specified.fill}}">
+          <template repeat="{{fill in ['none', 'forwards', 'backwards', 'both']}}">
+            <option value="{{fill}}">{{fill}}</option>
+          </template>
+        </select>
+      </div>
+      <div class="property">
+        <label for="iterations">iterations:</label>
+        <input class="field" id="iterations" type="number" 
+            value="{{target.specified.iterations}}">
+      </div>
+      <div class="property">
+        <label for="iterationStart">iterationStart:</label>
+        <input class="field" id="iterationStart" type="number" 
+            value="{{target.specified.iterationStart}}">
+      </div>
+      <div class="property">
+        <label for="playbackRate">playbackRate:</label>
+        <input class="field" id="playbackRate" type="number" 
+            value="{{target.specified.playbackRate}}">
+      </div>
+    </div>
+  </template>
+
+  <script src="wat-timeditem-inspector.js"></script>
+</polymer-element>
