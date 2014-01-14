@@ -1,0 +1,220 @@
+<!--
+Copyright 2014 Google Inc. All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+
+limitations under the License.
+-->
+
+<!doctype html>
+
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../polymer-selector/polymer-selector.html">
+
+<polymer-element name="wat-code-editor" attributes="orientation timedItem">
+  <template>
+    <style>
+      :host {
+        display: -webkit-flex;
+        -webkit-flex-flow: column;
+      }
+
+      #container {
+        display: -webkit-flex;
+        -webkit-flex-grow: 1;
+        width: 100%;
+        height: 100%;
+      }
+
+      #container.rows {
+        -webkit-flex-flow: row-reverse wrap-reverse;
+      }
+
+      #container.columns {
+        -webkit-flex-flow: column-reverse wrap-reverse;
+      }
+
+      #container .pane {
+        margin: 5px;
+        -webkit-flex-grow: 1;
+        -webkit-flex-basis: 0;
+        box-shadow: 0px 2px 4px rgba(0,0,0,0.2);
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        background: white;
+        padding: 10px;
+        resize: none;
+        font-family: Courier, monospace;
+        font-size: 10pt;
+      }
+
+      #container.rows .pane {
+        min-width: calc(50% - 32px);
+      }
+
+      #container.columns .pane {
+        min-height: calc(50% - 32px);
+      }
+
+      #CSS {
+        -webkit-order: 0;
+      }
+
+      #JavaScript {
+        -webkit-order: 1;
+      }
+
+      #HTML {
+        -webkit-order: 2;
+      }
+
+      #Preview {
+        -webkit-order: 3;
+        display: -webkit-flex;
+        -webkit-flex-flow: column;
+      }
+
+      #PreviewFrame {
+        border: none;
+        width: 100%;
+        -webkit-flex-grow: 1;
+      }
+
+      .player-controls {
+        padding: 10px;
+        text-align: center;
+      }
+
+      wat-player-controls {
+        margin: 0;
+      }
+
+      .tab,
+      .orientation-option {
+        display: inline-block;
+        min-width: 60px;
+        height: 60px;
+        line-height: 60px;
+        text-align: center;
+        padding: 0 8px;
+        cursor: pointer;
+        font-size: 14px;
+        color: #999;
+      }
+
+      .tab.polymer-selected {
+        background: #5599ff;
+        color: white;
+      }
+
+      .orientation-option.polymer-selected {
+        color: black;
+        font-weight: bold;
+      }
+    </style>
+
+    <div>
+      <polymer-selector selected="{{panes}}" valueattr="label" multi>
+        <template repeat="{{pane in ['HTML', 'CSS', 'JavaScript']}}">
+          <div class="tab" label="{{pane}}">{{pane}}</div>
+        </template>
+      </polymer-selector>
+
+      <polymer-selector selected="{{orientation}}" valueattr="label">
+        <div class="orientation-option" label="rows">Rows</div>
+        <div class="orientation-option" label="columns">Columns</div>
+      </polymer-selector>
+    </div>
+
+    <div id="container" class="{{orientation}}">
+      <div id="Preview" class="pane">
+        <iframe id="PreviewFrame"></iframe>
+        <div class="player-controls">
+          <wat-player-controls id="player-controls" step="0.001">
+          </wat-player-controls>
+        </div>
+      </div>
+      <textarea id="HTML" class="pane" placeholder="HTML" value="{{HTML}}">
+      </textarea>
+      <textarea id="CSS" class="pane" placeholder="CSS" value="{{CSS}}">
+      </textarea>
+      <textarea id="JavaScript" class="pane" placeholder="JavaScript"
+          value="{{JavaScript}}">
+      </textarea>
+    </div>
+  </template>
+
+  <script>
+    Polymer('wat-code-editor', {
+      orientation: 'columns',
+      HTML: '',
+      CSS: '',
+      JavaScript: '',
+
+      ready: function() {
+        this.panes = ['HTML', 'CSS', 'JavaScript'];
+        this.updatePreview();
+      },
+
+      observe: {
+        HTML: 'updatePreview',
+        CSS: 'updatePreview',
+        JavaScript: 'updatePreview'
+      },
+
+      panesChanged: function() {
+        this.$.HTML.style.display = 'none';
+        this.$.CSS.style.display = 'none';
+        this.$.JavaScript.style.display = 'none';
+        for (var i = 0; i < this.panes.length; i++) {
+          this.$[this.panes[i]].style.display = 'block';
+        };
+      },
+
+      // timedItemChanged: function() {
+      //   this.JavaScript = serializeTimedItem(this.timedItem, '  ');
+      // },
+
+      updatePreview: function() {
+        var preview = this.$.PreviewFrame;
+        preview.src = '../../polymer-animation/web-animations.html';
+
+        preview.onload = function() {
+          var w = preview.contentWindow;
+          var d = preview.contentWindow.document;
+
+          var content = d.createElement('div');
+          content.innerHTML = this.HTML;
+          d.body.appendChild(content);
+          
+          var style = d.createElement('style');
+          style.textContent = this.CSS;
+          d.body.appendChild(style);
+
+          var script = d.createElement('script');
+          script.textContent = this.JavaScript;
+          d.body.appendChild(script);
+
+          if (w.player) {
+            this.$['player-controls'].player = w.player;
+            this.timedItem = w.player.source;
+            window.Animation = w.Animation;
+            window.ParGroup = w.ParGroup;
+            window.SeqGroup = w.SeqGroup;
+            window.KeyframeEffect = w.KeyframeEffect;
+            window.MotionPathEffect = w.MotionPathEffect;
+          }
+        }.bind(this);
+      }
+    });
+  </script>
+</polymer-element>
