@@ -86,19 +86,19 @@ limitations under the License.
         });
 
         this.$['back-button'].addEventListener('click', function(e){
-          var item = timeline.viewStack.pop();
+          var item = this.viewStack.pop();
           if (!item) {
             return;
           }
           // Restore the item.
           if (item.prevSibling) {
-            item.prevSibling.after(timeline.timedItem);
+            item.prevSibling.after(this.timedItem);
           } else {
-            item.parentGroup.prepend(timeline.timedItem);
+            item.parentGroup.prepend(this.timedItem);
           }
-          timeline.timedItem = item.oldItem;
-          timeline.player.source = timeline.timedItem;
-          timeline.player.currentTime = timeline.player.source.startTime;   
+          this.timedItem = item.oldItem;
+          this.player.source = this.timedItem;
+          this.player.currentTime = this.player.source.startTime;   
         }.bind(this));
       },
       timedItemChanged: function() {
