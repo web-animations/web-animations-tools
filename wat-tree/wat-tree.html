@@ -15,9 +15,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 <link rel="import" href="../../polymer/polymer.html">
-<link rel="import" href="wat-tree-node.html">
 
-<polymer-element name="wat-tree" attributes="timedItem">
+<polymer-element name="wat-tree" attributes="timedItem selectedItem">
   <template>
     <style>
       #container {
@@ -39,31 +38,82 @@ limitations under the License.
     Polymer('wat-tree', {
       selectedItem: null,
       timedItem: null,
-      ready: function() {
-        this.addEventListener('on-timedItem-select', function(e) {
-          this.selectedItem = e.detail;
-        });
-      },
-      selectTimedItem: function(e) {
-        function deselectChildren(root, selectedItem) {
-          if (!root || root.timedItem === selectedItem) {
-            return;
-          } 
-          root.selected = false;
-          var children = root.childNodes;
-          for (var i = 0; i < children.length; i++) {
-            deselectChildren(children[i]);
-          }
-        }
-        var root = this.$.tree.querySelector('wat-tree-node');
-        deselectChildren(root, e.detail);
-      },
       timedItemChanged: function() {
         var root = document.createElement('wat-tree-node');
         root.tree = this;
         root.timedItem = this.timedItem;
         root.invisible = false;
         this.$.tree.appendChild(root);
+      },
+    });
+  </script>
+</polymer-element>
+
+<polymer-element name="wat-tree-node" attributes="timedItem">
+  <template>
+    <style>
+      .node {
+        list-style-type: none;
+        cursor: pointer;
+        color: blue;
+        padding-top: 5px;
+        padding-left: {{indent}}px;
+      }
+      .invisible {
+        display: none;
+      }
+      .selected {
+        color: red;
+      }
+    </style>
+    <li id="node" class="node {{invisible ? 'invisible' : ''}} 
+                              {{tree.selectedItem === timedItem ? 'selected' : ''}}" 
+        on-click="{{toggleSubtree}}">
+      <template if="{{hasChildren}}">
+        <span>{{collapsed ? '⊞' : '⊟'}}</span>
+      </template>
+      <span class="caption">{{type}}</span>
+      <content></content>
+    </li>
+  </template>
+  <script>
+    Polymer('wat-tree-node', {
+      tree: null,
+      type: '',
+      indent: 4,
+      timedItem: null,
+      hasChildren: false,
+      collapsed: true,
+      invisible: true,
+      timedItemChanged: function() {
+        this.type = this.timedItem.type ? this.timedItem.type + 'Group' : 'animation';
+        this.hasChildren = this.buildSubtree(this.timedItem, this.indent);
+      },
+      buildSubtree: function(timedItem, indent) {
+        var children = timedItem.children;
+        if (!children) {
+          return false;
+        }
+        var TAB_SIZE = 32;
+        for (var i = 0; i < children.length; i++) {
+          var elem = document.createElement('wat-tree-node');
+          elem.tree = this.tree;
+          elem.timedItem = children[i];
+          elem.indent = indent + TAB_SIZE;
+          this.appendChild(elem);
+        }
+        return true;
+      },
+      toggleSubtree: function(e) {
+        e.stopPropagation();
+        this.tree.selectedItem = this.timedItem;
+        if (this.hasChildren) {
+          this.collapsed = !this.collapsed;
+        }
+        var children = this.childNodes;
+        for (var i = 0; i < children.length; i++) {
+          children[i].invisible = !children[i].invisible;
+        }
       },
     });
   </script>
