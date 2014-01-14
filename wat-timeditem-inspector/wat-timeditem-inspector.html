@@ -19,12 +19,15 @@ limitations under the License.
 <link rel="import" href="../../polymer-animation/web-animations.html">
 <link rel="import" href="../wat-bezier/wat-bezier.html">
 <link rel="import" href="../wat-step/wat-step.html">
+<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+<meta charset="utf-8">
 
 <polymer-element name="wat-timeditem-inspector" attributes="target">
   <template>
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="wat-timeditem-inspector.css">
     
-    <div class="container">
+    <div id="property-container">
       <div class="property">
         <label for="delay">delay:</label>
         <input class="field" id="delay" type="number" 
@@ -57,10 +60,11 @@ limitations under the License.
           </template>
           <option value="custom">custom</option>
         </select>
+        <button id="launch-button" title="Launch Easing Editor"
+            on-click="{{showEasingEditorContainer}}">…</button>
       </div>
       <div class="{{easing == 'custom' ? 'property' : 'hidden'}}">
-        <input class="button" id="launch-button" type="button" 
-            value="Easing Editor" title="Launch Easing Editor">
+        <label></labeL>
         <input class="field" id="custom-easing" 
             placeholder="custom easing string" value="{{customEasing}}">
       </div>
@@ -87,6 +91,15 @@ limitations under the License.
         <input class="field" id="playbackRate" type="number" 
             value="{{target.specified.playbackRate}}">
       </div>
+    </div>
+
+    <div id="easing-editor-container" class="hidden">
+      <button id="back-button" on-click="{{showPropertyContainer}}" 
+          title="Back">
+        <i class="fa fa-reply"></i>
+      </button>
+      <wat-bezier id="wat-bezier" class="hidden"></wat-bezier>
+      <wat-step id="wat-step" class="hidden"></wat-step>
     </div>
   </template>
 

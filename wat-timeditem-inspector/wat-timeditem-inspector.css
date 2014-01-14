@@ -3,13 +3,20 @@
   height: 100%;
 }
 
-.container {
+#property-container {
   border: 1px solid silver;
   border-radius: 5px;
   padding: 5px;
   font-size: 0.9em;
-  width: 288px;
+  width: 318px;
   height: 100%;
+  white-space: nowrap;
+}
+
+#easing-editor-container {
+  border: 1px solid silver;
+  border-radius: 5px;
+  padding: 5px;
 }
 
 .property {
@@ -28,21 +35,26 @@
   vertical-align: middle;
 }
 
-.button {
+button {
   outline: none;
   color: white;
   background-color: rgba(66,133,244,1);
   border: 1px solid rgba(66,133,244,0.84);
-  border-radius: 2.5px;
+  border-radius: 3px;
   cursor: pointer;
   vertical-align: middle;
 }
 
 #launch-button {
   display: inline-block;
-  margin-right: 0.5em;
-  width: calc(35% - 0.5em);
-  text-size: 0.7em;
+  margin-left: 0.2em;
+  width: calc(35px - 0.5em);
+  text-size: 0.5em;
+}
+
+#back-button {
+  padding-top: 3px;
+  margin-bottom: 10px;
 }
 
 .property .field {
@@ -58,12 +70,17 @@
   box-sizing: border-box;
 }
 
+.property #easing {
+  width: calc(65% - 40px);
+}
+
 .property input {
   padding: 1px 2px;
 }
 
 .property .field:focus {
-  outline: 1px solid rgba(66,133,244,1);
+  border: 1px solid rgba(66,133,244,1);
+  outline: none;
 }
 
 .hidden {

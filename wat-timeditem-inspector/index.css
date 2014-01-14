@@ -4,7 +4,7 @@ body {
 }
 
 .box-container {
-  width: 610px;
+  width: 684px;
   margin: 12px 0 6px 12px;
   border: solid 1px silver;
   border-radius: 6px;
@@ -43,9 +43,9 @@ wat-player-controls {
 }
 
 wat-timeditem-inspector {
-  float: left;
+  display: inline-block;
   margin-right: 12px;
-  width: 300px;
+  width: 340px;
   height: 100%;
   vertical-align: top;
 }

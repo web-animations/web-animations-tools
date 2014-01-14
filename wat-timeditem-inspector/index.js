@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-"use strict";
+'use strict';
 
 document.addEventListener('WebComponentsReady', function() {
   var anim1 = new Animation(document.querySelector('#box1'),

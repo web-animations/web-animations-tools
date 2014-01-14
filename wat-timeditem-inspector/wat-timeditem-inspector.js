@@ -18,11 +18,14 @@ Polymer('wat-timeditem-inspector', {
   target: new Animation(null, null, 0),
   easing: 'target.specifed.easing',
   customEasing: '',
-  presetEasings: ['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear', 
+  bezierEasings: ['linear', 'ease', 'ease-in', 'ease-out', 'ease-in-out',
+    'cubic-bezier'],
+  stepEasings: ['step-start', 'step-middle', 'step-end', 'steps'],
+  presetEasings: ['linear', 'ease', 'ease-in', 'ease-out', 'ease-in-out',
       'step-start', 'step-middle', 'step-end'],
 
   observe: {
-    'target.specified.easing': 'targetEasingChanged'
+    'target.specified.easing': 'targetEasingChanged',
   },
 
   easingChanged: function() {
@@ -37,6 +40,11 @@ Polymer('wat-timeditem-inspector', {
     this.target.specified.easing = this.customEasing;
   },
 
+  targetChanged: function() {
+    this.$['wat-bezier'].target = this.target;
+    this.$['wat-step'].target = this.target;
+  },
+
   targetEasingChanged: function() {
     if (this.presetEasings.indexOf(this.target.specified.easing) >= 0) {
       this.easing = this.target.specified.easing;
@@ -44,5 +52,33 @@ Polymer('wat-timeditem-inspector', {
       this.easing = 'custom';
       this.customEasing = this.target.specified.easing;
     }
+    this.showAppropriateEasingEditor();
+  },
+
+  showAppropriateEasingEditor: function() {
+    if (this.bezierEasings.indexOf(this.target.specified.easing) >= 0 ||
+        this.target.specified.easing.indexOf('cubic-bezier') >= 0) {
+      this.$['wat-step'].className = 'hidden';
+      this.$['wat-bezier'].className = '';
+    } else if (this.stepEasings.indexOf(this.target.specified.easing) >= 0 ||
+        this.target.specified.easing.indexOf('steps') >= 0) {
+      this.$['wat-bezier'].className = 'hidden';
+      this.$['wat-step'].className = '';
+   }
+  },
+
+  showEasingEditorContainer: function() {
+    this.$['property-container'].className = 'hidden';
+    this.showAppropriateEasingEditor(); 
+    this.$['easing-editor-container'].className = '';
+
+  },
+
+  showPropertyContainer: function() {
+    if (this.presetEasings.indexOf(this.target.specified.easing) >= 0) {
+      this.easing = this.target.specified.easing;
+    }
+    this.$['easing-editor-container'].className = 'hidden';
+    this.$['property-container'].className = '';
   }
 });
