@@ -43,6 +43,8 @@ Polymer('wat-bezier', {
       this.$.P1x.disabled = this.$.P1y.disabled = this.$.P2x.disabled = 
           this.$.P2y.disabled = false;
       this.$.preset.disabled = false;
+      this.updateCanvas();
+      this.updateEasing();
     }
   },
   
