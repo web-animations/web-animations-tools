@@ -54,6 +54,9 @@ limitations under the License.
         this.x = this.player.currentTime * this.pixelsPerSecond;
       },
       onTrack: function(e) {
+        if (!this.player) {
+          return;
+        }
         var newCurrentTime = (e.clientX / this.pixelsPerSecond) + this.player.source.startTime;
         this.player.currentTime = newCurrentTime;
         this.player.paused = true;
