@@ -22,7 +22,7 @@ limitations under the License.
 <link rel="import" href="wat-timeline-scrubber.html">
 <link rel="import" href="wat-timeline-item.html">
 
-<polymer-element name="wat-timeline" attribute="timedItem player">
+<polymer-element name="wat-timeline" attributes="timedItem player">
   <template>
   <style>
     #timeline-container {
@@ -102,6 +102,10 @@ limitations under the License.
         }.bind(this));
       },
       timedItemChanged: function() {
+        if (this.timedItem.player) {
+          this.player = this.timedItem.player;
+        }
+
         // Remove all the children and rebuild the view.
         var timeline = this.$['timeline-container'];
         while (timeline.firstChild) {
