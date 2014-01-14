@@ -1,0 +1,79 @@
+<!--
+Copyright 2014 Google Inc. All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+
+limitations under the License.
+-->
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="wat-tree-node.html">
+
+<polymer-element name="wat-tree" attributes="timedItem">
+  <template>
+    <style>
+      #container {
+        overflow: auto;
+        width: 100%;
+        height: 100%;
+      }
+      #tree {
+        display: block;
+        padding-right: 15px;
+        padding-left: 10px;
+      }
+    </style>
+    <div id="container">
+      <ul id="tree"></ul>
+    </div>
+  </template>
+  <script>
+    Polymer('wat-tree', {
+      timedItem: null,
+      ready: function() {
+        this.addEventListener('on-timedItem-select', function(e) {
+          function deselectChildren(root, selectedItem) {
+            if (!root || root.timedItem === selectedItem) {
+              return;
+            } 
+            root.selected = false;
+            var children = root.childNodes;
+            for (var i = 0; i < children.length; i++) {
+              deselectChildren(children[i]);
+            }
+          }
+          var root = this.$.tree.querySelector('wat-tree-node');
+          deselectChildren(root, e.detail);
+        });
+      },
+      selectTimedItem: function(e) {
+        function deselectChildren(root, selectedItem) {
+          if (!root || root.timedItem === selectedItem) {
+            return;
+          } 
+          root.selected = false;
+          var children = root.childNodes;
+          for (var i = 0; i < children.length; i++) {
+            deselectChildren(children[i]);
+          }
+        }
+        var root = this.$.tree.querySelector('wat-tree-node');
+        deselectChildren(root, e.detail);
+      },
+      timedItemChanged: function() {
+        var root = document.createElement('wat-tree-node');
+        root.timedItem = this.timedItem;
+        root.invisible = false;
+        this.$.tree.appendChild(root);
+      },
+    });
+  </script>
+</polymer-element>
