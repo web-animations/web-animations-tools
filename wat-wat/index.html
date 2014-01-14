@@ -1,0 +1,100 @@
+<!--
+Copyright 2014 Google Inc. All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+
+limitations under the License.
+-->
+
+<!doctype html>
+
+<title>WAT</title>
+
+<link rel="stylesheet" type="text/css" href="index.css">
+<script src="../../platform/platform.js"></script>
+<!-- <link rel="import" href="../wat-tree/wat-tree.html"> -->
+<link rel="import" href="../wat-code-editor/wat-code-editor.html">
+<link rel="import" href="../wat-player-controls/wat-player-controls.html">
+<link rel="import" href="../wat-timeditem-inspector/wat-timeditem-inspector.html">
+<link rel="import" href="../wat-bezier/wat-bezier.html">
+<link rel="import" href="../wat-step/wat-step.html">
+<link rel="import" href="../wat-timeline/wat-timeline.html">
+<link rel="import" href="../../polymer-animation/web-animations.html">
+<!-- <script src="../lib/timeditem-serializer.js"></script> -->
+<script src="index.js"></script>
+
+<header>
+  <nav>
+    <ul>
+      <li><a href="#">New</a></li>
+      <li><a href="#">Load</a></li>
+      <li><a href="#">Save</a></li>
+    </ul>
+  </nav>
+</header>
+
+<polymer-element name="wat-wat" noscript>
+  <template>
+    <link rel="stylesheet" type="text/css" href="index.css">
+
+    <div id="inspector">
+      <!-- <wat-tree></wat-tree> -->
+      <wat-code-editor timedItem="{{timedItem}}" orientation="rows"></wat-code-editor>
+      <wat-timeditem-inspector timedItem="{{timedItem}}"></wat-timeditem-inspector>
+    </div>
+    <wat-timeline timedItem="{{timedItem}}"></wat-timeline>
+  </template>
+</polymer-element>
+
+<wat-wat></wat-wat>
+
+<!-- <div class="main-outer">
+  <div class="main-inner">
+    <ul id="tabs">
+      <li><a href="#preview">Preview</a></li>
+      <li><a href="#html">HTML</a></li>
+      <li><a href="#css">CSS</a></li>
+      <li><a href="#javascript">JavaScript</a></li>
+    </ul>
+    <div class="tab-content" id="preview">
+      <div class="animation">
+        <iframe></iframe>
+      </div>
+      <div class="player-controls">
+        <wat-player-controls step="0.001"></wat-player-controls>
+      </div>
+    </div>
+    <div class="tab-content hide" id="html">
+      <div class="code">
+        <textarea name="html" autofocus wrap="soft"></textarea>
+      </div>
+    </div>
+    <div class="tab-content hide" id="css">
+      <div class="code">
+        <textarea name="css" autofocus wrap="soft"></textarea>           
+      </div>
+    </div>
+    <div class="tab-content hide" id="javascript">
+      <div class="code"> 
+        <textarea name="javascript" autofocus wrap="soft"></textarea>           
+      </div>
+    </div>
+  </div>
+</div> -->
+
+<!-- <div class="editor">
+  <wat-animation-inspector></wat-animation-inspector>
+  <wat-bezier></wat-bezier>
+</div> -->
+
+<!-- <div class="timeline">
+</div> -->

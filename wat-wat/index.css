@@ -1,0 +1,194 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  background: -webkit-linear-gradient(top, black, #424342) 0 0 repeat-x;
+  background-size: 100% 40px;
+  font-family: 'Helvetica Neue', Helvetica, Arial, Roboto, sans-serif;
+}
+
+body {
+  display: flex;
+  flex-flow: column;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+header {
+  height: 40px;
+  margin: 0;
+  padding: 0;
+}
+
+nav {
+  display: block;
+}
+
+nav ul {
+  margin: 0;
+  padding: 0;
+  text-indent: 10px;
+}
+
+nav ul li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  float: left;
+}
+
+nav ul li a {
+  display: inline-block;
+  height: 40px;
+  line-height: 42px;
+  margin: 0 10px 0 0;
+  color: #ddd;
+  text-shadow: 1px 1px 2px #111;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+wat-code-editor {
+  flex-grow: 1;
+}
+
+#inspector {
+  display: flex;
+  flex-grow: 1;
+}
+
+wat-timeditem-inspector {
+  margin-top: 65px;
+}
+
+/*.main-outer,
+.editor,
+.timeline {
+  padding: 10px 10px 0 10px;
+  box-sizing: border-box;
+}
+
+.main-outer {
+  height: 813px;
+  width: 75%;
+  float: left;
+}
+
+.main-inner {
+  height: 90%;
+}
+
+ul#tabs {
+  list-style-type: none; 
+  margin: 10px 0 0 0; 
+  padding: 0 0 5px 0;
+}
+ul#tabs li {
+  display: inline;
+}
+
+ul#tabs li a {
+  color: #222; 
+  background-color: silver; 
+  border: 1px solid silver; 
+  border-bottom: none;
+  border-radius: 5px 5px 0 0; 
+  padding: 5px 5px 6px 5px; 
+  text-decoration: none;
+}
+
+ul#tabs li a:hover {
+  background-color: rgb(224, 224, 224);
+}
+
+ul#tabs li a.selected {
+  background-color: white; 
+  padding: 5px 5px 6.5px 5px;
+}
+
+div.tab-content {
+  height: 100%;
+  border: 1px solid silver;
+  border-radius: 0 5px 5px 5px;
+  padding: 10px; 
+  background-color: white;
+  box-sizing: padding-box;
+}
+
+div.tab-content.hide {
+  display: none;
+}
+
+.animation {
+  height: 90%;
+  width: 100%;
+}
+
+iframe {
+  height: 100%;
+  width: 100%;
+  border: none;
+}
+
+.player-controls {
+  height: 10%;
+  padding: 10px;
+  text-align: center;
+}
+
+wat-player-controls {
+  margin: 0;
+}
+
+.code {
+  height: 100%;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+textarea {
+  height: calc(100% - 10px);
+  width: calc(100% - 10px);
+  padding: 0;
+  margin: 5px;
+  border: none;
+  outline: none;
+  resize: none;
+  font-family: Courier, monospace;
+  font-size: 11pt;
+}
+
+.editor {
+  display: table;
+  position: relative;
+  height: 745px;
+  top: 43px;
+  left: -10px;
+  width: calc(25% - 10px);
+  float: right;
+  border: 1px solid silver;
+  border-radius: 5px 5px 5px 5px;
+}
+
+.timeline {
+  border-width: 1px 0;
+  clear: both;
+  text-align: center;
+}
+
+wat-animation-inspector {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+}
+
+wat-bezier {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+}*/
