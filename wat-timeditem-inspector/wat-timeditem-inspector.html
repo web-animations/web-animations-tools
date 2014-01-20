@@ -22,7 +22,7 @@ limitations under the License.
 <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 <meta charset="utf-8">
 
-<polymer-element name="wat-timeditem-inspector" attributes="target">
+<polymer-element name="wat-timeditem-inspector" attributes="timedItem">
   <template>
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="wat-timeditem-inspector.css">
@@ -31,17 +31,17 @@ limitations under the License.
       <div class="property">
         <label for="delay">delay:</label>
         <input class="field" id="delay" type="number" 
-            value="{{target.specified.delay}}">
+            value="{{timedItem.specified.delay}}">
       </div>
       <div class="property">
         <label for="endDelay">endDelay:</label>
         <input class="field" id="endDelay" type="number" 
-            value="{{target.specified.endDelay}}">
+            value="{{timedItem.specified.endDelay}}">
       </div>
       <div class="property">
         <label for="direction">direction:</label>
         <select class="field" id="direction" 
-            value="{{target.specified.direction}}">
+            value="{{timedItem.specified.direction}}">
           <template repeat="{{direction in ['normal', 'reverse', 'alternate', 'alternate-reverse']}}">
             <option value="{{direction}}">{{direction}}</option>
           </template>
@@ -49,8 +49,8 @@ limitations under the License.
       </div>
       <div class="property">
         <label for="duration">duration:</label>
-        <input class="field" id="duration" type="number" 
-            value="{{target.specified.duration}}">
+        <input class="field" id="duration" type="number" placeholder="intrinsic"
+            value="{{timedItem.specified.duration}}">
       </div>
       <div class="property">
         <label for="easing">easing:</label>
@@ -70,7 +70,7 @@ limitations under the License.
       </div>
       <div class="property">
         <label for="fill">fill:</label>
-        <select class="field" id="fill" value="{{target.specified.fill}}">
+        <select class="field" id="fill" value="{{timedItem.specified.fill}}">
           <template repeat="{{fill in ['none', 'forwards', 'backwards', 'both']}}">
             <option value="{{fill}}">{{fill}}</option>
           </template>
@@ -79,25 +79,27 @@ limitations under the License.
       <div class="property">
         <label for="iterations">iterations:</label>
         <input class="field" id="iterations" type="number" 
-            value="{{target.specified.iterations}}">
+            value="{{timedItem.specified.iterations}}">
       </div>
       <div class="property">
         <label for="iterationStart">iterationStart:</label>
         <input class="field" id="iterationStart" type="number" 
-            value="{{target.specified.iterationStart}}">
+            value="{{timedItem.specified.iterationStart}}">
       </div>
       <div class="property">
         <label for="playbackRate">playbackRate:</label>
         <input class="field" id="playbackRate" type="number" 
-            value="{{target.specified.playbackRate}}">
+            value="{{timedItem.specified.playbackRate}}">
       </div>
     </div>
 
     <div id="easing-editor-container" class="hidden">
-      <button id="back-button" on-click="{{showPropertyContainer}}" 
-          title="Back">
-        <i class="fa fa-reply"></i>
-      </button>
+      <div>
+        <button id="back-button" on-click="{{showPropertyContainer}}" 
+            title="Back">
+          <i class="fa fa-reply"></i>
+        </button>
+      </div>
       <wat-bezier id="wat-bezier" class="hidden"></wat-bezier>
       <wat-step id="wat-step" class="hidden"></wat-step>
     </div>
