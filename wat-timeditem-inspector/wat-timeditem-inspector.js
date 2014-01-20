@@ -46,8 +46,8 @@ Polymer('wat-timeditem-inspector', {
 
   timedItemChanged: function() {
     this.easing = this.timedItem.specified.easing;
-    this.$['wat-bezier'].target = this.timedItem;
-    this.$['wat-step'].target = this.timedItem;
+    this.$['wat-bezier'].timedItem = this.timedItem;
+    this.$['wat-step'].timedItem = this.timedItem;
   },
 
   timedItemEasingChanged: function() {

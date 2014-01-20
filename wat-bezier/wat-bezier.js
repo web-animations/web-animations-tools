@@ -1,6 +1,6 @@
 Polymer('wat-bezier', {
   controlPoints: [0, 0, 1, 1], // [P1x, P1y, P2x, P2y]
-  target: new Animation(null, null, 0),
+  timedItem: new Animation(null, null, 0),
   preset: 'linear',
   bezierEasings: ['linear', 'ease', 'ease-in', 'ease-out', 'ease-in-out',],
   disabled: false,
@@ -14,7 +14,7 @@ Polymer('wat-bezier', {
   },
      
   observe: {
-    'target.specified.easing': 'targetEasingChanged',
+    'timedItem.specified.easing': 'timedItemEasingChanged',
   },
   
   ready: function() {
@@ -164,18 +164,18 @@ Polymer('wat-bezier', {
   },
  
   updateEasing: function() {
-    if (this.target && this.target.specified) {
-      this.target.specified.easing = 
+    if (this.timedItem && this.timedItem.specified) {
+      this.timedItem.specified.easing = 
           this.coordsToString(this.controlPoints);
     }
   },
   
-  targetEasingChanged: function() {
-    if (this.bezierEasings.indexOf(this.target.specified.easing) >= 0 || 
-          this.target.specified.easing.indexOf('cubic-bezier') >= 0) {
+  timedItemEasingChanged: function() {
+    if (this.bezierEasings.indexOf(this.timedItem.specified.easing) >= 0 || 
+          this.timedItem.specified.easing.indexOf('cubic-bezier') >= 0) {
       this.disabled = false;
       this.controlPoints = 
-          this.stringToCoords(this.target.specified.easing).slice();
+          this.stringToCoords(this.timedItem.specified.easing).slice();
       for (var t in this.easing) {
         if (this.easing[t].toString() == this.controlPoints.toString()) {
           this.preset = t;
@@ -183,7 +183,7 @@ Polymer('wat-bezier', {
         }
       }
       this.preset = 'custom';
-    } else if (this.target.specified.easing != '') {
+    } else if (this.timedItem.specified.easing != '') {
       this.disabled = true;
     }
   },

@@ -1,7 +1,7 @@
 Polymer('wat-step', {
   steps: 1,
   position: 'end',
-  target: new Animation(null, null, 0),
+  timedItem: new Animation(null, null, 0),
   preset: 'custom',
   stepEasings: ['step-start', 'step-middle', 'step-end', 'steps'],
   disabled: false,
@@ -15,7 +15,7 @@ Polymer('wat-step', {
   observe: {
     'steps': 'updateTimingFunction',
     'position': 'updateTimingFunction',
-    'target.specified.easing': 'targetEasingChanged',
+    'timedItem.specified.easing': 'timedItemEasingChanged',
   },
   
   ready: function() {
@@ -207,16 +207,16 @@ Polymer('wat-step', {
   },
   
   updateEasing: function() {
-    if (this.target && this.target.specified) {
-      this.target.specified.easing = 
+    if (this.timedItem && this.timedItem.specified) {
+      this.timedItem.specified.easing = 
           this.propsToString({steps: this.steps, position: this.position});
     }
   },
   
-  targetEasingChanged: function() {
-    if (this.stepEasings.indexOf(this.target.specified.easing) >= 0 ||
-        this.target.specified.easing.indexOf('steps') >= 0) {
-      var stepsPos = this.stringToProps(this.target.specified.easing);
+  timedItemEasingChanged: function() {
+    if (this.stepEasings.indexOf(this.timedItem.specified.easing) >= 0 ||
+        this.timedItem.specified.easing.indexOf('steps') >= 0) {
+      var stepsPos = this.stringToProps(this.timedItem.specified.easing);
       
       this.disabled = false;
       this.steps = stepsPos.steps;
