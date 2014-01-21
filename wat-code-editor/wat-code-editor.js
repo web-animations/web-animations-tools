@@ -26,12 +26,15 @@ Polymer('wat-code-editor', {
   },
 
   observe: {
-    html: 'updatePreview',
-    css: 'updatePreview'
+    html: 'updatePreview'
   },
 
   toggle: function() {
     this.mode = this.mode == 'columns' ? 'rows' : 'columns';
+  },
+
+  cssChanged: function() {
+    this.previewStyle.textContent = this.css;
   },
 
   selectedChanged: function() {
@@ -68,12 +71,14 @@ Polymer('wat-code-editor', {
     this.style.display = '';
   },
 
-  timedItemChanged: function() {
-    this.updateCode();
+  timedItemChanged: function(oldValue, newValue) {
+    if (!oldValue) {
+      this.updateCode();
+    }
   },
 
   updateCode: function() {
-    this.javascript = 'var player = document.timeline.play(' + 
+    this.javascript = 'document.timeline.play(' +
         serializeTimedItem(this.timedItem) + ');';
   },
 
@@ -89,22 +94,25 @@ Polymer('wat-code-editor', {
       content.innerHTML = this.html;
       d.body.appendChild(content);
       
-      var style = d.createElement('style');
-      style.textContent = this.css;
-      d.body.appendChild(style);
+      this.previewStyle = d.createElement('style');
+      this.previewStyle.textContent = this.css;
+      d.body.appendChild(this.previewStyle);
 
       var script = d.createElement('script');
       script.textContent = this.javascript;
       d.body.appendChild(script);
 
-      if (w.player) {
-        this.$['player-controls'].player = w.player;
-        this.timedItem = w.player.source;
+      if (w.document.timeline.getCurrentPlayers().length > 0) {
+        this.$['player-controls'].player =
+            w.document.timeline.getCurrentPlayers()[0];
+        this.timedItem = this.$['player-controls'].player.source;
         window.Animation = w.Animation;
         window.ParGroup = w.ParGroup;
         window.SeqGroup = w.SeqGroup;
         window.KeyframeEffect = w.KeyframeEffect;
         window.MotionPathEffect = w.MotionPathEffect;
+      } else {
+        alert('Could not find any active players.');
       }
     }.bind(this);
   }

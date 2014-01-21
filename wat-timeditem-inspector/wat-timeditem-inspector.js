@@ -16,7 +16,7 @@
 
 Polymer('wat-timeditem-inspector', {
   timedItem: new Animation(null, null, 0),
-  easing: 'linear', /* FIXME: shouldn't need to set this here */
+  easing: '',
   customEasing: '',
   bezierEasings: ['linear', 'ease', 'ease-in', 'ease-out', 'ease-in-out',
     'cubic-bezier'],
