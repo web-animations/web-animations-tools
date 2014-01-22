@@ -78,7 +78,7 @@ limitations under the License.
         var gist = this.github.getGist(id);
         gist.read(function(error, response) {
           if (!error) {
-            console.log(response.files);
+            console.log(response.html_url);
             this.fire('files-loaded', response.files);
           } else {
             console.error(error);
