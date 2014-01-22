@@ -5,6 +5,7 @@
     "polymer": "Polymer/polymer#master",
     "polymer-selector": "Polymer/polymer-selector#master",
     "polymer-animation": "Polymer/polymer-animation#master",
-    "web-animations-js": "web-animations/web-animations-js#master"
+    "web-animations-js": "web-animations/web-animations-js#master",
+    "github-js": "michael/github#master"
   }
 }
