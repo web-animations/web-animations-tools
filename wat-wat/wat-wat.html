@@ -92,17 +92,21 @@
     <div id="inspector">
       <wat-code-editor id="code-editor" timedItem="{{timedItem}}" mode="rows"> 
       </wat-code-editor>
-      <wat-timeditem-inspector class="paper" timedItem="{{timedItem}}">
+      <wat-timeditem-inspector class="paper" timedItem="{{selected || timedItem}}">
       </wat-timeditem-inspector>
     </div>
-    <wat-timeline class="paper" timedItem="{{timedItem}}"></wat-timeline>
+    <wat-timeline class="paper" timedItem="{{timedItem}}" selected="{{selected}}">
+    </wat-timeline>
   </template>
 
   <script>
     Polymer('wat-wat', {
       anonymous: true,
+      selected: null,
 
       ready: function() {
+        this.timedItem = new Animation(null, null, 0);
+
         this.addEventListener('files-loaded', function(event) {
           var files = event.detail;
 
