@@ -110,7 +110,7 @@ limitations under the License.
         }
 
         // Setup the observer.
-        this.observer = new CompoundPathObserver(this.notifyRelayout, this);
+        this.observer = new CompoundObserver(this.notifyRelayout, this);
         this.observer.addPath(this, 'timedItem.startTime');
         this.observer.addPath(this, 'timedItem.endTime');
         this.observer.addPath(this, 'timedItem.duration');
@@ -119,7 +119,7 @@ limitations under the License.
         this.observer.addPath(this, 'timedItem.specified.playbackRate');
         this.observer.addPath(this, 'timedItem.specified.iterations');
         this.observer.addPath(this, 'timedItem.specified.iterationStart');
-        this.observer.start();
+        this.observer.open();
       },
       performLayout: function() {
         var timingInput = this.timedItem.specified;
@@ -180,7 +180,7 @@ limitations under the License.
           this.timedItem.removeEventListener('start', this.onStart);
           this.timedItem.removeEventListener('end', this.onEnd);
         }
-        observer.close();
+        this.observer.close();
       },
       notifyRelayout: function() {
         if (!this.layouting) {
