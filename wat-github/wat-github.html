@@ -16,9 +16,75 @@ limitations under the License.
 -->
 
 <link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../internal/wat-button/wat-button.html">
 
 <polymer-element name="wat-github">
   <template>
+    <style>
+      .paper {
+        box-shadow: 0px 2px 4px rgba(0,0,0,0.2);
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        margin: 5px;
+        padding: 5px;
+      }
+
+      #form {
+        vertical-align: middle; 
+        margin-top: 12px;
+      }
+
+      #signIn-screen {
+        display: {{signingIn ? '' : 'none'}};
+        position: absolute; 
+        left: calc(50vw - 100px); 
+        top: calc(40vh - 60px); 
+        width: 200px; 
+        height: 120px; 
+        background-color: white; 
+        z-index: 10;
+        text-align: center;
+        vertical-align: middle;
+      }
+
+      wat-button {
+        display: inline-block;
+        margin: 6px 2px;
+        width: 90px;
+        height: 28px;
+      }
+
+      wat-button ^^ button {
+        padding: 2px;
+      }
+
+      #github-token{
+        display: inline-block;
+        width: 184px;
+        margin: 4px;
+        padding: 0px 1px;
+        vertical-align: middle;
+        border: 1px solid silver;
+        border-radius: 2px;
+        height: 20px;
+      }
+
+      #github-token:focus {
+        border: 1px solid rgba(66,133,244,1);
+        outline: none;
+      }
+    </style>
+
+    <div id="signIn-screen" class="paper">
+      <div id="form">
+        <label for="github-token">GitHub Token:</label>
+        <input id="github-token" type="text">
+        <div>
+          <wat-button on-click="{{confirm}}" title="Confirm">Confirm</wat-button>
+          <wat-button on-click="{{cancel}}" title="Cancel">Cancel</wat-button>
+        </div>
+      </div>
+    </div>
   </template>
 
   <script src="../../github-js/lib/underscore-min.js"></script>
@@ -27,8 +93,23 @@ limitations under the License.
   
   <script>
     Polymer('wat-github', {
+      token: '',
+      signedIn: false,
+      signingIn: false,
+
       ready: function() {
-        this.github = new Github({token: ''});
+        this.token = window.localStorage['wat_token'] || '';
+        this.github = new Github({token: this.token});
+      },
+
+      tokenChanged: function() {
+        if (this.token) {
+          this.signedIn = true;
+          window.localStorage['wat_token'] = this.token;
+        } else {
+          this.signedIn = false;
+          window.localStorage.clear();
+        }
       },
 
       save: function(description, publicGist, files) {
@@ -81,10 +162,37 @@ limitations under the License.
             console.log(response.html_url);
             this.fire('files-loaded', response.files);
           } else {
+            if (error == 401) { // unathorized
+              this.signedIn = false;
+            }
             console.error(error);
           }
         }.bind(this));
-      }
+      },
+
+      signIn: function() {
+        this.signingIn = true;
+        setTimeout(function() {
+          this.$['github-token'].focus()
+        }.bind(this), 0);
+      },
+
+      signOut: function() {
+        this.token = '';
+        this.github = new Github({token: this.token});
+        this.fire('token-changed');
+      },
+
+      confirm: function() {
+        this.token = this.$['github-token'].value;
+        this.github = new Github({token: this.token});
+        this.fire('token-changed');
+        this.signingIn = false;
+      },
+
+      cancel: function() {
+        this.signingIn = false;
+      },
     });
   </script>
 </polymer-element>
