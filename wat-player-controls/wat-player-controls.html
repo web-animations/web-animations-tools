@@ -37,7 +37,7 @@ limitations under the License.
         height: 32px;
       }
       
-      .repeating {
+      .repeating ^^ button {
         color: rgba(66,133,244,1);
         background-color: white;
       }
@@ -96,7 +96,7 @@ limitations under the License.
     <wat-button on-click="{{skipToEnd}}" title="Skip To End">
       <i class="fa fa-fast-forward"></i>
     </wat-button>
-    <wat-button class="not-repeating" id="repeatButton" on-click="{{toggleRepeat}}" 
+    <wat-button id="repeatButton" on-click="{{toggleRepeat}}" 
         title="Repeat On / Off">
       <i class="fa fa-repeat"></i>
     </wat-button>
@@ -175,7 +175,7 @@ limitations under the License.
         if (this.repeating) {
           this.$.repeatButton.className = 'repeating';
         } else {
-          this.$.repeatButton.className = 'not-repeating';
+          this.$.repeatButton.className = '';
         }
       },
       
