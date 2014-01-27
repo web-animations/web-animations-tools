@@ -34,7 +34,9 @@ Polymer('wat-code-editor', {
   },
 
   cssChanged: function() {
-    this.previewStyle.textContent = this.css;
+    if (this.previewStyle) {
+      this.previewStyle.textContent = this.css;
+    }
   },
 
   selectedChanged: function() {
