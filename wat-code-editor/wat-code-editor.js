@@ -114,7 +114,7 @@ Polymer('wat-code-editor', {
         window.KeyframeEffect = w.KeyframeEffect;
         window.MotionPathEffect = w.MotionPathEffect;
       } else {
-        alert('Could not find any active players.');
+        console.error('Could not find any active players.');
       }
     }.bind(this);
   },

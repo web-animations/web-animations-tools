@@ -2,11 +2,12 @@
 
 <link rel="import" href="../../../polymer/polymer.html">
 
-<polymer-element name="wat-ace-editor" attributes="value mode">
+<polymer-element name="wat-ace-editor" attributes="value mode label">
   <template>
     <style>
       :host {
         display: flex;
+        position: relative;
       }
       
       editor {
@@ -17,13 +18,42 @@
         z-index: 1;
         overflow: auto;
       }
+
+      #editor-label {
+        position: absolute;
+        height: 0.8em;
+        width: 80px;
+        line-height: 0.8em;
+        left: calc(100% - 107px);
+        top: 12px;
+        z-index: 5;
+        text-align: right;
+        font-size: 0.8em;
+      }
+
+      #editor-label span {
+        background-color: white;
+        color: silver;
+        width: auto;
+        padding: 2px 4px;
+        border: 1px solid rgba(192,192,192,0.5);
+        border-radius: 3px;
+        box-shadow: 0px 1px 2px rgba(0,0,0,0.1);
+        opacity: 0.9;
+      }
+
+      .fade {
+        opacity: 0.3;
+      }
     </style>
 
+    <div id="editor-label"><span>{{label}}</span></div>
     <editor id="editor"></editor>
   </template>
   
   <script>
     Polymer('wat-ace-editor', {
+      label: '',
       value: '',
       mode: 'ace/mode/javascript',
 
@@ -34,6 +64,16 @@
         this.editor.getSession().setValue(this.value);
         this.editor.getSession().setMode(this.mode);
         this.editor.getSession().on('change', this.editorTextChanged.bind(this));
+        this.editor.on('focus', this.fadeLabel.bind(this));
+        this.editor.on('blur', this.showLabel.bind(this));
+      },
+
+      fadeLabel: function() {
+        this.$['editor-label'].classList.add('fade');
+      },
+
+      showLabel: function() {
+        this.$['editor-label'].classList.remove('fade');
       },
 
       editorTextChanged: function() {
