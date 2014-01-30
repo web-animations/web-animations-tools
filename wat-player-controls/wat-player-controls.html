@@ -45,17 +45,18 @@ limitations under the License.
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 
     <style>
+      :host {
+        display: flex;
+        align-items: center;
+        flex-flow: row wrap;
+      }
+
       wat-button {
-        display: inline-block;
         width: 32px;
         margin: 2px;
         vertical-align: middle;
       }
 
-      wat-button ^^ button {
-        height: 32px;
-      }
-      
       .repeating ^^ button {
         color: rgba(66,133,244,1);
         background-color: white;
