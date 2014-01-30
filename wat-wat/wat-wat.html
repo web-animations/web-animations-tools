@@ -1,5 +1,6 @@
 <link rel="import" href="../../polymer/polymer.html">
 <link rel="import" href="../../polymer-animation/web-animations.html">
+<link rel="import" href="../internal/wat-dock/wat-dock.html">
 <link rel="import" href="../wat-code-editor/wat-code-editor.html">
 <link rel="import" href="../wat-timeditem-inspector/wat-timeditem-inspector.html">
 <link rel="import" href="../wat-timeline/wat-timeline.html">
@@ -74,6 +75,14 @@
       wat-timeline {
         max-height: 30vh;
       }
+      
+      wat-dock > * {
+        flex-grow: 1;
+      }
+      
+      wat-dock[collapsed] {
+        flex-grow: 0;
+      }
     </style>
 
     <header>
@@ -91,11 +100,15 @@
     <div id="inspector">
       <wat-code-editor id="code-editor" timedItem="{{timedItem}}" mode="rows"> 
       </wat-code-editor>
-      <wat-timeditem-inspector class="paper" timedItem="{{selected || timedItem}}">
-      </wat-timeditem-inspector>
+      <wat-dock side="right">
+        <wat-timeditem-inspector class="paper" timedItem="{{selected || timedItem}}">
+        </wat-timeditem-inspector>
+      </wat-dock>
     </div>
-    <wat-timeline class="paper" timedItem="{{timedItem}}" selected="{{selected}}">
-    </wat-timeline>
+    <wat-dock side="bottom">
+      <wat-timeline class="paper" timedItem="{{timedItem}}" selected="{{selected}}">
+      </wat-timeline>
+    </wat-dock>
   </template>
 
   <script>
