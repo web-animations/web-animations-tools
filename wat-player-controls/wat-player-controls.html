@@ -15,6 +15,25 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
+<!--
+/**
+ * @module Web Animations Tools
+ */
+/**
+ * wat-player-controls can be used to control a Player.
+ *
+ * Example:
+ *
+ *     <wat-player-controls></wat-player-controls>
+ *     <script>
+ *       document.querySelector('wat-player-controls').player = 
+ *           document.timeline.play(new Animation(...));
+ *     </script>
+ *    
+ * @class wat-player-controls
+ */
+-->
+
 <!DOCTYPE html>
 
 <link rel="import" href="../../polymer/polymer.html">
@@ -115,6 +134,30 @@ limitations under the License.
   
   <script>
     Polymer('wat-player-controls', {
+      /**
+       * The Player to control.
+       *
+       * Example:
+       *
+       *     document.querySelector(wat-player-controls).player = 
+       *         document.timeline.play(new Animation(...));
+       *  
+       * @attribute player
+       * @type object
+       * @default null
+       */
+      player: null,
+      /**
+       * The step interval for the scrubber.
+       *
+       * Example:
+       *
+       *     <wat-player-controls step="0.0005"></wat-player-controls>
+       *  
+       * @attribute step
+       * @type number
+       * @default 0.001
+       */
       step: 0.001,
       paused: true,
       repeating: false,
