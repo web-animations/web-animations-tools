@@ -6,7 +6,7 @@
 <link rel="import" href="../wat-timeline/wat-timeline.html">
 <link rel="import" href="../wat-github/wat-github.html">
 
-<polymer-element name="wat-wat" noscript>
+<polymer-element name="wat-wat">
   <template>
     <style>
       :host {
@@ -98,15 +98,15 @@
     <wat-github id="github"></wat-github>
 
     <div id="inspector">
-      <wat-code-editor id="code-editor" timedItem="{{timedItem}}" mode="rows"> 
+      <wat-code-editor id="code-editor" timedItem="{{selectedRoot}}" mode="rows"> 
       </wat-code-editor>
       <wat-dock side="right">
-        <wat-timeditem-inspector class="paper" timedItem="{{selected || timedItem}}">
+        <wat-timeditem-inspector class="paper" timedItem="{{selected || selectedRoot}}">
         </wat-timeditem-inspector>
       </wat-dock>
     </div>
     <wat-dock side="bottom">
-      <wat-timeline class="paper" timedItem="{{timedItem}}" selected="{{selected}}">
+      <wat-timeline class="paper" timedItem="{{selectedRoot}}" selected="{{selected}}">
       </wat-timeline>
     </wat-dock>
   </template>
@@ -114,11 +114,13 @@
   <script>
     Polymer('wat-wat', {
       anonymous: true,
-      selected: null,
+      
+      created: function() {
+        this.selected = new Animation(null, null, 0);
+        this.selectedRoot = new Animation(null, null, 0);
+      },
 
       ready: function() {
-        this.timedItem = new Animation(null, null, 0);
-
         this.addEventListener('files-loaded', function(event) {
           var files = event.detail;
 
@@ -131,6 +133,8 @@
           if (files['animation.css']) {
             this.$['code-editor'].css = files['animation.css'].content;
           }
+
+          this.$['code-editor'].updatePreview();
         });
 
         if (window.location.hash.length > 0) {

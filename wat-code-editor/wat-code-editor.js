@@ -25,10 +25,6 @@ Polymer('wat-code-editor', {
     this.updatePreview();
   },
 
-  observe: {
-    html: 'updatePreview'
-  },
-
   toggle: function() {
     this.mode = this.mode == 'columns' ? 'rows' : 'columns';
   },

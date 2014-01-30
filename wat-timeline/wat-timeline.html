@@ -55,14 +55,16 @@ limitations under the License.
 
     Polymer('wat-timeline', {
       pixelsPerSecond: 1,
-      timedItem: null,
-      selected: null,
       player: null,
       viewStack: [],
       root: null,
       parentForRoot: null,
       playerChanged: function() {
         this.$.scrubber.player = this.player;
+      },
+      created: function() {
+        this.timedItem = new Animation(null, null, 0);
+        this.selected = new Animation(null, null, 0);
       },
       ready: function() {
         this.parentForRoot = {};
