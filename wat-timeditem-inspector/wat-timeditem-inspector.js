@@ -15,7 +15,6 @@
  */
 
 Polymer('wat-timeditem-inspector', {
-  timedItem: new Animation(null, null, 0),
   easing: '',
   customEasing: '',
   bezierEasings: ['linear', 'ease', 'ease-in', 'ease-out', 'ease-in-out',
@@ -28,6 +27,10 @@ Polymer('wat-timeditem-inspector', {
     'timedItem.specified.easing': 'timedItemEasingChanged',
   },
 
+  created: function() {
+    this.timedItem = new Animation(null, null, 0);
+  },
+  
   ready: function() {
     this.easing = this.timedItem.specified.easing;
   },
@@ -45,10 +48,15 @@ Polymer('wat-timeditem-inspector', {
   },
 
   timedItemChanged: function() {
-    this.easing = this.timedItem.specified.easing;
-    this.$['wat-bezier'].timedItem = this.timedItem;
-    this.$['wat-step'].timedItem = this.timedItem;
+    if (this.timedItem) {
+      this.easing = this.timedItem.specified.easing;
+      this.$['wat-bezier'].timedItem = this.timedItem;
+      this.$['wat-step'].timedItem = this.timedItem;
+    } else {
+      this.timedItem = new Animation(null, null, 0);
+    }
   },
+
 
   timedItemEasingChanged: function() {
     this.easing = this.timedItem.specified.easing;
