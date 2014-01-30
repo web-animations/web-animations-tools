@@ -10,13 +10,11 @@
         position: relative;
       }
       
-      editor {
+      #editorFrame {
         flex-grow: 1;
-      }
-
-      .ace_scrollbar {
-        z-index: 1;
-        overflow: auto;
+        margin: 0;
+        padding: 0;
+        border: none;
       }
 
       #editor-label {
@@ -46,9 +44,8 @@
         opacity: 0.3;
       }
     </style>
-
     <div id="editor-label"><span>{{label}}</span></div>
-    <editor id="editor"></editor>
+    <iframe id="editorFrame"></iframe>
   </template>
   
   <script>
@@ -56,16 +53,28 @@
       label: '',
       value: '',
       mode: 'ace/mode/javascript',
-
       ready: function() {
-        this.shadowRoot.applyAuthorStyles = true;
-        this.editor = ace.edit(this.$.editor);
-        this.editor.setTheme('ace/theme/github');
-        this.editor.getSession().setValue(this.value);
-        this.editor.getSession().setMode(this.mode);
-        this.editor.getSession().on('change', this.editorTextChanged.bind(this));
-        this.editor.on('focus', this.fadeLabel.bind(this));
-        this.editor.on('blur', this.showLabel.bind(this));
+        var frame = this.$.editorFrame;
+        frame.onload = function() {
+          var script = document.createElement('script');
+          script.setAttribute('src', 'https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js');
+          script.onload = function() {
+            this.editor = frame.contentWindow.ace.edit(frame.contentDocument.body);
+            this.editor.setTheme('ace/theme/github');
+            this.editor.getSession().setValue(this.value);
+            this.editor.getSession().setMode(this.mode);
+            this.editor.getSession().on('change', this.editorTextChanged.bind(this));
+            this.editor.on('focus', this.fadeLabel.bind(this));
+            this.editor.on('blur', this.showLabel.bind(this));
+          }.bind(this);
+          frame.contentDocument.head.appendChild(script);
+          var style = frame.contentDocument.createElement('style');
+          style.type = 'text/css';
+          style.appendChild(document.createTextNode(
+              '.ace_scrollbar { z-index: 1; overflow: auto !important; } ' +
+              'body { margin: 0; }'));
+          frame.contentDocument.head.appendChild(style);
+        }.bind(this);
       },
 
       fadeLabel: function() {
@@ -81,12 +90,18 @@
       },
 
       valueChanged: function() {
+        if (!this.editor) {
+          return;
+        }
         if (this.editor.getSession().getValue() != this.value) {
           this.editor.getSession().setValue(this.value);
         }
       },
 
       modeChanged: function() {
+        if (!this.editor) {
+          return;          
+        }
         this.editor.getSession().setMode(this.mode);
       }
     });
