@@ -17,10 +17,9 @@
 Polymer('wat-code-editor', {
   mode: 'columns',
   javascript: '',
-  oldJavascript: '',
+  previewJavascript: '',
   html: '',
   css: '',
-  previewSrc: '../../polymer-animation/web-animations.html',
 
   ready: function() {
     this.selected = ['javascript', 'html', 'css'];
@@ -32,8 +31,7 @@ Polymer('wat-code-editor', {
   },
 
   htmlChanged: function() {
-    var preview = this.$['preview-frame'];
-    preview.src = this.previewSrc;
+    this.reload();
   },
 
   cssChanged: function() {
@@ -79,7 +77,7 @@ Polymer('wat-code-editor', {
   timedItemChanged: function(oldValue, newValue) {
     if (!oldValue) {
       this.updateCode();
-      this.oldJavascript = this.javascript;
+      this.previewJavaScript = this.javascript;
     }
   },
 
@@ -89,30 +87,41 @@ Polymer('wat-code-editor', {
   },
 
   updatePreview: function() {
+    this.previewJavaScript = this.javascript;
+    this.reload();
+  },
+
+  reload: function() {
     var preview = this.$['preview-frame'];
-    this.oldJavascript = this.javascript;
-    preview.src = this.previewSrc;
+
+    var d = preview.contentDocument;
+    if (!d) {
+      preview.onload = this.updatePreview.bind(this);
+      return;
+    }
+
+    d.open();
+    d.write('<!DOCTYPE html>');
+    d.write('<script src="../../web-animations-js/web-animations.js"></script>');
+    d.write('<style>body { };</style>')
+    d.write(this.html);
+    d.close();
 
     preview.onload = function() {
       var w = preview.contentWindow;
       var d = preview.contentWindow.document;
 
-      var content = d.createElement('div');
-      content.innerHTML = this.html;
-      d.body.appendChild(content);
-      
-      this.previewStyle = d.createElement('style');
+      this.previewStyle = d.querySelector('style');
       this.previewStyle.textContent = this.css;
-      d.body.appendChild(this.previewStyle);
 
       var script = d.createElement('script');
-      script.textContent = this.oldJavascript;
+      script.textContent = this.previewJavaScript;
       d.body.appendChild(script);
-
-      if (w.document.timeline.getCurrentPlayers().length > 0) {
-        this.$['player-controls'].player =
-            w.document.timeline.getCurrentPlayers()[0];
-        this.timedItem = this.$['player-controls'].player.source;
+      
+      if (d.timeline.getCurrentPlayers().length > 0) {
+        var player = d.timeline.getCurrentPlayers()[0];
+        this.$['player-controls'].player = player;
+        this.timedItem = player.source;
         window.Animation = w.Animation;
         window.ParGroup = w.ParGroup;
         window.SeqGroup = w.SeqGroup;
