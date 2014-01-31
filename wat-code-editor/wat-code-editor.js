@@ -17,8 +17,10 @@
 Polymer('wat-code-editor', {
   mode: 'columns',
   javascript: '',
+  oldJavascript: '',
   html: '',
   css: '',
+  previewSrc: '../../polymer-animation/web-animations.html',
 
   ready: function() {
     this.selected = ['javascript', 'html', 'css'];
@@ -27,6 +29,11 @@ Polymer('wat-code-editor', {
 
   toggle: function() {
     this.mode = this.mode == 'columns' ? 'rows' : 'columns';
+  },
+
+  htmlChanged: function() {
+    var preview = this.$['preview-frame'];
+    preview.src = this.previewSrc;
   },
 
   cssChanged: function() {
@@ -72,6 +79,7 @@ Polymer('wat-code-editor', {
   timedItemChanged: function(oldValue, newValue) {
     if (!oldValue) {
       this.updateCode();
+      this.oldJavascript = this.javascript;
     }
   },
 
@@ -82,7 +90,8 @@ Polymer('wat-code-editor', {
 
   updatePreview: function() {
     var preview = this.$['preview-frame'];
-    preview.src = '../../polymer-animation/web-animations.html';
+    this.oldJavascript = this.javascript;
+    preview.src = this.previewSrc;
 
     preview.onload = function() {
       var w = preview.contentWindow;
@@ -97,7 +106,7 @@ Polymer('wat-code-editor', {
       d.body.appendChild(this.previewStyle);
 
       var script = d.createElement('script');
-      script.textContent = this.javascript;
+      script.textContent = this.oldJavascript;
       d.body.appendChild(script);
 
       if (w.document.timeline.getCurrentPlayers().length > 0) {
