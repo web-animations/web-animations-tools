@@ -27,25 +27,21 @@
 }
 
 #launch-button {
-  display: inline-block;
+  display: inline-flex;
   margin-left: 0.2em;
   width: calc(35px - 0.5em);
+  height: 20px;
 }
 
 #launch-button ^^ button {
-  height: 20px;
+
   line-height: 6px;
   padding: 0 0 2px 0;
-  vertical-align: middle;
 }
 
 #back-button {
   width: 32px;
   margin-bottom: 10px;
-}
-
-#back-button ^^ button {
-  height: 32px;
 }
 
 .property .field {

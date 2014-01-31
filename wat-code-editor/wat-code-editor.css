@@ -20,6 +20,7 @@ wat-button {
 #preview {
   display: flex;
   flex-flow: column;
+  align-items: center;
 }
 
 #preview-frame {
@@ -50,7 +51,6 @@ polymer-selector > *.polymer-selected {
 }
 
 .player-controls {
-  text-align: center;
   padding: 8px;
 }
 
