@@ -24,7 +24,8 @@ limitations under the License.
 <link rel="import" href="../internal/wat-button/wat-button.html">
 <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 
-<polymer-element name="wat-code-editor" attributes="timedItem mode">
+<polymer-element name="wat-code-editor" 
+    attributes="timedItem mode theme showGutter tabSize useWrapMode showPrintMargin">
   <template>
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="wat-code-editor.css">
@@ -63,6 +64,29 @@ limitations under the License.
       <wat-button id="toggle-button" on-click="{{toggle}}" title="Toggle Layout">
         <i class="fa fa-th-large"></i>
       </wat-button>
+
+      <label for="theme">Editor theme:</label>
+      <select id="theme" class="field" value="{{theme}}">
+        <template repeat="{{themeOption in themeOptions}}">
+          <option value="{{themeOption}}">{{themeOption}}</option>
+        </template>
+      </select>
+
+      <label for="tabSize">Tab size:</label>
+      <input id="tabSize" class="field" type="number" value="{{tabSize}}">
+
+      <label for="showLineNumbers">Show line numbers:</label>
+      <input id="showLineNumbers" class="field" type="checkbox"
+          checked="{{showGutter}}">
+
+      <label for="showRuler">Show ruler:</label>
+      <input id="showRuler" class="field" type="checkbox"
+          checked="{{showPrintMargin}}">
+
+      <label for="wrapLines">Wrap lines:</label>
+      <input id="wrapLines" class="field" type="checkbox"
+          checked="{{useWrapMode}}">
+
       <wat-button on-click="{{updateCode}}" title="Update Code">
         Update Code
       </wat-button>
@@ -80,15 +104,21 @@ limitations under the License.
           </div>
         </div>
         <wat-ace-editor id="javascript" class="paper" mode="ace/mode/javascript" 
-            value="{{javascript}}" label="JavaScript">
+            value="{{javascript}}" label="JavaScript" theme="{{theme}}"
+            showGutter="{{showGutter}}" tabSize="{{tabSize}}"
+            useWrapMode="{{useWrapMode}}" showPrintMargin="{{showPrintMargin}}">
         </wat-ace-editor>
       </div>
       <div id="container2" class="container">
         <wat-ace-editor id="html" class="paper" mode="ace/mode/html" 
-            value="{{html}}" label="HTML">
+            value="{{html}}" label="HTML" theme="{{theme}}"
+            showGutter="{{showGutter}}" tabSize="{{tabSize}}"
+            useWrapMode="{{useWrapMode}}" showPrintMargin="{{showPrintMargin}}">
         </wat-ace-editor>
         <wat-ace-editor id="css" class="paper" mode="ace/mode/css" 
-            value="{{css}}" label="CSS">
+            value="{{css}}" label="CSS" theme="{{theme}}"
+            showGutter="{{showGutter}}" tabSize="{{tabSize}}"
+            useWrapMode="{{useWrapMode}}" showPrintMargin="{{showPrintMargin}}">
         </wat-ace-editor>
       </div>
     </div>

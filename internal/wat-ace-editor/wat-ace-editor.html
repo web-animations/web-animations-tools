@@ -2,7 +2,8 @@
 
 <link rel="import" href="../../../polymer/polymer.html">
 
-<polymer-element name="wat-ace-editor" attributes="value mode label">
+<polymer-element name="wat-ace-editor"
+    attributes="value mode label theme showGutter tabSize useSoftTabs useWrapMode highlightActiveLine showPrintMargin">
   <template>
     <style>
       :host {
@@ -31,7 +32,7 @@
 
       #editor-label span {
         background-color: white;
-        color: silver;
+        color: gray;
         width: auto;
         padding: 2px 4px;
         border: 1px solid rgba(192,192,192,0.5);
@@ -53,6 +54,14 @@
       label: '',
       value: '',
       mode: 'ace/mode/javascript',
+      theme: 'github',
+      showGutter: true,
+      tabSize: 2,
+      useSoftTabs: true,
+      useWrapMode: true,
+      highlightActiveLine: true,
+      showPrintMargin: true,
+
       ready: function() {
         var frame = this.$.editorFrame;
         frame.onload = function() {
@@ -60,9 +69,15 @@
           script.setAttribute('src', 'https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js');
           script.onload = function() {
             this.editor = frame.contentWindow.ace.edit(frame.contentDocument.body);
-            this.editor.setTheme('ace/theme/github');
+            this.editor.setTheme('ace/theme/' + this.theme);
             this.editor.getSession().setValue(this.value);
             this.editor.getSession().setMode(this.mode);
+            this.editor.renderer.setShowGutter(this.showGutter);
+            this.editor.getSession().setTabSize(parseInt(this.tabSize));
+            this.editor.getSession().setUseSoftTabs(this.useSoftTabs);
+            this.editor.getSession().setUseWrapMode(this.useWrapMode);
+            this.editor.setHighlightActiveLine(this.highlightActiveLine);
+            this.editor.setShowPrintMargin(this.showPrintMargin);
             this.editor.getSession().on('change', this.editorTextChanged.bind(this));
             this.editor.on('focus', this.fadeLabel.bind(this));
             this.editor.on('blur', this.showLabel.bind(this));
@@ -103,6 +118,58 @@
           return;          
         }
         this.editor.getSession().setMode(this.mode);
+      },
+
+      themeChanged: function() {
+        if (!this.editor) {
+          return;
+        }
+        this.editor.setTheme('ace/theme/' + this.theme);
+      },
+
+      showGutterChanged: function() {
+        if (!this.editor) {
+          return;
+        }
+        this.editor.renderer.setShowGutter(this.showGutter);
+      },
+
+      tabSizeChanged: function() {
+        if (!this.editor) {
+          return;
+        }
+        this.tabSize = parseInt(this.tabSize);
+        if (this.tabSize) {
+          this.editor.getSession().setTabSize(this.tabSize);
+        }
+      },
+
+      useSoftTabsChanged: function() {
+        if (!this.editor) {
+          return;
+        }
+        this.editor.getSession().setUseSoftTabs(this.useSoftTabs);
+      },
+
+      useWrapModeChanged: function() {
+        if (!this.editor) {
+          return;
+        }
+        this.editor.getSession().setUseWrapMode(this.useWrapMode);
+      },
+
+      highlightActiveLineChanged: function() {
+        if (!this.editor) {
+          return;
+        }
+        this.editor.setHighlightActiveLine(this.highlightActiveLine);
+      },
+
+      showPrintMarginChanged: function() {
+        if (!this.editor) {
+          return;
+        }
+        this.editor.setShowPrintMargin(this.showPrintMargin);
       }
     });
   </script>
