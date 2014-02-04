@@ -36,7 +36,7 @@ Polymer('wat-timeditem-inspector', {
   },
 
   easingChanged: function() {
-    if (this.easing != 'custom') {
+    if (this.timedItem && this.easing != 'custom') {
       this.timedItem.specified.easing = this.easing;
     } else {
       this.customEasing = '';
@@ -59,6 +59,9 @@ Polymer('wat-timeditem-inspector', {
 
 
   timedItemEasingChanged: function() {
+    if (!this.timedItem) {
+      return;
+    }
     this.easing = this.timedItem.specified.easing;
     if (this.presetEasings.indexOf(this.timedItem.specified.easing) >= 0) {
       this.easing = this.timedItem.specified.easing;

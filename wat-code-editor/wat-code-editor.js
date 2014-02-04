@@ -15,44 +15,95 @@
  */
 
 Polymer('wat-code-editor', {
-  mode: 'columns',
+  message: '',
+  mode: 'rows',
+  rowsMode: true,
   javascript: '',
   previewJavascript: '',
   html: '',
   css: '',
   theme: 'github',
-  themeOptions: ['ambiance', 'chaos', 'chrome', 'clouds', 'clouds_midnight',
-      'cobalt', 'crimson_editor', 'dawn', 'dreamweaver', 'eclipse', 'github',
-      'idle_fingers', 'katzenmilch', 'kr_theme', 'kuroir', 'merbivore',
-      'merbivore_soft', 'mono_industrial', 'monokai', 'pastel_on_dark',
-      'solarized_dark', 'solarized_light', 'terminal', 'textmate', 'tomorrow',
-      'tomorrow_night', 'tomorrow_night_blue', 'tomorrow_night_bright',
-      'tomorrow_night_eighties', 'twilight', 'vibrant_ink', 'xcode'],
   showGutter: true,
   tabSize: 2,
   useWrapMode: true,
   showPrintMargin: true,
+  state: 'loading',
+  update: null,
 
   ready: function() {
-    this.selected = ['javascript', 'html', 'css'];
+    this.mode = window.localStorage['wat-mode'] || this.mode;
+    this.rowsMode = this.mode == 'rows' ? true : false;
+    if (window.localStorage['wat-selected-editors'] === undefined) {
+      this.selected = ['javascript', 'html', 'css'];
+    } else {
+      this.selected = window.localStorage['wat-selected-editors'].split(',');
+    }
     this.updatePreview();
   },
 
-  toggle: function() {
-    this.mode = this.mode == 'columns' ? 'rows' : 'columns';
+  observe: {
+    'javascript': 'toggleUnsavedIndicator',
+    'previewJavascript': 'toggleUnsavedIndicator'
+  },
+
+  rowsModeChanged: function() {
+    this.mode = this.rowsMode ? 'rows' : 'columns';
+  },
+
+  modeChanged: function() {
+    window.localStorage['wat-mode'] = this.mode;
   },
 
   htmlChanged: function() {
-    this.reload();
+    if (this.state == 'loading') {
+      return;
+    }
+    this.updateState('reload');
   },
 
   cssChanged: function() {
-    if (this.previewStyle) {
-      this.previewStyle.textContent = this.css;
+    if (this.state == 'loading') {
+      return;
+    }
+    this.updateState('css');
+  },
+
+  updateState: function(state, delay) {
+    if (delay === undefined) {
+      delay = 500;
+    }
+    if (state == 'css' && this.state == 'reload') {
+      state = 'reload';
+    }
+    if (this.update) {
+      clearTimeout(this.update);
+      this.update = null;
+    }
+
+    this.state = state;
+
+    this.update = setTimeout(function() {
+      if (this.state == 'css') {
+        this.previewStyle.textContent = this.css;
+      } else if (this.state == 'reload') {
+        this.reload();
+      }
+      this.state = 'idle';
+      this.saveFilesToLocalStorage();
+    }.bind(this), delay);
+  },
+
+  toggleUnsavedIndicator: function() {
+    if (this.previewJavascript == this.javascript) {
+      this.$.unsaved.setAttribute('hidden', null);
+    } else {
+      this.$.unsaved.removeAttribute('hidden');
     }
   },
 
   selectedChanged: function() {
+    window.localStorage['wat-selected-editors'] = this.selected;
+
     var editors = [this.$.javascript, this.$.html, this.$.css];
     var visible = [];
     
@@ -89,7 +140,7 @@ Polymer('wat-code-editor', {
   timedItemChanged: function(oldValue, newValue) {
     if (!oldValue) {
       this.updateCode();
-      this.previewJavaScript = this.javascript;
+      this.previewJavascript = this.javascript;
     }
   },
 
@@ -99,8 +150,8 @@ Polymer('wat-code-editor', {
   },
 
   updatePreview: function() {
-    this.previewJavaScript = this.javascript;
-    this.reload();
+    this.previewJavascript = this.javascript;
+    this.updateState('reload', 0);
   },
 
   reload: function() {
@@ -127,7 +178,7 @@ Polymer('wat-code-editor', {
       this.previewStyle.textContent = this.css;
 
       var script = d.createElement('script');
-      script.textContent = this.previewJavaScript;
+      script.textContent = this.previewJavascript;
       d.body.appendChild(script);
       
       if (d.timeline.getCurrentPlayers().length > 0) {
@@ -140,14 +191,37 @@ Polymer('wat-code-editor', {
         window.KeyframeEffect = w.KeyframeEffect;
         window.MotionPathEffect = w.MotionPathEffect;
       } else {
-        console.error('Could not find any active players.');
+        this.message = 'Could not find any active players.';
       }
     }.bind(this);
   },
 
+  saveFilesToLocalStorage: function() {
+    window.localStorage['wat-javascript'] = this.javascript;
+    window.localStorage['wat-css'] = this.css;
+    window.localStorage['wat-html'] = this.html;
+  },
+
+  loadFilesFromLocalStorage: function() {
+    if (!window.localStorage['wat-javascript'] && !window.localStorage['wat-html'] &&
+        !window.localStorage['wat-css']) {
+      this.timedItem = new Animation(null, null, 0);
+    } else {
+      this.javascript = window.localStorage['wat-javascript'] || this.javascript;
+      this.html = window.localStorage['wat-html'] || this.html;
+      this.css = window.localStorage['wat-css'] || this.css;
+    }
+    this.previewJavascript = this.javascript;
+    this.state = 'idle';
+  },
+
   clearAll: function() {
-    this.timedItem = new Animation(null, null, 0);
-    this.javascript = this.css = this.html = '';
-    this.updateCode();
+    this.previewJavascript = this.css = this.html = '';
+    this.javascript = 'document.timeline.play(' +
+        serializeTimedItem(new Animation(null, null, 0)) + ');';
+    ['wat-javascript', 'wat-html', 'wat-css'].forEach(function(i) {
+      window.localStorage.removeItem(i);
+    });
+    this.updatePreview();
   }
 });
