@@ -83,14 +83,31 @@
       wat-dock[collapsed] {
         flex-grow: 0;
       }
+
+      wat-code-editor,
+      wat-dock {
+        opacity: {{$.github.signingIn ? '.2' : '1'}};
+      }
+
+      .hidden {
+        display: none;
+      }
     </style>
 
     <header>
       <nav>
         <ul>
           <li><a on-click="{{newAnimation}}">New</a></li>
-          <li><a on-click="{{saveAnimation}}">Save</a></li>
+          <li class="{{$.github.signedIn ? '' : 'hidden'}}">
+            <a on-click="{{saveAnimation}}">Save</a>
+          </li>
           <li><a on-click="{{saveNewAnimation}}">Save As New</a></li>
+          <li class="{{$.github.signedIn ? 'hidden' : ''}}">
+            <a on-click="{{signIn}}">Sign In</a>\
+          </li>
+          <li class="{{$.github.signedIn ? '' : 'hidden'}}">
+            <a on-click="{{signOut}}">Sign Out</a>
+          </li>
         </ul>
       </nav>
     </header>
@@ -113,8 +130,6 @@
 
   <script>
     Polymer('wat-wat', {
-      anonymous: true,
-      
       created: function() {
         this.selected = new Animation(null, null, 0);
         this.selectedRoot = new Animation(null, null, 0);
@@ -137,10 +152,12 @@
           this.$['code-editor'].updatePreview();
         });
 
-        if (window.location.hash.length > 0) {
-          var id = window.location.hash.substring(1);
-          this.loadAnimation(id);
-        }
+        this.addEventListener('token-changed', function(event) {
+          this.loadAnimation();
+        }.bind(this));
+
+        this.$['code-editor'].updatePreview();
+        this.loadAnimation();
       },
 
       newAnimation: function() {
@@ -175,7 +192,7 @@
       },
 
       saveAnimation: function() {
-        var saveAsNew = this.anonymous;
+        var saveAsNew = !this.$.github.signedIn;
 
         this.save(saveAsNew);
       },
@@ -184,8 +201,19 @@
         this.save(true);
       },
 
-      loadAnimation: function(id) {
-        this.$.github.load(id);
+      loadAnimation: function() {
+        if (window.location.hash.length > 0) {
+          var id = window.location.hash.substring(1);
+          this.$.github.load(id);
+        }
+      },
+
+      signIn: function() {
+        this.$.github.signIn();
+      },
+
+      signOut: function() {
+        this.$.github.signOut();
       }
     });
   </script>
