@@ -17,6 +17,7 @@ limitations under the License.
 
 <!DOCTYPE html>
 <link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../wat-keyframe-editor/wat-keyframe-editor.html">
 
 <polymer-element name="wat-timeline-item" attributes="timedItem parentItem timeline">
   <template>
@@ -49,14 +50,32 @@ limitations under the License.
     #group-container.playing {
       background-color: rgba(247, 195, 52, 0.8);
     }
+    #edit-button {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      top: 5px;
+      right: 5px;
+    }
+    #edit-button ^^ button {
+      padding: 2px 5px;
+    }
     span {
       display: block;
       padding: 10px;
     }
+    .hidden {
+      display: none;
+    }
+    .faded {
+      opacity: 0.2;
+    }
   </style>
     <div id="group-container" class="{{timeline.selected === timedItem ? 'selected' : ''}}"
           style="left:{{(delay / parentPlaybackRate) * timeline.pixelsPerSecond}}px">
-      <div class="timeline-item {{playbackRate < 0 ? 'negativePlayback' : ''}}" 
+      <wat-keyframe-editor class="{{editingKeyframe ? '' : 'hidden'}}" timedItem="{{timedItem}}" 
+          width="{{firstIterDuration * timeline.pixelsPerSecond}}"></wat-keyframe-editor>
+      <div class="timeline-item {{playbackRate < 0 ? 'negativePlayback' : ''}} {{editingKeyframe ? 'hidden' : ''}}"
             style="min-width:{{firstIterDuration * timeline.pixelsPerSecond}}px;
                     max-width:{{firstIterDuration * timeline.pixelsPerSecond}}px;"
             on-click="{{onSelect}}" on-dblclick="{{onFocus}}">
@@ -73,6 +92,13 @@ limitations under the License.
         <div class="timeline-item iteration" style="min-width:{{length * timeline.pixelsPerSecond}}px;"
             on-click="{{onSelect}}" on-dblclick="{{onFocus}}"></div>
       </template>
+      <!-- FIXME: Need to check if the effect is keyframe effect. 
+                  Cannot do instanceof in template for now. -->
+      <template if="{{!timedItem.type}}">
+        <wat-button id="edit-button" class="faded" title="edit" 
+            on-mouseover="{{toggleButtonFading}}" on-mouseleave="{{toggleButtonFading}}" 
+            on-click="{{toggleKeyframeEditor}}">✎</wat-button>
+      </template>
     </div>
   </template>
   <script>
@@ -82,6 +108,7 @@ limitations under the License.
       timeline: null,
       timedItem: null,
       parentItem: null,
+      delay: 0,
       playbackRate: 1,
       parentPlaybackRate: 1,
       allocatedTime: 0,
@@ -89,6 +116,7 @@ limitations under the License.
       iterStartDuration: 0,
       observer: null,
       layouting: false,
+      editingKeyframe: false,
       timedItemChanged: function() {
         this.performLayout();
 
@@ -190,7 +218,25 @@ limitations under the License.
       },
       onEnd: function(e) {
         this.$['group-container'].classList.remove('playing');
-      }
+      },
+      toggleButtonFading: function(e) {
+        e.target.classList.toggle('faded');
+      },
+      toggleKeyframeEditor: function() {
+        if (this.timedItem.effect &&
+            !this.timedItem.effect instanceof KeyframeEffect) {
+          this.editingKeyframe = false;
+          return;
+        }
+        if (!this.timedItem.effect) {
+          this.timedItem.effect = new KeyframeEffect();
+        }
+
+        this.editingKeyframe = !this.editingKeyframe;
+        if (this.editingKeyframe) {
+          this.timeline.selected = this.timedItem;
+        }
+      },
     });
   </script>
 </polymer-element>

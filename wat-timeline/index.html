@@ -156,6 +156,7 @@ limitations under the License.
         select.add(option);
       }
       select.onchange = function(e) {
+        timeline.timedItem.player.source = null;
         timeline.timedItem = animations[this.selectedIndex].timedItem;
         timeline.player = document.timeline.play(timeline.timedItem);
       }
