@@ -29,28 +29,58 @@ limitations under the License.
     #keyframe-container {
       min-width: {{width}}px;
     }
-    svg {
+    #new-property-prompt {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #prompt-button {
+      opacity: 0.6;
+      border: none;
+      font-size: 18px;
+      background-color: transparent;
+    }
+    #property-name-input {
+      border: none;
+      background: transparent;
+      border-bottom: 2px solid black;
+      font-size: 18px;
+      color: black;
+    }
+    #line {
       position: absolute;
+      top: 21px;
+      width: 100%;
+      border-top: 1px solid black;
     }
-    text {
-      font-size: 0.9em;
-      fill: #000000;
-      text-anchor: middle;
+    #delete-property-button {
+      width: 16px;
+      height: 16px;
+      padding: 0px;
+      border: 0px;
+      background-color: transparent;
     }
-    path {
-      stroke: silver;
+    #property-name {
+      position: absolute;
+      top: -19px;
     }
-
+    .hidden {
+      display: none;
+    }
   </style>
   <div id="keyframe-container">
     <template repeat="{{p in properties}}">
-      <div class="property-container" data-name="{{p.name}}" on-click="{{addKeyFrame}}">
-        <svg xmlns="http://www.w3.org/2000/svg" height="28px">
-          <!-- Show the property name on 1/4 and 3/4 of the container -->
-          <text x="{{width / 4}}" y="19">{{p.name}}</text>
-          <text x="{{width * 3 / 4}}" y="19">{{p.name}}</text>
-          <path d="M 0 21 H {{width}}"></path>
-        </svg>
+      <div class="property-container" data-name="{{p.name}}" on-pointerup="{{addKeyFrame}}">
+        <div id="line">
+          <template repeat="{{percentage in [20, 80]}}">
+            <div id="property-name" on-mouseover="{{toggleDeleteButton}}"
+                on-mouseout="{{toggleDeleteButton}}" style="left: {{percentage}}%">
+              {{p.name}}
+              <button id="delete-property-button" class="hidden"
+                  data-name="{{p.name}}" on-click="{{deleteProperty}}">×</button>
+            </div>
+          </template>
+        </div>
         <template repeat="{{frame, i in p.frames}}">
           <wat-keyframe-item property="{{frame.name}}" value="{{frame.value}}" 
               position="{{frame.position}}" editor="{{frame.editor}}" index="{{i}}">
@@ -58,6 +88,16 @@ limitations under the License.
         </template>
       </div>
     </template>
+    <div id="new-property-prompt" class="property-container">
+        <button id="prompt-button" class="{{addingProperty ? 'hidden' : ''}}"
+            on-pointerup="{{togglePropertyInput}}">
+          Click To Add New Property
+        </button>
+        <div class="{{addingProperty ? '' : 'hidden'}}">
+          <input id="property-name-input" type="text" placeholder="New Property Name">
+          <button on-pointerup="{{addProperty}}">Add</button>
+        </div>
+    </div>
   </div>
   </template>
   <script>
@@ -67,6 +107,7 @@ limitations under the License.
       timedItem: null,
       width: 0,
       properties: null,
+      addingProperty: false,
       observe: {
         'width': 'timedItemChanged',
       },
@@ -76,7 +117,7 @@ limitations under the License.
         this.addEventListener('delete-keyframe', function(e) {
           var frames = this.getProperty(e.detail.name).object.frames;
           frames.splice(e.detail.index, 1);
-        }); 
+        });
       },
       timedItemChanged: function() {
         if (!this.timedItem || !this.timedItem.effect) {
@@ -109,16 +150,7 @@ limitations under the License.
         this.properties = properties;
       },
       addKeyFrame: function(e) {
-        var target = e.target;
-        // Prevent adding keyframes when clicking on the delete button or adjusting keyframes.
-        if (target.tagName === 'WAT-KEYFRAME-ITEM' || target.tagName === 'BUTTON') {
-          return;
-        }
-        // Find the corresponding property container because children
-        // may be set as the click target instead of the property container.
-        while (target && !target.classList.contains('property-container')) {
-          target = target.parentNode;
-        }
+        var target = e.currentTarget;
         e.stopPropagation();
         var property = target.dataset['name'];
         var frames = this.getProperty(property).object.frames;
@@ -144,7 +176,7 @@ limitations under the License.
         };
 
         var newFrames = [];
-        var properties = this.$['keyframe-container'].querySelectorAll('.property-container');
+        var properties = this.getPropertyContainers();
         for (var i = 0; i < properties.length; i++) {
           var items = properties[i].querySelectorAll('wat-keyframe-item');
           for (var j = 0; j < items.length; j++) {
@@ -154,10 +186,7 @@ limitations under the License.
             insert(frame, newFrames);
           }
         }
-        // SetFrames throws exception on empty array.
-        if (newFrames.length <= 0) {
-          return;
-        }
+
         this.timedItem.effect.setFrames(newFrames);
       },
       getProperty: function(property) {
@@ -165,8 +194,45 @@ limitations under the License.
           if (this.properties[i].name === property) {
             return {object: this.properties[i], index: i};
           }
-          return null;
         }
+        return null;
+      },
+      getPropertyContainers: function() {
+        return this.$['keyframe-container'].querySelectorAll('.property-container');
+      },
+      addProperty: function() {
+        if (!this.properties) {
+          this.properties = [];
+        }
+
+        // Hide the property input again.
+        this.togglePropertyInput();
+
+        var newProperty = this.$['property-name-input'].value;
+        if (!newProperty || this.getProperty(newProperty) !== null) {
+          return;
+        }
+
+        this.properties.push({name: newProperty, frames: []});
+      },
+      deleteProperty: function(e) {
+        var property = e.target.dataset['name'];
+        var propertyIndex = this.getProperty(property).index;
+        this.properties.splice(propertyIndex, 1);
+
+        // Force it to remove the property from the DOM before updating
+        // the keyframes because the keyframe will pull all the properties
+        // from these property containers. Can't rely on polymer to update
+        // the DOM because polymer update is asynchronous.
+        this.getPropertyContainers()[propertyIndex].remove();
+        this.convertPropertyToFrames();
+      },
+      toggleDeleteButton: function(e) {
+        var button = e.currentTarget.querySelector('button');
+        button.classList.toggle('hidden');
+      },
+      togglePropertyInput: function() {
+        this.addingProperty = !this.addingProperty;
       },
     });
   </script>
