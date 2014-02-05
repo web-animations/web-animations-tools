@@ -96,8 +96,10 @@ Polymer('wat-code-editor', {
   toggleUnsavedIndicator: function() {
     if (this.previewJavascript == this.javascript) {
       this.$.unsaved.setAttribute('hidden', null);
+      this.$.run.setAttribute('fade', null);
     } else {
       this.$.unsaved.removeAttribute('hidden');
+      this.$.run.removeAttribute('fade');
     }
   },
 
@@ -213,6 +215,7 @@ Polymer('wat-code-editor', {
     }
     this.previewJavascript = this.javascript;
     this.state = 'idle';
+    this.reload();
   },
 
   clearAll: function() {
