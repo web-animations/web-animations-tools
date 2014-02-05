@@ -75,7 +75,7 @@ limitations under the License.
     </span>
     <button id="delete-button" class="faded" title="delete" 
         on-mouseover="{{toggleButton}}" on-mouseleave="{{toggleButton}}" 
-        on-click="{{deleteFrame}}">×</button>
+        on-pointerup="{{deleteFrame}}">×</button>
   </div>
   <input id="input" type="text" class="movable hidden" 
       value="{{value}}" on-focus="{{selectAll}}"
@@ -110,7 +110,8 @@ limitations under the License.
       selectAll: function() {
         this.$.input.select();
       },
-      enableEdit: function() {
+      enableEdit: function(e) {
+        e.stopPropagation();
         // Polymer conditional binding cannot force the input to focus 
         // therefore we are doing it manually.
         this.$['text-container'].classList.add('hidden');
@@ -131,16 +132,19 @@ limitations under the License.
       },
       pointers: {},
       pointerDown: function(e) {
+        e.stopPropagation();
         e.target.setPointerCapture(e.pointerId);
         this.pointers[e.pointerId] = true;
         this.pointerMove(e);
-        e.preventDefault();
         this.dragging = true;
+        e.preventDefault();
       },
       pointerUp: function(e) {
+        e.stopPropagation();
         this.pointers[e.pointerId] = false;
         e.target.releasePointerCapture(e.pointerId);
         this.dragging = false;
+        e.preventDefault();
       },
       pointerMove: function(e) {
         if (!this.pointers[e.pointerId]) {
@@ -156,6 +160,7 @@ limitations under the License.
         e.target.classList.toggle('faded');
       },
       deleteFrame: function(e) {
+        e.stopPropagation();
         this.fire('delete-keyframe', {name: this.property, index: this.index});
       },
     });
