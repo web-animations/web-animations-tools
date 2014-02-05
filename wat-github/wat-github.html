@@ -125,10 +125,13 @@ limitations under the License.
       },
 
       clearMessage: function(delay) {
+        if (this.messageTimeout) {
+          clearTimeout(this.messageTimeout);
+        }
         if (delay === undefined) {
           delay = 3000;
         }
-        setTimeout(function() {
+        this.messageTimeout = setTimeout(function() {
           this.message = '';
         }.bind(this), delay);
       },

@@ -19,7 +19,7 @@ limitations under the License.
 
 <link rel="import" href="../../../polymer/polymer.html">
 
-<polymer-element name="wat-button" attributes="title">
+<polymer-element name="wat-button" attributes="title" noscript>
   <template>
     <style>
       :host {
@@ -41,10 +41,4 @@ limitations under the License.
     </style>
     <button title="{{title}}"><content></content></button>
   </template>
-
-  <script>
-    Polymer('wat-button', {
-      title: '',
-    });
-  </script>
 </polymer>
