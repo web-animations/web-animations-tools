@@ -21,6 +21,10 @@ limitations under the License.
 <polymer-element name="wat-timeline-axis" attributes="width timespan numMarker minNumMarkers precision">
   <template>
   <style>
+      :host {
+        /* Prevent the timeline overgrow.*/
+        min-height: 25px;
+      }
       text {
         font-size: 0.8em;
         fill: #000000;
@@ -46,7 +50,8 @@ limitations under the License.
       timespan: 1,
       numMarkers: 21,
       precision: 2,
-      minNumMarkers: 1,
+      // Need a start and end marker.
+      minNumMarkers: 2,
       maxNumMarkers: 50,
 
       observe: {

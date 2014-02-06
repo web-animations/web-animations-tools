@@ -72,13 +72,13 @@ limitations under the License.
     }
   </style>
     <div id="group-container" class="{{timeline.selected === timedItem ? 'selected' : ''}}"
-          style="left:{{(delay / parentPlaybackRate) * timeline.pixelsPerSecond}}px">
+          style="left:{{(delay / parentPlaybackRate) * timeline.pixelsPerSecond}}px"
+          on-pointerup="{{onSelect}}" on-dblclick="{{onFocus}}">
       <wat-keyframe-editor class="{{editingKeyframe ? '' : 'hidden'}}" timedItem="{{timedItem}}" 
           width="{{firstIterDuration * timeline.pixelsPerSecond}}"></wat-keyframe-editor>
       <div class="timeline-item {{playbackRate < 0 ? 'negativePlayback' : ''}} {{editingKeyframe ? 'hidden' : ''}}"
             style="min-width:{{firstIterDuration * timeline.pixelsPerSecond}}px;
-                    max-width:{{firstIterDuration * timeline.pixelsPerSecond}}px;"
-            on-click="{{onSelect}}" on-dblclick="{{onFocus}}">
+                    max-width:{{firstIterDuration * timeline.pixelsPerSecond}}px;">
         <span>{{timedItem ? (timedItem.type ? timedItem.type + 'Group' : 'animation') : ''}}</span>
         <template if="{{timedItem.type}}">
           <template repeat="{{child in timedItem._children}}">
@@ -90,14 +90,14 @@ limitations under the License.
         <!-- FIXME: Not sure why do we need min width here but without it 
              there will have layout problem when zoom in on the page. -->
         <div class="timeline-item iteration" style="min-width:{{length * timeline.pixelsPerSecond}}px;"
-            on-click="{{onSelect}}" on-dblclick="{{onFocus}}"></div>
+            on-pointerup="{{onSelect}}" on-dblclick="{{onFocus}}"></div>
       </template>
       <!-- FIXME: Need to check if the effect is keyframe effect. 
                   Cannot do instanceof in template for now. -->
       <template if="{{!timedItem.type}}">
         <wat-button id="edit-button" class="faded" title="edit" 
             on-mouseover="{{toggleButtonFading}}" on-mouseleave="{{toggleButtonFading}}" 
-            on-click="{{toggleKeyframeEditor}}">✎</wat-button>
+            on-pointerup="{{toggleKeyframeEditor}}">✎</wat-button>
       </template>
     </div>
   </template>
@@ -199,7 +199,9 @@ limitations under the License.
           this.timedItem.removeEventListener('start', this.onStart);
           this.timedItem.removeEventListener('end', this.onEnd);
         }
-        this.observer.close();
+        if (this.observer) {
+          this.observer.close();
+        }
       },
       notifyRelayout: function() {
         if (!this.layouting) {
