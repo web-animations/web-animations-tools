@@ -68,7 +68,12 @@ Polymer('wat-wat', {
 
   observe: {
     '$.dockRight.collapsed': 'dockRightCollapsedChanged',
-    '$.dockBottom.collapsed': 'dockBottomCollapsedChanged'
+    '$.dockBottom.collapsed': 'dockBottomCollapsedChanged',
+    '$.dockBottom.shadowRoot.childNodes.length' : 'updateTimeline'
+  },
+
+  updateTimeline: function() {
+    this.$['wat-timeline'].updateTimeline();
   },
 
   dockRightCollapsedChanged: function() {
