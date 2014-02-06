@@ -96,8 +96,10 @@ Polymer('wat-code-editor', {
   toggleUnsavedIndicator: function() {
     if (this.previewJavascript == this.javascript) {
       this.$.unsaved.setAttribute('hidden', null);
+      this.$.run.setAttribute('fade', null);
     } else {
       this.$.unsaved.removeAttribute('hidden');
+      this.$.run.removeAttribute('fade');
     }
   },
 
@@ -191,7 +193,7 @@ Polymer('wat-code-editor', {
         window.KeyframeEffect = w.KeyframeEffect;
         window.MotionPathEffect = w.MotionPathEffect;
       } else {
-        this.message = 'Could not find any active players.';
+        this.fire('request-toast', 'Could not find any active players.');
       }
     }.bind(this);
   },
@@ -213,6 +215,7 @@ Polymer('wat-code-editor', {
     }
     this.previewJavascript = this.javascript;
     this.state = 'idle';
+    this.reload();
   },
 
   clearAll: function() {

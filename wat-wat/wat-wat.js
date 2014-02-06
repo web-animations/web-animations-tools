@@ -31,19 +31,14 @@ Polymer('wat-wat', {
       'tomorrow_night_eighties', 'twilight', 'vibrant_ink', 'xcode'],
   
   ready: function() {
-    this.$.dockRight.collapsed = window.localStorage['wat-dock-right-collapsed'] === undefined ? 
-        false : JSON.parse(window.localStorage['wat-dock-right-collapsed']);
-    this.$.dockBottom.collapsed = window.localStorage['wat-dock-bottom-collapsed'] === undefined ? 
-        false : JSON.parse(window.localStorage['wat-dock-bottom-collapsed']);
+    this.$.dockRight.collapsed = this.getStorageValue('wat-dock-right-collapsed', false);
+    this.$.dockBottom.collapsed = this.getStorageValue('wat-dock-bottom-collapsed', false);
     this.theme = window.localStorage['wat-theme'] || 'github';
-    this.showGutter = window.localStorage['wat-show-gutter'] === undefined ? 
-        true : JSON.parse(window.localStorage['wat-show-gutter']);
+    this.showGutter = this.getStorageValue('wat-show-gutter', true);
     this.tabSize = window.localStorage['wat-tab-size'] === undefined ? 
         2 : parseInt(window.localStorage['wat-tab-size']);
-    this.useWrapMode = window.localStorage['wat-use-wrap-mode'] === undefined ? 
-        true : JSON.parse(window.localStorage['wat-use-wrap-mode']);
-    this.showPrintMargin = window.localStorage['wat-show-print-margin'] === undefined ? 
-        true : JSON.parse(window.localStorage['wat-show-print-margin']);
+    this.useWrapMode = this.getStorageValue('wat-use-wrap-mode', true);
+    this.showPrintMargin = this.getStorageValue('wat-show-print-margin', true);
     this.addEventListener('files-loaded', function(event) {
       var files = event.detail;
 
@@ -62,6 +57,10 @@ Polymer('wat-wat', {
 
     this.addEventListener('token-changed', function(event) {
       this.loadAnimation();
+    }.bind(this));
+
+    this.addEventListener('request-toast', function(event) {
+      this.$.github.toast(event.detail);
     }.bind(this));
 
     this.loadAnimation();
@@ -98,6 +97,11 @@ Polymer('wat-wat', {
 
   showPrintMarginChanged: function() {
     window.localStorage['wat-show-print-margin'] = this.showPrintMargin;
+  },
+
+  getStorageValue: function(localStorageKey, defaultValue) {
+    return window.localStorage[localStorageKey] === undefined ? defaultValue : 
+        JSON.parse(window.localStorage[localStorageKey]);
   },
 
   restoreDefaultSettings: function() {
