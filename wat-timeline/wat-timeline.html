@@ -100,6 +100,9 @@ limitations under the License.
         this.addEventListener('on-timeline-relayout', this.relayoutTimeline.bind(this));
       },
       updateTimeline: function(timespan) {
+        if (!this.timedItem) {
+          return;
+        }
         var timeline = this.$.itemContainer;
         // Get the visual attributes of the timeline container so that
         // the axis and the scrubber will have the same width with it.
