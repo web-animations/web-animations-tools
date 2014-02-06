@@ -148,6 +148,7 @@ Polymer('wat-wat', {
       files['animation.css'] = {'content': css};
     }
     
+    this.$.github.toast('Saving files to GitHub…');
     if (!saveAsNew && window.location.hash.length > 0) {
       var id = window.location.hash.substring(1);
       this.$.github.update(id, description, publicGist, files);
@@ -170,6 +171,7 @@ Polymer('wat-wat', {
     this.$['wat-code-editor'].loadFilesFromLocalStorage();
     if (window.location.hash.length > 0) {
       var id = window.location.hash.substring(1);
+      this.$.github.toast('Loading files from GitHub…');
       this.$.github.load(id);
     }
   },
