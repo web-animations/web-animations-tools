@@ -18,20 +18,17 @@ limitations under the License.
 
 <link rel="import" href="../../polymer/polymer.html">
 
-<polymer-element name="wat-timeline-scrubber" attributes="player pixelsPerSecond height">
+<polymer-element name="wat-timeline-scrubber" attributes="player pixelsPerSecond">
   <template>
   <style>
     :host {
       position: absolute;
       z-index: 1;
     }
-    #container {
-      position: relative;
-    }
     #circle {
       position: absolute;
       left: {{x - 5}}px;
-      top: 23px;
+      top: 18px;
       height: 12px;
       width: 12px;
       background-color: black;
@@ -40,29 +37,27 @@ limitations under the License.
     #line {
       position: absolute;
       left: {{x}}px;
-      height: {{height}}px;
+      height: 100vh;
       border-left:1px solid black;
     }
   </style>
-    <div id="container">
-      <div id="circle" on-track="{{onTrack}}"></div>
-      <div id="line" on-track="{{onTrack}}"></div>
-    </div>
+  <div id="circle" on-track="{{onTrack}}"></div>
+  <div id="line" on-track="{{onTrack}}"></div>
   </template>
   <script>
     'use strict';
     Polymer('wat-timeline-scrubber', {
       player: null,
       x: 0,
-      height: 0,
       pixelsPerSecond: 0,
       observe: {
         'player.currentTime': 'onPlayerTimeChanged',
       },
       onPlayerTimeChanged: function() {
-        this.player.currentTime = Math.min(this.player.currentTime, this.player.source.endTime);
-        this.player.currentTime = Math.max(this.player.currentTime, this.player.source.startTime);
-        this.x = this.player.currentTime * this.pixelsPerSecond;
+        var newCurrentTime = this.player.currentTime;
+        newCurrentTime = Math.min(newCurrentTime, this.player.source.endTime);
+        newCurrentTime = Math.max(newCurrentTime, this.player.source.startTime);
+        this.x = newCurrentTime * this.pixelsPerSecond;
       },
       onTrack: function(e) {
         if (!this.player) {
