@@ -30,6 +30,7 @@ limitations under the License.
       background-color: rgba(255, 255, 255, 0.9);
       /*Setting top to leave space for the arrow.*/
       top: 13px; 
+      white-space: nowrap;
     }
     #arrow {
       position: absolute;
@@ -99,8 +100,8 @@ limitations under the License.
         this.textWidth = this.value.length * 7 + 6;
       },
       positionChanged: function(oldValue, newValue) {
-        if (this.$.text.clientWidth !== 0) {
-          this.textWidth = this.$.text.clientWidth;
+        if (this.$.text.offsetWidth !== 0) {
+          this.textWidth = this.$.text.offsetWidth;
         }
         var textPos = this.position - this.textWidth / 2;
         textPos = Math.max(textPos, 0);
