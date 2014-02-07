@@ -120,14 +120,6 @@ limitations under the License.
       timedItemChanged: function() {
         this.performLayout();
 
-        // When the animation is playing, toggle the class to change the style.
-        // This is limited because if the player is manually adjusted then
-        // these events may not be triggered.
-        if (this.timedItem instanceof Animation) {
-          this.timedItem.addEventListener('start', this.onStart.bind(this));
-          this.timedItem.addEventListener('end', this.onEnd.bind(this));
-        }
-
         // Setup the observer.
         this.observer = new CompoundObserver();
         this.observer.addPath(this, 'timedItem.startTime');
@@ -194,11 +186,6 @@ limitations under the License.
         this.layouting = false;
       },
       detached: function() {
-        // Clean up the event listeners and observers.
-        if (this.timedItem instanceof Animation) {
-          this.timedItem.removeEventListener('start', this.onStart);
-          this.timedItem.removeEventListener('end', this.onEnd);
-        }
         if (this.observer) {
           this.observer.close();
         }
