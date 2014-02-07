@@ -41,8 +41,10 @@ limitations under the License.
       border-left:1px solid black;
     }
   </style>
-  <div id="circle" on-track="{{onTrack}}"></div>
-  <div id="line" on-track="{{onTrack}}"></div>
+  <div id="circle" on-pointerup="{{pointerUp}}" on-pointerdown="{{pointerDown}}" 
+      on-pointermove="{{pointerMove}}"></div>
+  <div id="line" on-pointerup="{{pointerUp}}" on-pointerdown="{{pointerDown}}" 
+      on-pointermove="{{pointerMove}}"></div>
   </template>
   <script>
     'use strict';
@@ -59,14 +61,32 @@ limitations under the License.
         newCurrentTime = Math.max(newCurrentTime, this.player.source.startTime);
         this.x = newCurrentTime * this.pixelsPerSecond;
       },
-      onTrack: function(e) {
+      pointers: {},
+      pointerDown: function(e) {
+        e.stopPropagation();
+        e.target.setPointerCapture(e.pointerId);
+        this.pointers[e.pointerId] = true;
+        this.pointerMove(e);
+        e.preventDefault();
+      },
+      pointerUp: function(e) {
+        e.stopPropagation();
+        this.pointers[e.pointerId] = false;
+        e.target.releasePointerCapture(e.pointerId);
+        e.preventDefault();
+      },
+      pointerMove: function(e) {
+        if (!this.pointers[e.pointerId]) {
+          return;
+        }
+
         if (!this.player) {
           return;
         }
         var newCurrentTime = (e.clientX / this.pixelsPerSecond) + this.player.source.startTime;
         this.player.currentTime = newCurrentTime;
         this.player.paused = true;
-      }
+      },
     });
   </script>
 </polymer-element>
