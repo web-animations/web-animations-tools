@@ -21,14 +21,22 @@ limitations under the License.
 <link rel="import" href="../internal/wat-button/wat-button.html">
 <link rel="import" href="../wat-bezier/wat-bezier.html">
 <link rel="import" href="../wat-step/wat-step.html">
+<link rel="import" href="../wat-target-selector/wat-target-selector.html">
 <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 
-<polymer-element name="wat-timeditem-inspector" attributes="timedItem">
+<polymer-element name="wat-timeditem-inspector" attributes="timedItem previewFrame">
   <template>
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="wat-timeditem-inspector.css">
     
     <div id="property-container">
+      <div class="property {{timedItem.type ? 'hidden' : ''}}">
+        <label for="animTarget">target:</label>
+        <input class="field" id="animTarget" placeholder="DOM Element ID"
+            value="{{$.targetSelector.selected}}" on-change="{{animationTargetChanged}}">
+        <wat-button class="launch-button" title="Launch Element Selector"
+            on-click="{{showElementSelectorContainer}}">…</wat-button>
+      </div>
       <div class="property">
         <label for="delay">delay:</label>
         <input class="field" id="delay" type="number" 
@@ -61,7 +69,7 @@ limitations under the License.
           </template>
           <option value="custom">custom</option>
         </select>
-        <wat-button id="launch-button" title="Launch Easing Editor"
+        <wat-button class="launch-button" title="Launch Easing Editor"
             on-click="{{showEasingEditorContainer}}">…</wat-button>
       </div>
       <div class="{{easing == 'custom' ? 'property' : 'hidden'}}">
@@ -103,6 +111,16 @@ limitations under the License.
       </div>
       <wat-bezier id="wat-bezier" class="hidden"></wat-bezier>
       <wat-step id="wat-step" class="hidden"></wat-step>
+    </div>
+    <div id="target-selector-container" class="hidden">
+      <div>
+        <wat-button id="back-button" on-click="{{showPropertyContainer}}" 
+            title="Back">
+          <i class="fa fa-reply"></i>
+        </wat-button>
+      </div>
+      <wat-target-selector id="targetSelector" frame="{{previewFrame}}">
+      </wat-target-selector>
     </div>
   </template>
 

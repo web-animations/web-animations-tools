@@ -1,0 +1,59 @@
+<!--
+Copyright 2014 Google Inc. All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+
+limitations under the License.
+-->
+
+<!DOCTYPE html>
+
+<script src="../../web-animations-js/web-animations.js"></script>
+<script src="../../platform/platform.js"></script>
+<link rel="import" href="wat-target-selector.html">
+<link rel="import" href="../internal/wat-button/wat-button.html">
+
+<iframe id="frame"></iframe>
+<wat-target-selector id="selector"></wat-target-selector>
+<script>
+  var frame = document.querySelector('#frame');
+  var d = frame.contentDocument;
+  d.open();
+  d.write('<style>'+
+          'div {' +
+            'width: 32px;' +
+            'height: 32px;' +
+            'border: 1px solid black;' +
+          '}\n' +
+          '.selected {' +
+              'border: 1px solid red;'+
+          '}</style>' _+
+          '<div id="div1"></div>' +
+          '<div id="div2"></div>' +
+          '<div id="div3"></div>');
+  d.close();
+
+  document.addEventListener('select-target', function(e) {
+    var divs = frame.contentDocument.getElementsByTagName('*');
+    for (var i = 0; i < divs.length; i++) {
+      divs[i].classList.remove('selected');
+    }
+    var selectedDiv = frame.contentDocument.getElementById(e.detail);
+    selectedDiv.classList.add('selected');
+  });
+
+  document.addEventListener('polymer-ready', function() {
+    var selector = document.querySelector('#selector');
+    selector.frame = frame;
+    selector.update();
+  });
+</script>
