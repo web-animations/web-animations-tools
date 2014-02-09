@@ -57,7 +57,6 @@ Polymer('wat-timeditem-inspector', {
     }
   },
 
-
   timedItemEasingChanged: function() {
     if (!this.timedItem) {
       return;
