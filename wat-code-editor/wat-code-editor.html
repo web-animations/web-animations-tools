@@ -10,9 +10,39 @@ You may obtain a copy of the License at
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
+See the License for the specific language governing permissions and limitations
+under the License.
+-->
 
-limitations under the License.
+<!--
+/**
+ * @module Web Animations Tools
+ */
+/**
+ * `wat-code-editor` can be used to edit JavaScript, HTML, and CSS to create
+ * one or more `TimedItem`s, and then play those `TimedItem`s.
+ *
+ * Example: (as used in `wat-wat`)
+ *
+ *     <wat-code-editor id="wat-code-editor" timedItem="{{selectedRoot}}"
+ *         message="{{message}}" mode="rows" theme="{{theme}}"
+ *         showGutter="{{showGutter}}" tabSize="{{tabSize}}"
+ *         useWrapMode="{{useWrapMode}}" showPrintMargin="{{showPrintMargin}}">
+ *       <wat-button id="open-menu" on-click="{{toggleMenuVisibility}}"
+ *           title="Open Menu">
+ *         <i class="fa fa-bars"></i>
+ *       </wat-button>
+ *       <wat-github id="github" message="{{message}}"></wat-github>
+ *     </wat-code-editor>
+ *
+ * @class wat-code-editor
+ */
+ /**
+ * Fired when `wat-code-editor` would like `wat-github` to call its `toast()`
+ * function. Response object contains the message string to pass to `toast()`.
+ *
+ * @event request-toast
+ */
 -->
 
 <!doctype html>
@@ -90,6 +120,7 @@ limitations under the License.
         flex-grow: 1;
         height: 30px;
         margin-right: 5px;
+        font-size: 90%;
       }
 
       [hidden] {
