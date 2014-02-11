@@ -79,7 +79,7 @@ limitations under the License.
         on-pointerup="{{deleteFrame}}">×</button>
   </div>
   <input id="input" type="text" class="movable hidden" 
-      value="{{value}}" on-focus="{{selectAll}}"
+      value="{{value}}" on-focus="{{selectAll}}" on-pointerup="{{onInputClick}}"
       on-blur="{{disableEdit}}" on-keydown="{{onKeyUp}}">
   </template>
   <script>
@@ -164,6 +164,9 @@ limitations under the License.
         e.stopPropagation();
         this.fire('delete-keyframe', {name: this.property, index: this.index});
       },
+      onInputClick: function(e) {
+        e.stopPropagation();
+      }
     });
   </script>
 </polymer-element>
