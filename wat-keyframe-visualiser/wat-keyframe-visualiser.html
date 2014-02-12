@@ -1,0 +1,206 @@
+<!--
+Copyright 2014 Google Inc. All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+
+limitations under the License.
+-->
+<link rel="import" href="../../polymer/polymer.html">
+
+<polymer-element name="wat-keyframe-visualiser" attributes="timedItem">
+  <template>
+    <style>
+      :host {
+        display: flex;
+        flex-flow: column;
+        overflow: auto;
+      }
+      #stage {
+        flex-grow: 1;
+        box-sizing: border-box;
+      }
+    </style>
+    <iframe id="stage"></iframe>
+    <div id="container">
+      <div id="settings">
+        <label for="numFrames">#Frames</label>
+        <input id="numFrames" type="number" value="{{numFrames}}" min="0">
+        <input type="checkbox" checked="{{posSensitive}}"><span>Position Sensitive</span>
+        <input type="checkbox" checked="{{onionSkinning}}"><span>Onion Skinning</span>
+      </div>
+      <template repeat="{{properties}}">
+        <div>
+          <input type="checkbox" name="property" value="{{name}}" checked="{{checked}}"
+              on-change="{{displayKeyFrames}}">
+          <span>{{name}} : {{value}}</span>
+        </div>
+      </template>
+    </div>
+  </template>
+  <script>
+    Polymer('wat-keyframe-visualiser', {
+      timedItem: null,
+      posSensitive: false,
+      onionSkinning: false,
+      frameReady: false,
+      numFrames: 20,
+      observe: {
+        'numFrames': 'displayKeyFrames',
+        'posSensitive': 'displayKeyFrames',
+        'onionSkinning': 'displayKeyFrames',
+        'timedItem': 'update',
+        'timedItem.player.currentTime': 'update',
+        // FIXME: Listen for changes of keyframes. Should find a better way to do it.
+        'timedItem.effect._keyframeDictionaries': 'update',
+      },
+      ready: function() {
+        var frame = this.$.stage;
+        frame.onload = function() {
+          // Set up the iframe that is going to be used as the stage.
+          var style = frame.contentDocument.createElement('style');
+          style.type = 'text/css';
+          style.appendChild(document.createTextNode(
+            '#container {display: inline; white-space: nowrap;}'
+          ));
+          frame.contentDocument.head.appendChild(style);
+
+          var root = frame.contentDocument.createElement('div');
+          root.id = 'container';
+          frame.contentDocument.body.appendChild(root);
+          this.frameReady = true;
+        }.bind(this);
+
+        frame.src = '';
+      },
+      update: function() {
+        if (!this.timedItem ||
+            !this.timedItem instanceof Animation ||
+            !this.timedItem.effectValueAtLocalTime ||
+            !this.timedItem.player || !this.frameReady) {
+          return;
+        }
+
+        // Remember the checked states of the inputs and restore them after polymer refresh the view.
+        var checked = {};
+        var checkedProperties = this.$.container.querySelectorAll(
+            'input[name = "property"]:checked'
+        );
+        for (var i = 0; i < checkedProperties.length; i++) {
+          checked[checkedProperties[i].value] = true;
+        }
+
+        // Refresh the list of properties.
+        var localTime = this.timedItem.player ? this.timedItem.player.currentTime : 0;
+        var properties = [];
+        var effect;
+        try {
+          effect = this.timedItem.effectValueAtLocalTime(localTime);
+        } catch (e) {
+          // FIXME: Invalid keyframes will cause an exception to be thrown
+          // because effectValueAtLocalTime uses the raw keyframes, catch it
+          // for now to prevent exception popping up in the log.
+          return;
+        }
+        for (var prop in effect) {
+          if (typeof effect[prop] !== 'function') {
+            return;
+          }
+
+          properties.push({
+            name: prop,
+            value: effect[prop].call(),
+            checked: checked[prop] ? true : false,
+          });
+
+        }
+        this.properties = properties;
+
+        this.displayKeyFrames();
+      },
+      displayKeyFrames: function() {
+        var root = this.$.stage.contentDocument.body.querySelector('#container');
+        root.innerHTML = '';
+
+        var checkedProperties = this.$.container.querySelectorAll('input[name = "property"]:checked');
+        if (!checkedProperties || checkedProperties.length <= 0) {
+          return;
+        }
+
+        // Duplicate the node and put it into iframe.
+        var node = this.getUnAnimatedNode();
+
+        var timespan = this.timedItem.endTime - this.timedItem.startTime;
+
+        for (var i = 0; i <= this.numFrames; i++) {
+          var dupNode = node.cloneNode(true);
+
+          // Avoid id collision.
+          dupNode.id = null;
+
+          if (this.posSensitive) {
+            dupNode.style.position = 'absolute';
+          } else {
+            dupNode.style.display = 'inline-block';
+            dupNode.style.position = 'static';
+          }
+
+          var time = timespan * (i / this.numFrames);
+          var effect;
+          try {
+            effect = this.timedItem.effectValueAtLocalTime(time);
+          } catch (e) {
+            // FIXME: Same as the try and catch in the update function.
+            return;
+          }
+          for (var j = 0; j < checkedProperties.length; j++) {
+            var prop = checkedProperties[j].value;
+            var value = effect[prop].call();
+
+            dupNode.style[prop] = value;
+            if (prop === 'transform') {
+              dupNode.style.webkitTransform = value;
+            }
+          }
+
+          if (this.onionSkinning) {
+            // Opacity decreases linearly when the time of the keyframe is further away.
+            var opacity;
+            var localTime = this.timedItem.player ? this.timedItem.player.currentTime : 0;
+            var minOpacity = 0.2;
+
+            if (time < localTime) {
+              opacity = time / localTime + minOpacity;
+            } else {
+              opacity = (timespan - time) / (timespan - localTime) + minOpacity;
+            }
+            dupNode.style.opacity = Math.min(opacity, 1);
+          }
+          root.appendChild(dupNode);
+        }
+      },
+      getUnAnimatedNode: function() {
+        var savedCurrentTime = this.timedItem.player.currentTime;
+        var paused = this.timedItem.player.paused;
+
+        this.timedItem.player.paused = true;
+        this.timedItem.player.currentTime = -1;
+        var originalNode = this.timedItem.target.cloneNode(true);
+        originalNode.style.cssText = getComputedStyle(this.timedItem.target).cssText;
+
+        this.timedItem.player.currentTime = savedCurrentTime;
+        this.timedItem.player.paused = paused;
+
+        return originalNode;
+      },
+    });
+  </script>
+</polymer-element>

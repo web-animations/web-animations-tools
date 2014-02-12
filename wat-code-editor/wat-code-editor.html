@@ -20,6 +20,7 @@ limitations under the License.
 <link rel="import" href="../../polymer/polymer.html">
 <link rel="import" href="../../polymer-selector/polymer-selector.html">
 <link rel="import" href="../../polymer-ui-toggle-button/polymer-ui-toggle-button.html">
+<link rel="import" href="../wat-keyframe-visualiser/wat-keyframe-visualiser.html">
 <link rel="import" href="../wat-player-controls/wat-player-controls.html">
 <link rel="import" href="../internal/wat-ace-editor/wat-ace-editor.html">
 <link rel="import" href="../internal/wat-button/wat-button.html">
@@ -113,6 +114,7 @@ limitations under the License.
         <div value="javascript">JavaScript</div>
         <div value="html">HTML</div>
         <div value="css">CSS</div>
+        <div value="keyframe">Keyframe</div>
       </polymer-selector>
       <polymer-ui-toggle-button onCaption="ROWS" offCaption="COLUMNS" value="{{rowsMode}}">
       </polymer-ui-toggle-button>
@@ -146,6 +148,8 @@ limitations under the License.
         </div>
       </div>
       <div id="container2" class="container">
+        <wat-keyframe-visualiser id="keyframe" class="paper" timedItem="{{timedItem}}">
+        </wat-keyframe-visualiser>
         <wat-ace-editor id="html" class="paper" mode="ace/mode/html" 
             value="{{html}}" label="HTML" theme="{{theme}}"
             showGutter="{{showGutter}}" tabSize="{{tabSize}}"
