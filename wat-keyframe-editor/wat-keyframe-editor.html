@@ -95,7 +95,8 @@ limitations under the License.
           Click To Add New Property
         </button>
         <div class="{{addingProperty ? '' : 'hidden'}}">
-          <input id="property-name-input" type="text" placeholder="New Property Name">
+          <input id="property-name-input" type="text" 
+              placeholder="New Property Name" on-keyup="{{addProperty}}">
           <button on-pointerup="{{addProperty}}">Add</button>
         </div>
     </div>
@@ -205,7 +206,12 @@ limitations under the License.
       getPropertyContainers: function() {
         return this.$['keyframe-container'].querySelectorAll('.property-container');
       },
-      addProperty: function() {
+      addProperty: function(e) {
+        var ENTER_KEYCODE = 13;
+        if (e.type === 'keyup' && e.keyCode !== ENTER_KEYCODE) {
+          return; 
+        }
+
         if (!this.properties) {
           this.properties = [];
         }
