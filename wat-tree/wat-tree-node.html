@@ -47,6 +47,10 @@ limitations under the License.
         line-height: 0.5em;
         margin-left: 5px;
       }
+      input {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
       #selection {
         color: black;
         position: absolute;
@@ -77,13 +81,17 @@ limitations under the License.
       }
     </style>
     <div id="node" class="tree-node {{tree.selected === timedItem ? 'selected' : ''}}"
-        on-click="{{selectSubtree}}" draggable="{{tree.selected === timedItem}}">
+        on-click="{{selectSubtree}}" on-dblclick="{{onDoubleClick}}" 
+        draggable="{{tree.selected === timedItem}}">
 
       <div id="name-container">
         <template if="{{timedItem.type}}">
           <span on-click="{{toggleSubtree}}">{{timedItem.collapsed ? '⊞' : '⊟'}}</span>
         </template>
-        <span id="name">{{timedItem.type ? timedItem.type + 'Group' : 'animation'}}</span>
+        <span id="name">
+          {{timedItem.name ? timedItem.name : (timedItem.type ? timedItem.type + 'Group' : 'animation')}}
+        </span>
+        <input class="hidden" id="name-input" type="text" on-keyup="{{changeName}}" on-blur="{{changeName}}">
 
         <button class="{{tree.editing ? '' : 'invisible'}}"
             on-click="{{showSelectionMenu}}">+</button>

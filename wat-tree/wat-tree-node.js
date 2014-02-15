@@ -10,6 +10,9 @@
     dropBefore: false,
     dropAfter: false,
     dropAppend: false,
+    observe: {
+      'tree.editing': 'editingChanged',
+    },
     toggleSubtree: function(e) {
       this.timedItem.collapsed = !this.timedItem.collapsed;
     },
@@ -177,6 +180,43 @@
     },
     deleteItem: function() {
       this.timedItem.remove();
+    },
+    onDoubleClick: function(e) {
+      e.stopPropagation();
+      if (!this.tree.editing) {
+        this.focusSubtree();
+        return;
+      }
+
+      this.$.name.classList.add('hidden');
+      this.$['name-input'].classList.remove('hidden');
+
+      if (!this.timedItem.name) {
+        this.timedItem.name = this.$.name.innerHTML.trim();
+      }
+      this.$['name-input'].value = this.timedItem.name;
+      this.$['name-input'].select();
+    },
+    focusSubtree: function() {
+      this.fire('on-timedItem-focus', this.timedItem);
+    },
+    changeName: function(e) {
+      var ENTER_KEYCODE = 13;
+      if (e.type == 'keyup' && e.keyCode !== ENTER_KEYCODE) {
+        return;
+      }
+      this.hideNameInput();
+      this.timedItem.name = this.$['name-input'].value;
+    },
+    editingChanged: function() {
+      if (this.tree.editing) {
+        return;
+      }
+      this.hideNameInput();
+    },
+    hideNameInput: function() {
+      this.$.name.classList.remove('hidden');
+      this.$['name-input'].classList.add('hidden');
     },
   });
 })();
