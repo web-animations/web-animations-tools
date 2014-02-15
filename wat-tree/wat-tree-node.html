@@ -16,50 +16,58 @@ limitations under the License.
 -->
 <link rel="import" href="../../polymer/polymer.html">
 
-<polymer-element name="wat-tree-node" attributes="tree timedItem" on-dragstart="{{startDragging}}">
+<polymer-element name="wat-tree-node" attributes="tree timedItem indent"
+    on-dragstart="{{startDragging}}" on-dragover="{{enableHighlight}}"
+    on-dragleave="{{disableHighlight}}" on-drop="{{onDrop}}">
   <template>
     <style>
       .tree-node {
-        list-style-type: none;
         cursor: pointer;
-        color: blue;
-        padding-left: {{tree.tabSize}}px;
+        padding-left: {{indent}}px;
+      }
+      .tree-node:hover {
+        background-color: rgba(66, 133, 244, 0.5);
+      }
+      #name-container {
+        display: inline;
+        white-space: nowrap;
+        border-top: {{dropBefore ? '2px solid red' : ''}};
+        border-bottom: {{dropAfter ? (((timedItem.type && timedItem.collapsed) || !timedItem.type) ? '2px solid red' : '') : ''}};
+      }
+      span {
+        display: inline-block;
+        padding: 10px 0px 9px 5px;
+        color: {{dropAppend ? 'red' : ''}};
+      }
+      .selected {
+        color: orange;
       }
       .hidden {
         display: none;
       }
-      .selected {
-        color: red;
-      }
-      .drop-area {
-        width: 120px;
-        height: 15px;
-        background-color: transparent;
-      }
-      .drop-area.highlight {
-        background-color: rgba(0, 0, 0, 0.2);
-      }
     </style>
-    <li id="node" class="tree-node {{tree.selected === timedItem ? 'selected' : ''}}" 
+    <div id="node" class="tree-node {{tree.selected === timedItem ? 'selected' : ''}}"
         on-click="{{selectSubtree}}" draggable="{{tree.selected === timedItem}}">
-      <template if="{{timedItem.type}}">
-        <span on-click="{{toggleSubtree}}">{{expanded ? '⊟' : '⊞'}}</span>
-      </template>
-      <span>{{timedItem.type ? timedItem.type + 'Group' : 'animation'}}</span>
-      <div class="{{expanded ? '' : 'hidden'}}">
-        <div data-action="prepend" class="drop-area" 
-            on-dragover="{{enableHighlight}}" on-dragleave="{{disableHighlight}}" 
-            on-drop="{{onDrop}}"></div>
+
+      <div id="name-container">
+        <template if="{{timedItem.type}}">
+          <span on-click="{{toggleSubtree}}">{{timedItem.collapsed ? '⊞' : '⊟'}}</span>
+        </template>
+        <span id="name">{{timedItem.type ? timedItem.type + 'Group' : 'animation'}}</span>
+      </div>
+
+    </div>
+
+    <template if="{{timedItem.type}}">
+      <div class="{{timedItem.collapsed ? 'hidden' : ''}}">
         <!-- FIXME: Accessing the private array because TimedItemList does not 
             work in template repeat.-->
         <template repeat="{{child in timedItem._children}}">
-          <wat-tree-node tree="{{tree}}" timedItem="{{child}}"></wat-tree-node>
+          <wat-tree-node tree="{{tree}}" timedItem="{{child}}" 
+              indent="{{indent + tree.tabSize}}"></wat-tree-node>
         </template>
       </div>
-      <div data-action="insertAfter" class="drop-area" 
-            on-dragover="{{enableHighlight}}" on-dragleave="{{disableHighlight}}" 
-            on-drop="{{onDrop}}"></div>
-    </li>
+    </template>
   </template>
   <script src="wat-tree-node.js"></script>
 </polymer-element>

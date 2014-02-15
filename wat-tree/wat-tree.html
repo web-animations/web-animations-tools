@@ -21,14 +21,17 @@ limitations under the License.
   <template>
     <style>
       :host {
-        display: block;
+        display: flex;
+        flex-flow: column;
+      }
+      #tree {
         overflow: auto;
       }
-      ul {
-        padding-left: 0px;
-      }
     </style>
-    <ul id="tree"></ul>
+    <div id="tree">
+      <wat-tree-node tree="{{}}" timedItem="{{timedItem}}" indent="{{tabSize}}">
+      </wat-tree-node>
+    </div>
   </template>
   <script>
     Polymer('wat-tree', {
@@ -36,14 +39,6 @@ limitations under the License.
       dragged: null,
       selected: null,
       timedItem: null,
-      timedItemChanged: function() {
-        var root = document.createElement('wat-tree-node');
-        root.tree = this;
-        root.timedItem = this.timedItem;
-
-        this.$.tree.innerHTML = '';
-        this.$.tree.appendChild(root);
-      },
     });
   </script>
 </polymer-element>
