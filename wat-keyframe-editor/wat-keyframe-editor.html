@@ -90,12 +90,11 @@ limitations under the License.
       </div>
     </template>
     <div id="new-property-prompt" class="property-container">
-        <button id="prompt-button" class="{{addingProperty ? 'hidden' : ''}}"
-            on-pointerup="{{togglePropertyInput}}">
+        <button id="prompt-button" on-pointerup="{{togglePropertyInput}}">
           Click To Add New Property
         </button>
-        <div class="{{addingProperty ? '' : 'hidden'}}">
-          <input id="property-name-input" type="text" 
+        <div id="input-container" class="hidden">
+          <input id="property-name-input" type="text"
               placeholder="New Property Name" on-keyup="{{addProperty}}">
           <button on-pointerup="{{addProperty}}">Add</button>
         </div>
@@ -253,7 +252,13 @@ limitations under the License.
         button.classList.toggle('hidden');
       },
       togglePropertyInput: function() {
-        this.addingProperty = !this.addingProperty;
+        this.$['input-container'].classList.toggle('hidden');
+        this.$['prompt-button'].classList.toggle('hidden');
+
+        if (!this.$['input-container'].classList.contains('hidden')) {
+          this.$['property-name-input'].focus();
+          this.$['property-name-input'].select();
+        }
       },
     });
   </script>
