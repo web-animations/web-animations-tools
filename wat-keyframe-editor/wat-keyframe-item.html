@@ -101,6 +101,7 @@ limitations under the License.
       valueChanged: function() {
         // Estimate the width of the text because clientWidth is not initialized yet.
         this.textWidth = this.value.length * 7 + 6;
+        this.positionChanged();
       },
       positionChanged: function(oldValue, newValue) {
         if (this.$.text.offsetWidth !== 0) {
