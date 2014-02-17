@@ -19,7 +19,7 @@ limitations under the License.
 
 <link rel="import" href="../../polymer/polymer.html">
 
-<polymer-element name="wat-keyframe-item" attributes="property value position editor index">
+<polymer-element name="wat-keyframe-item" attributes="property value position editor index locked">
   <template>
   <style>
     #text {
@@ -30,6 +30,7 @@ limitations under the License.
       background-color: rgba(255, 255, 255, 0.9);
       /*Setting top to leave space for the arrow.*/
       top: 13px; 
+      white-space: nowrap;
     }
     #arrow {
       position: absolute;
@@ -47,7 +48,7 @@ limitations under the License.
     #delete-button {
       position: absolute;
       top: 9px;
-      right: 2px;
+      right: 5px;
       width: 12px;
       height: 12px;
       padding: 0px;
@@ -73,12 +74,14 @@ limitations under the License.
         on-pointerup="{{pointerUp}}" on-dblclick="{{enableEdit}}">
         {{value}}
     </span>
-    <button id="delete-button" class="faded" title="delete" 
-        on-mouseover="{{toggleButton}}" on-mouseleave="{{toggleButton}}" 
-        on-pointerup="{{deleteFrame}}">×</button>
+    <template if="{{!locked}}">
+      <button id="delete-button" class="faded" title="delete"
+          on-mouseover="{{toggleButton}}" on-mouseleave="{{toggleButton}}"
+          on-pointerup="{{deleteFrame}}">×</button>
+    </template>
   </div>
   <input id="input" type="text" class="movable hidden" 
-      value="{{value}}" on-focus="{{selectAll}}"
+      value="{{value}}" on-focus="{{selectAll}}" on-pointerup="{{onInputClick}}"
       on-blur="{{disableEdit}}" on-keydown="{{onKeyUp}}">
   </template>
   <script>
@@ -94,13 +97,15 @@ limitations under the License.
       textWidth: 0,
       editor: null,
       dragging: false,
+      locked: false,
       valueChanged: function() {
         // Estimate the width of the text because clientWidth is not initialized yet.
         this.textWidth = this.value.length * 7 + 6;
+        this.positionChanged();
       },
       positionChanged: function(oldValue, newValue) {
-        if (this.$.text.clientWidth !== 0) {
-          this.textWidth = this.$.text.clientWidth;
+        if (this.$.text.offsetWidth !== 0) {
+          this.textWidth = this.$.text.offsetWidth;
         }
         var textPos = this.position - this.textWidth / 2;
         textPos = Math.max(textPos, 0);
@@ -133,6 +138,9 @@ limitations under the License.
       pointers: {},
       pointerDown: function(e) {
         e.stopPropagation();
+        if (this.locked) {
+          return;
+        }
         e.target.setPointerCapture(e.pointerId);
         this.pointers[e.pointerId] = true;
         this.pointerMove(e);
@@ -161,8 +169,11 @@ limitations under the License.
       },
       deleteFrame: function(e) {
         e.stopPropagation();
-        this.fire('delete-keyframe', {name: this.property, index: this.index});
+        this.fire('delete-keyframe', this);
       },
+      onInputClick: function(e) {
+        e.stopPropagation();
+      }
     });
   </script>
 </polymer-element>

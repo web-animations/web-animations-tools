@@ -83,18 +83,19 @@ limitations under the License.
         </div>
         <template repeat="{{frame, i in p.frames}}">
           <wat-keyframe-item property="{{frame.name}}" value="{{frame.value}}" 
-              position="{{frame.position}}" editor="{{frame.editor}}" index="{{i}}">
+              position="{{frame.position}}" editor="{{frame.editor}}" index="{{i}}"
+              locked="{{frame.locked}}">
           </wat-keyframe-item>
         </template>
       </div>
     </template>
     <div id="new-property-prompt" class="property-container">
-        <button id="prompt-button" class="{{addingProperty ? 'hidden' : ''}}"
-            on-pointerup="{{togglePropertyInput}}">
+        <button id="prompt-button" on-pointerup="{{togglePropertyInput}}">
           Click To Add New Property
         </button>
-        <div class="{{addingProperty ? '' : 'hidden'}}">
-          <input id="property-name-input" type="text" placeholder="New Property Name">
+        <div id="input-container" class="hidden">
+          <input id="property-name-input" type="text"
+              placeholder="New Property Name" on-keyup="{{addProperty}}">
           <button on-pointerup="{{addProperty}}">Add</button>
         </div>
     </div>
@@ -115,8 +116,11 @@ limitations under the License.
         this.addEventListener('on-property-change', this.convertPropertyToFrames);
 
         this.addEventListener('delete-keyframe', function(e) {
-          var frames = this.getProperty(e.detail.name).object.frames;
-          frames.splice(e.detail.index, 1);
+          var keyframeItem = e.detail;
+          var frames = this.getProperty(keyframeItem.property).object.frames;
+          frames.splice(keyframeItem.index, 1);
+          keyframeItem.remove();
+          this.convertPropertyToFrames();
         });
       },
       timedItemChanged: function() {
@@ -137,12 +141,13 @@ limitations under the License.
           var _frames = _properties[prop];
           var frames = [];
           for (var i = 0; i < _frames.length; i++) {
+            var frame = _frames[i];
             frames.push({
               name: prop,
-              value: _frames[i].cssValue,
-              position: this.width * _frames[i].offset,
+              value: frame.cssValue,
+              position: this.width * frame.offset,
               editor: this,
-              index: i,
+              locked: (frame.offset === 0 || frame.offset === 1) ? true : false,
             });
           }
           properties.push({name: prop, frames: frames});
@@ -157,10 +162,10 @@ limitations under the License.
 
         frames.push({
           name: property,
-          value: 'undefined',
+          value: 'inherit',
           position: e.clientX - target.getBoundingClientRect().left,
           editor: this,
-          index: frames.length,
+          locked: false,
         });
       },
       convertPropertyToFrames: function() {
@@ -200,7 +205,12 @@ limitations under the License.
       getPropertyContainers: function() {
         return this.$['keyframe-container'].querySelectorAll('.property-container');
       },
-      addProperty: function() {
+      addProperty: function(e) {
+        var ENTER_KEYCODE = 13;
+        if (e.type === 'keyup' && e.keyCode !== ENTER_KEYCODE) {
+          return; 
+        }
+
         if (!this.properties) {
           this.properties = [];
         }
@@ -213,7 +223,17 @@ limitations under the License.
           return;
         }
 
-        this.properties.push({name: newProperty, frames: []});
+        var defaultFrames = [0, this.width].map(function(pos) {
+          return {
+            name: newProperty,
+            value: getComputedStyle(this.timedItem.target)[newProperty],
+            position: pos,
+            editor: this,
+            locked: true,
+          }
+        }.bind(this));
+
+        this.properties.push({name: newProperty, frames: defaultFrames});
       },
       deleteProperty: function(e) {
         var property = e.target.dataset['name'];
@@ -232,7 +252,13 @@ limitations under the License.
         button.classList.toggle('hidden');
       },
       togglePropertyInput: function() {
-        this.addingProperty = !this.addingProperty;
+        this.$['input-container'].classList.toggle('hidden');
+        this.$['prompt-button'].classList.toggle('hidden');
+
+        if (!this.$['input-container'].classList.contains('hidden')) {
+          this.$['property-name-input'].focus();
+          this.$['property-name-input'].select();
+        }
       },
     });
   </script>
