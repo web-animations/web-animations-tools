@@ -28,10 +28,6 @@ limitations under the License.
   <template>
   <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
   <style>
-    :host {
-      display: flex;
-      flex-direction: column;
-    }
     #axis {
       /* Flex layout leave no spaces between elements therefore we add spacing in. Using padding 
          instead of margin because the height of the scrubber line depends on the height of this 
@@ -58,11 +54,12 @@ limitations under the License.
   <wat-button id="back-button" title="back" on-click="{{popViewStack}}">
     <i class="fa fa-reply"></i>
   </wat-button>
-  <wat-timeline-scrubber player="{{player}}" pixelsPerSecond="{{pixelsPerSecond}}"
-      height="{{$.itemContainer.clientHeight + $.axis.clientHeight}}">
-  </wat-timeline-scrubber>
-  <wat-timeline-axis id="axis" width="{{$.itemContainer.clientWidth}}"></wat-timeline-axis>
-  <div id="itemContainer"></div>
+  <div>
+    <wat-timeline-scrubber id="scrubber" player="{{player}}" pixelsPerSecond="{{pixelsPerSecond}}">
+    </wat-timeline-scrubber>
+    <wat-timeline-axis id="axis"></wat-timeline-axis>
+    <div id="itemContainer"></div>
+  </div>
   </template>
   <script>
     'use strict';
@@ -109,6 +106,7 @@ limitations under the License.
         var containerWidth = timeline.clientWidth; 
         var timespan = Math.max(this.timedItem.endTime - this.timedItem.startTime, 0);
         this.pixelsPerSecond = timespan === 0 ? 0 : containerWidth / timespan;
+        this.$.axis.width = containerWidth;
         this.$.axis.timespan = timespan;
 
         this.parentForRoot.playbackRate = 1;
