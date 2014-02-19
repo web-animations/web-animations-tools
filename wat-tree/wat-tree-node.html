@@ -39,11 +39,41 @@ limitations under the License.
         padding: 10px 0px 9px 5px;
         color: {{dropAppend ? 'red' : ''}};
       }
+      button {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        padding: 0px;
+        line-height: 0.5em;
+        margin-left: 5px;
+      }
+      #selection {
+        color: black;
+        position: absolute;
+        background-color: buttonface;
+        list-style-type: none;
+        padding-top: 0px;
+        padding-left: 0px;
+        cursor: pointer;
+        box-shadow: 3px 3px 2px black;
+        z-index: 2;
+      }
+      #selection > li {
+        font-size: 0.9em;
+        padding: 5px;
+        border: 1px solid silver;
+      }
+      #selection > li:hover {
+        background-color: silver;
+      }
       .selected {
         color: orange;
       }
       .hidden {
         display: none;
+      }
+      .invisible {
+        visibility: hidden;
       }
     </style>
     <div id="node" class="tree-node {{tree.selected === timedItem ? 'selected' : ''}}"
@@ -54,9 +84,19 @@ limitations under the License.
           <span on-click="{{toggleSubtree}}">{{timedItem.collapsed ? '⊞' : '⊟'}}</span>
         </template>
         <span id="name">{{timedItem.type ? timedItem.type + 'Group' : 'animation'}}</span>
-      </div>
 
+        <button class="{{tree.editing ? '' : 'invisible'}}"
+            on-click="{{showSelectionMenu}}">+</button>
+        <button class="{{tree.editing && timedItem.parent ? '' : 'invisible'}}"
+            on-click="{{deleteItem}}">×</button>
+      </div>
     </div>
+
+    <ul id="selection" class="hidden" on-mouseout="{{hideSelectionMenu}}">
+      <template repeat="{{name in ['Animation', 'ParGroup', 'SeqGroup']}}">
+        <li on-click="{{addAnimation}}" value="{{name}}">{{name}}</li>
+      </template>
+    </ul>
 
     <template if="{{timedItem.type}}">
       <div class="{{timedItem.collapsed ? 'hidden' : ''}}">

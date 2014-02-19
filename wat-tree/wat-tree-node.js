@@ -115,5 +115,68 @@
         return AFTER;
       }
     },
+    showSelectionMenu: function(e) {
+      this.$.selection.classList.remove('hidden');
+      var mouseX = e.clientX - this.getBoundingClientRect().left;
+      var mouseY = e.clientY - this.tree.getBoundingClientRect().top
+                             - this.$.node.getBoundingClientRect().height / 2;
+      this.$.selection.style.left = mouseX + 'px';
+      this.$.selection.style.top = mouseY + 'px';
+    },
+    hideSelectionMenu: function(e) {
+      var children = this.$.selection.childNodes;
+      // Prevent hiding menu when moving between menu options.
+      for (var i = 0; i < children.length; i++) {
+        if (children[i] === e.toElement) {
+          return;
+        }
+      }
+      this.$.selection.classList.add('hidden');
+    },
+    addAnimation: function(e) {
+      // When adding an animation to a non-group timedItem,
+      // the tool will automatically create a group to contain it.
+      if (this.timedItem instanceof Animation) {
+        var root = new ParGroup([]);
+
+        if (this.timedItem.parent) {
+          this.timedItem.before(root);
+          this.timedItem.remove();
+        } else {
+          // The current timedItem is the root
+          var player = this.timedItem.player;
+          if (player && player.source === this.timedItem) {
+            player.source = root;
+          }
+        }
+        root.append(this.timedItem);
+        // If changing the root of the animation tree,
+        // update the root of wat-tree to reflect the change.
+        if (!root.parent) {
+          this.tree.timedItem = root;
+        }
+        this.timedItem = root;
+      }
+      var newItem;
+      switch(e.target.innerHTML) {
+        case 'Animation':
+          newItem = new Animation(null, null, null);
+          break;
+        case 'ParGroup':
+          newItem = new ParGroup([], null);
+          break;
+        case 'SeqGroup':
+          newItem = new SeqGroup([], null);
+          break;
+      }
+      this.timedItem.append(newItem);
+      this.selected = newItem;
+      this.$.selection.selectedIndex = 0;
+
+      this.$.selection.classList.add('hidden');
+    },
+    deleteItem: function() {
+      this.timedItem.remove();
+    },
   });
 })();

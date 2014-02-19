@@ -23,11 +23,20 @@ limitations under the License.
       :host {
         display: flex;
         flex-flow: column;
+        position: relative;
       }
       #tree {
         overflow: auto;
       }
+      button {
+        display: block;
+        /* The sum is 60px so that the timeline and tree is aligned.*/
+        min-height: 30px;
+        width: 40px;
+        margin-bottom: 5px;
+      }
     </style>
+    <button on-click="{{toggleEdit}}">Edit</button>
     <div id="tree">
       <wat-tree-node tree="{{}}" timedItem="{{timedItem}}" indent="{{tabSize}}">
       </wat-tree-node>
@@ -39,6 +48,10 @@ limitations under the License.
       dragged: null,
       selected: null,
       timedItem: null,
+      editing: false,
+      toggleEdit: function() {
+        this.editing = !this.editing;
+      },
     });
   </script>
 </polymer-element>
