@@ -18,7 +18,9 @@ limitations under the License.
 
 <link rel="import" href="../../polymer/polymer.html">
 
-<polymer-element name="wat-timeline-axis" attributes="pixelsPerSecond timespan numMarker minNumMarkers precision">
+<polymer-element name="wat-timeline-axis"
+    attributes="pixelsPerSecond timespan numMarker minNumMarkers precision"
+    on-pointerdown="{{pointerDown}}" on-pointerup="{{pointerUp}}" on-pointermove="{{pointerMove}}">
   <template>
   <style>
       :host {
@@ -124,7 +126,27 @@ limitations under the License.
           var marker = createMarker(linePos, textPos, timeInterval * i);
           markers.appendChild(marker);       
         }
-      }
+      },
+      pointers: {},
+      pointerDown: function(e) {
+        e.stopPropagation();
+        this.pointers[e.pointerId] = true;
+        this.startPoint = e.x;
+        this.pointerMove(e);
+        e.preventDefault();
+      },
+      pointerUp: function(e) {
+        e.stopPropagation();
+        this.pointers[e.pointerId] = false;
+        e.preventDefault();
+      },
+      pointerMove: function(e) {
+        if (!this.pointers[e.pointerId]) {
+          return;
+        }
+        this.fire('zoom', {delta: e.x - this.startPoint});
+        this.startPoint = e.x;
+      },
     });
   </script>
 </polymer-element>

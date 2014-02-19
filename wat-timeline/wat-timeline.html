@@ -107,6 +107,7 @@ limitations under the License.
         });
 
         this.addEventListener('on-timeline-relayout', this.relayoutTimeline.bind(this));
+        this.addEventListener('zoom', this.zoom);
       },
       updateTimeline: function(timespan) {
         if (!this.timedItem) {
@@ -173,6 +174,9 @@ limitations under the License.
         this.$.itemContainer.scrollTop = scrollTop;
         tree.scrollTop = scrollTop;
       },
+      zoom: function(e) {
+        this.pixelsPerSecond += e.detail.delta / this.timespan;
+      }
     });
   </script>
 </polymer-element>
