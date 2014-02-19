@@ -16,6 +16,7 @@ limitations under the License.
 -->
 <link rel="import" href="../../polymer/polymer.html">
 <link rel="import" href="wat-tree-node.html">
+<link rel="import" href="../internal/wat-button/wat-button.html">
 
 <polymer-element name="wat-tree" attributes="timedItem selected tabSize">
   <template>
@@ -28,15 +29,14 @@ limitations under the License.
       #tree-container {
         overflow: auto;
       }
-      button {
-        display: block;
-        /* The sum is 60px so that the timeline and tree is aligned.*/
-        min-height: 30px;
+      wat-button {
         width: 40px;
-        margin-bottom: 5px;
+        font-size: 12px;
+        min-height: 30px;
+        margin-bottom: 6px;
       }
     </style>
-    <button on-click="{{toggleEdit}}">Edit</button>
+    <wat-button on-click="{{toggleEdit}}">Edit</wat-button>
     <div id="tree-container" on-scroll="{{scrollTree}}">
       <wat-tree-node tree="{{}}" timedItem="{{timedItem}}" indent="{{tabSize}}">
       </wat-tree-node>
