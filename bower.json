@@ -5,6 +5,7 @@
     "polymer": "Polymer/polymer#0.1.3",
     "polymer-selector": "Polymer/polymer-selector#master",
     "polymer-ui-toggle-button": "Polymer/polymer-ui-toggle-button#master",
+    "polymer-ui-splitter": "Polymer/polymer-ui-splitter#master",
     "polymer-flex-layout": "Polymer/polymer-flex-layout#master",
     "polymer-animation": "Polymer/polymer-animation#master",
     "polymer-docs": "Polymer/polymer-docs#master",

@@ -15,19 +15,32 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 <link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="wat-tree-node.html">
+<link rel="import" href="../internal/wat-button/wat-button.html">
 
 <polymer-element name="wat-tree" attributes="timedItem selected tabSize">
   <template>
     <style>
       :host {
-        display: block;
+        display: flex;
+        flex-flow: column;
+        position: relative;
+      }
+      #tree-container {
         overflow: auto;
       }
-      ul {
-        padding-left: 0px;
+      wat-button {
+        width: 40px;
+        font-size: 12px;
+        min-height: 30px;
+        margin-bottom: 6px;
       }
     </style>
-    <ul id="tree"></ul>
+    <wat-button on-click="{{toggleEdit}}">Edit</wat-button>
+    <div id="tree-container" on-scroll="{{scrollTree}}">
+      <wat-tree-node tree="{{}}" timedItem="{{timedItem}}" indent="{{tabSize}}">
+      </wat-tree-node>
+    </div>
   </template>
   <script>
     Polymer('wat-tree', {
@@ -35,125 +48,13 @@ limitations under the License.
       dragged: null,
       selected: null,
       timedItem: null,
-      timedItemChanged: function() {
-        var root = document.createElement('wat-tree-node');
-        root.tree = this;
-        root.timedItem = this.timedItem;
-
-        this.$.tree.innerHTML = '';
-        this.$.tree.appendChild(root);
+      editing: false,
+      toggleEdit: function() {
+        this.editing = !this.editing;
       },
-    });
-  </script>
-</polymer-element>
-
-<polymer-element name="wat-tree-node" attributes="tree timedItem" on-dragstart="{{startDragging}}">
-  <template>
-    <style>
-      .tree-node {
-        list-style-type: none;
-        cursor: pointer;
-        color: blue;
-        padding-left: {{tree.tabSize}}px;
-      }
-      .hidden {
-        display: none;
-      }
-      .selected {
-        color: red;
-      }
-      .drop-area {
-        width: 120px;
-        height: 15px;
-        background-color: transparent;
-      }
-      .drop-area.highlight {
-        background-color: rgba(0, 0, 0, 0.2);
-      }
-    </style>
-    <li id="node" class="tree-node {{tree.selected === timedItem ? 'selected' : ''}}" 
-        on-click="{{selectSubtree}}" draggable="{{tree.selected === timedItem}}">
-      <template if="{{timedItem.type}}">
-        <span on-click="{{toggleSubtree}}">{{expanded ? '⊟' : '⊞'}}</span>
-      </template>
-      <span>{{timedItem.type ? timedItem.type + 'Group' : 'animation'}}</span>
-      <div class="{{expanded ? '' : 'hidden'}}">
-        <div data-action="prepend" class="drop-area" 
-            on-dragover="{{enableHighlight}}" on-dragleave="{{disableHighlight}}" 
-            on-drop="{{onDrop}}"></div>
-        <!-- FIXME: Accessing the private array because TimedItemList does not 
-            work in template repeat.-->
-        <template repeat="{{child in timedItem._children}}">
-          <wat-tree-node tree="{{tree}}" timedItem="{{child}}"></wat-tree-node>
-        </template>
-      </div>
-      <div data-action="insertAfter" class="drop-area" 
-            on-dragover="{{enableHighlight}}" on-dragleave="{{disableHighlight}}" 
-            on-drop="{{onDrop}}"></div>
-    </li>
-  </template>
-  <script>
-    Polymer('wat-tree-node', {
-      tree: null,
-      timedItem: null,
-      expanded: false,
-      toggleSubtree: function(e) {
-        this.expanded = !this.expanded;
+      scrollTree: function() {
+        this.fire('scroll', null);
       },
-      selectSubtree: function(e) {
-        e.stopPropagation();
-        if (this.tree.selected === this.timedItem) {
-          this.tree.selected = null;
-        } else {
-          this.tree.selected = this.timedItem;
-        }
-      },
-      startDragging: function(e) {
-        e.stopPropagation();
-        e.dataTransfer.effectAllowed = 'move';
-        this.tree.dragged = this.timedItem;
-        this.expanded = false;
-      },
-      enableHighlight: function(e) {
-        if (!this.isValidDropLocation(e)) {
-          return;
-        }
-
-        e.target.classList.add('highlight');
-        e.preventDefault();
-      },
-      disableHighlight: function(e) {
-        if (!this.isValidDropLocation(e)) {
-          return;
-        }
-        e.target.classList.remove('highlight');
-        e.preventDefault();
-      },
-      onDrop: function(e) {
-        if (!this.isValidDropLocation(e)) {
-          return;
-        }
-        var animation = this.tree.dragged;
-        if (animation.parent) {
-          animation.remove();
-        }
-
-        var action = e.target.dataset['action'];
-        if (action === 'insertAfter') {
-          this.timedItem.after(animation);
-        } else if (action === 'prepend') {
-          this.timedItem.prepend(animation);
-        }
-
-        this.disableHighlight(e);
-        this.tree.dragged = null;
-        e.preventDefault();
-      },
-      isValidDropLocation: function(e) {
-        return this.tree.dragged &&
-            this.tree.dragged !== this.timedItem &&
-            (e.target.dataset['action'] !== 'insertAfter' || this.timedItem.parent);
-      }
     });
   </script>
 </polymer-element>

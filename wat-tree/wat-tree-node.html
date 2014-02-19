@@ -1,0 +1,121 @@
+<!--
+Copyright 2014 Google Inc. All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+
+limitations under the License.
+-->
+<link rel="import" href="../../polymer/polymer.html">
+
+<polymer-element name="wat-tree-node" attributes="tree timedItem indent"
+    on-dragstart="{{startDragging}}" on-dragover="{{enableHighlight}}"
+    on-dragleave="{{disableHighlight}}" on-drop="{{onDrop}}">
+  <template>
+    <style>
+      .tree-node {
+        cursor: pointer;
+        padding-left: {{indent}}px;
+      }
+      .tree-node:hover {
+        background-color: rgba(66, 133, 244, 0.5);
+      }
+      #name-container {
+        display: inline;
+        white-space: nowrap;
+        border-top: {{dropBefore ? '2px solid red' : ''}};
+        border-bottom: {{dropAfter ? (((timedItem.type && timedItem.collapsed) || !timedItem.type) ? '2px solid red' : '') : ''}};
+      }
+      span {
+        display: inline-block;
+        padding: 10px 0px 9px 5px;
+        color: {{dropAppend ? 'red' : ''}};
+      }
+      button {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        padding: 0px;
+        line-height: 0.5em;
+        margin-left: 5px;
+      }
+      input {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+      #selection {
+        color: black;
+        position: absolute;
+        background-color: buttonface;
+        list-style-type: none;
+        padding-top: 0px;
+        padding-left: 0px;
+        cursor: pointer;
+        box-shadow: 3px 3px 2px black;
+        z-index: 2;
+      }
+      #selection > li {
+        font-size: 0.9em;
+        padding: 5px;
+        border: 1px solid silver;
+      }
+      #selection > li:hover {
+        background-color: silver;
+      }
+      .selected {
+        color: orange;
+      }
+      .hidden {
+        display: none;
+      }
+      .invisible {
+        visibility: hidden;
+      }
+    </style>
+    <div id="node" class="tree-node {{tree.selected === timedItem ? 'selected' : ''}}"
+        on-click="{{selectSubtree}}" on-dblclick="{{onDoubleClick}}" 
+        draggable="{{tree.selected === timedItem}}">
+
+      <div id="name-container">
+        <template if="{{timedItem.type}}">
+          <span on-click="{{toggleSubtree}}">{{timedItem.collapsed ? '⊞' : '⊟'}}</span>
+        </template>
+        <span id="name">
+          {{timedItem.name ? timedItem.name : (timedItem.type ? timedItem.type + 'Group' : 'animation')}}
+        </span>
+        <input class="hidden" id="name-input" type="text" on-keyup="{{changeName}}" on-blur="{{changeName}}">
+
+        <button class="{{tree.editing ? '' : 'invisible'}}"
+            on-click="{{showSelectionMenu}}">+</button>
+        <button class="{{tree.editing && timedItem.parent ? '' : 'invisible'}}"
+            on-click="{{deleteItem}}">×</button>
+      </div>
+    </div>
+
+    <ul id="selection" class="hidden" on-mouseout="{{hideSelectionMenu}}">
+      <template repeat="{{name in ['Animation', 'ParGroup', 'SeqGroup']}}">
+        <li on-click="{{addAnimation}}" value="{{name}}">{{name}}</li>
+      </template>
+    </ul>
+
+    <template if="{{timedItem.type}}">
+      <div class="{{timedItem.collapsed ? 'hidden' : ''}}">
+        <!-- FIXME: Accessing the private array because TimedItemList does not 
+            work in template repeat.-->
+        <template repeat="{{child in timedItem._children}}">
+          <wat-tree-node tree="{{tree}}" timedItem="{{child}}" 
+              indent="{{indent + tree.tabSize}}"></wat-tree-node>
+        </template>
+      </div>
+    </template>
+  </template>
+  <script src="wat-tree-node.js"></script>
+</polymer-element>

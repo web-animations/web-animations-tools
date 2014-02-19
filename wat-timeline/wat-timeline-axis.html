@@ -18,17 +18,20 @@ limitations under the License.
 
 <link rel="import" href="../../polymer/polymer.html">
 
-<polymer-element name="wat-timeline-axis" attributes="width timespan numMarker minNumMarkers precision">
+<polymer-element name="wat-timeline-axis"
+    attributes="pixelsPerSecond timespan numMarker minNumMarkers precision"
+    on-pointerdown="{{pointerDown}}" on-pointerup="{{pointerUp}}" on-pointermove="{{pointerMove}}">
   <template>
   <style>
       :host {
         /* Prevent the timeline overgrow.*/
-        min-height: 25px;
+        min-height: 37px;
       }
       text {
         font-size: 0.8em;
         fill: #000000;
         text-anchor: middle;
+        user-select: none;
       }
       line {
         stroke: black;
@@ -37,7 +40,7 @@ limitations under the License.
         stroke: black;
       }
     </style>
-    <svg xmlns="http://www.w3.org/2000/svg" height="25px">
+    <svg xmlns="http://www.w3.org/2000/svg" width="{{width}}px" height="25px">
       <g id="axis">
         <path d="M 0 24 H {{width}}"></path>
       </g>
@@ -46,6 +49,7 @@ limitations under the License.
   <script>
     'use strict';
     Polymer('wat-timeline-axis', {
+      pixelsPerSecond: 0,
       width: 0,
       timespan: 1,
       numMarkers: 21,
@@ -55,12 +59,14 @@ limitations under the License.
       maxNumMarkers: 50,
 
       observe: {
-        width: 'updateView',
+        pixelsPerSecond: 'updateView',
         timespan: 'updateView',
         numMarkers: 'updateView'
       },
 
       updateView: function(oldValue, newValue) {
+        this.width = Math.round(this.pixelsPerSecond * this.timespan);
+
         // Determine the number of markers to display by estimating the width of 
         // the number displayed on top of the marker. the number of digits includes the 
         // number of digits before the decimal point, the decimal point and the precision.
@@ -120,7 +126,27 @@ limitations under the License.
           var marker = createMarker(linePos, textPos, timeInterval * i);
           markers.appendChild(marker);       
         }
-      }
+      },
+      pointers: {},
+      pointerDown: function(e) {
+        e.stopPropagation();
+        this.pointers[e.pointerId] = true;
+        this.startPoint = e.x;
+        this.pointerMove(e);
+        e.preventDefault();
+      },
+      pointerUp: function(e) {
+        e.stopPropagation();
+        this.pointers[e.pointerId] = false;
+        e.preventDefault();
+      },
+      pointerMove: function(e) {
+        if (!this.pointers[e.pointerId]) {
+          return;
+        }
+        this.fire('zoom', {delta: e.x - this.startPoint});
+        this.startPoint = e.x;
+      },
     });
   </script>
 </polymer-element>
