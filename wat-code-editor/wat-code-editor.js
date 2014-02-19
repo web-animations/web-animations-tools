@@ -38,6 +38,7 @@ Polymer('wat-code-editor', {
     } else {
       this.selected = window.localStorage['wat-selected-editors'].split(',');
     }
+    this.previewFrame = this.$['preview-frame'];
     this.updatePreview();
   },
 

@@ -25,6 +25,7 @@ Polymer('wat-timeditem-inspector', {
 
   observe: {
     'timedItem.specified.easing': 'timedItemEasingChanged',
+    '$.targetSelector.selected': 'animationTargetChanged',
   },
 
   created: function() {
@@ -52,11 +53,12 @@ Polymer('wat-timeditem-inspector', {
       this.easing = this.timedItem.specified.easing;
       this.$['wat-bezier'].timedItem = this.timedItem;
       this.$['wat-step'].timedItem = this.timedItem;
+      this.$.targetSelector.selected = this.timedItem.target ?
+          this.timedItem.target.id : '';
     } else {
       this.timedItem = new Animation(null, null, 0);
     }
   },
-
 
   timedItemEasingChanged: function() {
     if (!this.timedItem) {
@@ -70,6 +72,29 @@ Polymer('wat-timeditem-inspector', {
       this.customEasing = this.timedItem.specified.easing;
     }
     this.showAppropriateEasingEditor();
+  },
+  
+  previewFrameChanged: function() {
+    var elementSelector = this.$.targetSelector;
+    this.previewFrame.addEventListener('load', 
+        elementSelector.update.bind(elementSelector));
+  },
+
+  animationTargetChanged: function() {
+    var doc = this.previewFrame.contentDocument;
+    var elem = doc.getElementById(this.$.targetSelector.selected);
+    if (!elem) {
+      return;
+    }
+    var oldAnim = this.timedItem;
+    var newAnim = new Animation(elem, oldAnim.effect, oldAnim.specified);
+    newAnim.name = oldAnim.name;
+    if (oldAnim.parent) {
+      oldAnim.before(newAnim);
+      oldAnim.remove();
+    }
+    this.timedItem = newAnim;
+    this.showPropertyContainer();
   },
 
   showAppropriateEasingEditor: function() {
@@ -90,11 +115,18 @@ Polymer('wat-timeditem-inspector', {
     this.$['easing-editor-container'].className = '';
   },
 
+  showElementSelectorContainer: function() {
+    this.$['property-container'].className = 'hidden';
+    this.$['target-selector-container'].className = '';
+    this.$.targetSelector.update();
+  },
+
   showPropertyContainer: function() {
     if (this.presetEasings.indexOf(this.timedItem.specified.easing) >= 0) {
       this.easing = this.timedItem.specified.easing;
     }
     this.$['easing-editor-container'].className = 'hidden';
+    this.$['target-selector-container'].className = 'hidden';
     this.$['property-container'].className = '';
   }
 });

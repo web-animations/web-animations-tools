@@ -63,13 +63,16 @@ Polymer('wat-wat', {
       this.$.github.toast(event.detail);
     }.bind(this));
 
+    this.$.inspector.previewFrame = this.$['wat-code-editor'].previewFrame;
+
     this.loadAnimation();
   },
 
   observe: {
     '$.dockRight.collapsed': 'dockRightCollapsedChanged',
     '$.dockBottom.collapsed': 'dockBottomCollapsedChanged',
-    '$.dockBottom.shadowRoot.childNodes.length' : 'updateTimeline'
+    '$.dockBottom.shadowRoot.childNodes.length' : 'updateTimeline',
+    '$.inspector.timedItem': 'inspectorItemChanged',
   },
 
   updateTimeline: function() {
@@ -102,6 +105,38 @@ Polymer('wat-wat', {
 
   showPrintMarginChanged: function() {
     window.localStorage['wat-show-print-margin'] = this.showPrintMargin;
+  },
+
+  // The follow three functions are replacements for the timedItem binding
+  // between wat-wat and wat-timedItem-inspector. We can't use a simple 
+  // binding because the inspector may create a new Animation when changing
+  // the target of an animation. In that case we need to change both the 
+  // selectedRoot and the current player's source item.
+  selectedChanged: function() {
+    if (this.selected !== null) {
+      this.$.inspector.timedItem = this.selected;
+    } else {
+      this.$.inspector.timedItem = this.selectedRoot;
+    }
+  },
+
+  selectedRootChanged: function() {
+    if (this.selected === null) {
+      this.$.inspector.timedItem = this.selectedRoot;
+    }
+  },
+
+  inspectorItemChanged: function() {
+    // Inspector changed the selected item, if the selected item is root,
+    // change the root. Otherwise just change the selcted item.
+    if (this.selected === this.selectedRoot) {
+      var newAnim = this.$.inspector.timedItem;
+      if (this.selectedRoot && this.selectedRoot.player) {
+        this.selectedRoot.player.source = newAnim;
+      }
+      this.selectedRoot = newAnim;
+    }
+    this.selected = this.$.inspector.timedItem;
   },
 
   getStorageValue: function(localStorageKey, defaultValue) {

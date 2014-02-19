@@ -1,0 +1,64 @@
+<!--
+Copyright 2014 Google Inc. All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+
+limitations under the License.
+-->
+<link rel="import" href="../../polymer/polymer.html">
+
+<polymer-element name="wat-target-selector" attributes="frame selected">
+  <template>
+    <style>
+      :host {
+        display: block;
+        width: 330px;
+      }
+      input {
+        margin-bottom: 15px;
+      }
+    </style>
+    <div id="radio-button-group">
+      <template repeat="{{e in elements}}">
+        <input type="radio" name="id" value="{{e.id}}" checked="{{e.id === selected ? true : false}}">{{e.id}}<br>
+      </template>
+    </div>
+    <wat-button title="select" on-click="{{selectElement}}">Select</wat-button>
+  </template>
+  <script>
+    Polymer('wat-target-selector', {
+      frame: null,
+      selected: null,
+      update: function() {
+        if (!this.frame) {
+          return;
+        }
+        var elems = this.frame.contentDocument.body.getElementsByTagName('*');
+        var elemsWithID = [];
+        for (var i = 0; i < elems.length; i++) {
+          if (elems[i].id) {
+            elemsWithID.push(elems[i]);
+          }
+        }
+
+        this.elements = elemsWithID;
+      },
+      selectElement: function() {
+        var selected = this.$['radio-button-group'].querySelector('input[name = "id"]:checked');
+        if (!selected) {
+          return;
+        }
+        this.selected = selected.value;
+      },
+    });
+  </script>
+</polymer-element>
