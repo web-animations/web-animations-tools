@@ -25,7 +25,7 @@ limitations under the License.
         flex-flow: column;
         position: relative;
       }
-      #tree {
+      #tree-container {
         overflow: auto;
       }
       button {
@@ -37,7 +37,7 @@ limitations under the License.
       }
     </style>
     <button on-click="{{toggleEdit}}">Edit</button>
-    <div id="tree">
+    <div id="tree-container" on-scroll="{{scrollTree}}">
       <wat-tree-node tree="{{}}" timedItem="{{timedItem}}" indent="{{tabSize}}">
       </wat-tree-node>
     </div>
@@ -51,6 +51,9 @@ limitations under the License.
       editing: false,
       toggleEdit: function() {
         this.editing = !this.editing;
+      },
+      scrollTree: function() {
+        this.fire('scroll', null);
       },
     });
   </script>

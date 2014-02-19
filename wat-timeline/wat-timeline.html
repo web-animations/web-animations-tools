@@ -19,6 +19,8 @@ limitations under the License.
 
 <link rel="import" href="../../polymer/polymer.html">
 <link rel="import" href="../internal/wat-button/wat-button.html">
+<link rel="import" href="../wat-tree/wat-tree.html">
+<link rel="import" href="../../polymer-ui-splitter/polymer-ui-splitter.html">
 <link rel="import" href="wat-timeline-axis.html">
 <link rel="import" href="wat-timeline-scrubber.html">
 <link rel="import" href="wat-timeline-item.html">
@@ -28,12 +30,23 @@ limitations under the License.
   <template>
   <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
   <style>
-    #axis {
-      /* Flex layout leave no spaces between elements therefore we add spacing in. Using padding 
-         instead of margin because the height of the scrubber line depends on the height of this 
-         component. If margin is used then margin need to be hard coded in the height of scrubber.*/
-      padding-top: 6px;
-      padding-bottom: 6px;
+    :host {
+      display: flex;
+      flex-direction: column;
+    }
+    #container {
+      display: flex;
+      flex-direction: row;
+    }
+    #timeline {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-y: hidden;
+    }
+    #itemContainer {
+      display: inline;
+      overflow: auto;
     }
     #back-button {
       display: {{viewStack.length > 0 ? 'flex' : 'none'}};
@@ -43,22 +56,21 @@ limitations under the License.
     .hidden {
       display: none;
     }
-    #itemContainer {
-      /* FIXME: Always display the scroll bar to prevent the situation where the axis gets
-         the updated width with the scroll bar displayed but not the timeline view. It will
-         cause alignment issue between axis and the actual timeline view. */
-      overflow-y: scroll;
-      overflow-x: hidden;
-    }
   </style>
   <wat-button id="back-button" title="back" on-click="{{popViewStack}}">
     <i class="fa fa-reply"></i>
   </wat-button>
-  <div>
-    <wat-timeline-scrubber id="scrubber" player="{{player}}" pixelsPerSecond="{{pixelsPerSecond}}">
-    </wat-timeline-scrubber>
-    <wat-timeline-axis id="axis"></wat-timeline-axis>
-    <div id="itemContainer"></div>
+  <div id="container">
+    <wat-tree id="tree" timedItem="{{timedItem}}" selected="{{selected}}"
+        on-scroll="{{syncScroll}}"></wat-tree>
+    <polymer-ui-splitter id="splitter" direction="left"></polymer-ui-splitter>
+    <div id="timeline">
+      <wat-timeline-scrubber id="scrubber" player="{{player}}" pixelsPerSecond="{{pixelsPerSecond}}">
+      </wat-timeline-scrubber>
+      <wat-timeline-axis id="axis" pixelsPerSecond="{{pixelsPerSecond}}"></wat-timeline-axis>
+      <div id="itemContainer" on-scroll="{{syncScroll}}"
+          style="width: {{pixelsPerSecond * timespan}}px"></div>
+    </div>
   </div>
   </template>
   <script>
@@ -100,17 +112,11 @@ limitations under the License.
         if (!this.timedItem) {
           return;
         }
-        var timeline = this.$.itemContainer;
-        // Get the visual attributes of the timeline container so that
-        // the axis and the scrubber will have the same width with it.
-        var containerWidth = timeline.clientWidth; 
-        var timespan = Math.max(this.timedItem.endTime - this.timedItem.startTime, 0);
-        this.pixelsPerSecond = timespan === 0 ? 0 : containerWidth / timespan;
-        this.$.axis.width = containerWidth;
-        this.$.axis.timespan = timespan;
+        this.timespan = Math.max(this.timedItem.endTime - this.timedItem.startTime, 0);
+        this.$.axis.timespan = this.timespan;
 
         this.parentForRoot.playbackRate = 1;
-        this.parentForRoot.firstIterDuration = timespan - Math.min(this.timedItem.specified.delay, 0);
+        this.parentForRoot.firstIterDuration = this.timespan - Math.min(this.timedItem.specified.delay, 0);
         this.parentForRoot.iterStartDuration = 0;
       },
       relayoutTimeline: function() {
@@ -124,6 +130,16 @@ limitations under the License.
 
         this.$.itemContainer.innerHTML = '';
         this.updateTimeline();
+
+        var timelineWidth = this.clientWidth
+          - this.$.tree.offsetWidth
+          - this.$.splitter.offsetWidth
+          // The 30 is the space for the vertical scrollbar so that 
+          // the horizontal scroll will not appear initially.
+          - 30;
+        if (timelineWidth > 0) {
+          this.pixelsPerSecond = timelineWidth / (this.timespan > 0 ? this.timespan : 1);
+        }
 
         this.root = document.createElement('wat-timeline-item');
         this.root.parentItem = this.parentForRoot;
@@ -146,6 +162,16 @@ limitations under the License.
         this.timedItem = item.oldItem;
         this.player.source = this.timedItem;
         this.player.currentTime = this.player.source.startTime;   
+      },
+      syncScroll: function(e) {
+        var tree = this.$.tree.$['tree-container'];
+        // Sync the scrollbar between the treeview and the timeline.
+        var scrollTop = this.$.itemContainer.scrollTop;
+        if (e.srcElement === this.$.tree) {
+          scrollTop = tree.scrollTop;
+        }
+        this.$.itemContainer.scrollTop = scrollTop;
+        tree.scrollTop = scrollTop;
       },
     });
   </script>
