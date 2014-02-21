@@ -14,6 +14,30 @@ See the License for the specific language governing permissions and
 
 limitations under the License.
 -->
+<!--
+/**
+ * @module Web Animations Tools
+ */
+/**
+ * `wat-tree` can be used to view the structure of an animation or
+ * a group of animations in a tree structure.
+ *
+ * Example:
+ *     <wat-tree id="tree"></wat-tree>
+ *     <script>
+ *        var animation = new Animation(null, [{opacity: 0}], 2);
+ *        var tree = document.getElementById('tree');
+ *        tree.timedItem = animation;
+ *        // You can set it to a child animation that you want to select.
+ *        tree.selected = null;
+ *        // By default the size of the indentation is 32 but you can
+ *        // set your preferred size for the indentation.
+ *        tree.tabSize = 18;
+ *     </script>
+ *
+ * @class wat-tree
+ */
+-->
 <link rel="import" href="../../polymer/polymer.html">
 <link rel="import" href="wat-tree-node.html">
 <link rel="import" href="../internal/wat-button/wat-button.html">
@@ -44,8 +68,24 @@ limitations under the License.
   </template>
   <script>
     Polymer('wat-tree', {
+      /**
+       * The size of the tab in the tree view. Tabs are used in tree nodes for
+       * indentation purposes. Possible values are non-negative integers.
+       *
+       * @attribute tabSize
+       * @type Number
+       * @default 24
+       */
       tabSize: 24,
       dragged: null,
+      /**
+       * The timedItem that is selected in the tree view. Possible values are 
+       * animation objects or animation group objects.
+       *
+       * @attribute selected
+       * @type TimedItem
+       * @default null
+       */
       selected: null,
       timedItem: null,
       editing: false,
