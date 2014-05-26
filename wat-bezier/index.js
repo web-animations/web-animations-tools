@@ -19,15 +19,15 @@
 document.addEventListener('polymer-ready', function() {
   var anim1 = new Animation(document.querySelector('#box1'),
       {left: '500px'},
-      {duration: 2.5, easing: 'ease-in'}
+      {duration: 2500, easing: 'ease-in'}
   );
 
   var anim2 = new Animation(document.querySelector('#box2'),
       {left: '500px'},
-      {duration: 2.5, easing: 'ease-out'}
+      {duration: 2500, easing: 'ease-out'}
   );
 
-  var animation = new ParGroup([anim1, anim2]);
+  var animation = new AnimationGroup([anim1, anim2]);
 
   document.querySelectorAll('wat-bezier')[0].timedItem = anim1;
   document.querySelectorAll('wat-bezier')[1].timedItem = anim2;

@@ -75,13 +75,13 @@ document.addEventListener('polymer-ready', function() {
   var createCharacter = function(color, index, coords) {
     var charGrid = document.getElementById('charGrid' + index);
     var circles = charGrid.querySelectorAll('div');
-    var seqGroup = new SeqGroup([], {delay: 0.08});
+    var seqGroup = new AnimationSequence([], {delay: 80});
     var circle;
     
     for (var i = 0, circle; circle = circles[coords[i]]; i++) {
       var animation = new Animation(circle, 
           {backgroundColor: color, visibility: 'visible'}, 
-          {duration: 0.06, delay: -0.052});
+          {duration: 60, delay: -52, fill: 'forwards'});
       seqGroup.append(animation);
     }
     
@@ -97,7 +97,7 @@ document.addEventListener('polymer-ready', function() {
   }
   document.body.appendChild(text);
 
-  var logoAnimation = new SeqGroup([]);
+  var logoAnimation = new AnimationSequence([]);
   for (var i = 0; i < strLength; i++) {
     logoAnimation.append(createCharacter(
         colors[i % colors.length], i, coords[str[i]]));
