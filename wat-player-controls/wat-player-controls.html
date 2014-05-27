@@ -129,8 +129,8 @@ limitations under the License.
         step="0.1" title="Playback Rate">
     <input class="scrubber" type="range" value="{{player.currentTime}}" 
         step="{{step}}" min="{{player.source.startTime}}"
-        max="{{player.source.endTime}}" on-pointerup="{{resume}}"
-        on-pointerdown="{{pauseWhileSeeking}}" title="Adjust Current Time">
+        max="{{player.source.endTime}}" on-up="{{resume}}"
+        on-down="{{pauseWhileSeeking}}" title="Adjust Current Time">
   </template>
   
   <script>

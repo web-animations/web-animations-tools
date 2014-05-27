@@ -70,7 +70,7 @@ limitations under the License.
   </style>
   <div id="keyframe-container">
     <template repeat="{{p in properties}}">
-      <div class="property-container" data-name="{{p.name}}" on-pointerup="{{addKeyFrame}}">
+      <div class="property-container" data-name="{{p.name}}" on-up="{{addKeyFrame}}">
         <div id="line">
           <template repeat="{{percentage in [20, 80]}}">
             <div id="property-name" on-mouseover="{{toggleDeleteButton}}"
@@ -90,13 +90,13 @@ limitations under the License.
       </div>
     </template>
     <div id="new-property-prompt" class="property-container">
-        <button id="prompt-button" on-pointerup="{{togglePropertyInput}}">
+        <button id="prompt-button" on-up="{{togglePropertyInput}}">
           Click To Add New Property
         </button>
         <div id="input-container" class="hidden">
           <input id="property-name-input" type="text"
               placeholder="New Property Name" on-keyup="{{addProperty}}">
-          <button on-pointerup="{{addProperty}}">Add</button>
+          <button on-up="{{addProperty}}">Add</button>
         </div>
     </div>
   </div>

@@ -72,12 +72,12 @@ limitations under the License.
   </style>
     <div id="group-container" class="{{timeline.selected === timedItem ? 'selected' : ''}}"
           style="left:{{(delay / parentPlaybackRate) * timeline.pixelsPerSecond}}px"
-          on-pointerup="{{onSelect}}" on-dblclick="{{onFocus}}">
+          on-up="{{onSelect}}" on-dblclick="{{onFocus}}">
       <wat-keyframe-editor class="{{editingKeyframe ? '' : 'hidden'}}" timedItem="{{timedItem}}" 
           width="{{firstIterDuration * timeline.pixelsPerSecond}}"></wat-keyframe-editor>
       <div class="timeline-item {{playbackRate < 0 ? 'negativePlayback' : ''}} {{editingKeyframe ? 'hidden' : ''}}"
-            style="min-width:{{firstIterDuration * timeline.pixelsPerSecond}}px;
-                    max-width:{{firstIterDuration * timeline.pixelsPerSecond}}px;">
+            style="min-width:{{firstIterDuration * timeline.pixelsPerSecond / 1000}}px;
+                    max-width:{{firstIterDuration * timeline.pixelsPerSecond / 1000}}px;">
         <span></span>
         <div id="children" class="{{(timedItem.type && timedItem.collapsed) ? 'hidden' : ''}}">
           <template if="{{timedItem.type}}">
@@ -92,14 +92,14 @@ limitations under the License.
         <!-- FIXME: Not sure why do we need min width here but without it 
              there will have layout problem when zoom in on the page. -->
         <div class="timeline-item iteration" style="min-width:{{length * timeline.pixelsPerSecond}}px;"
-            on-pointerup="{{onSelect}}" on-dblclick="{{onFocus}}"></div>
+            on-up="{{onSelect}}" on-dblclick="{{onFocus}}"></div>
       </template>
       <!-- FIXME: Need to check if the effect is keyframe effect. 
                   Cannot do instanceof in template for now. -->
       <template if="{{!timedItem.type}}">
         <wat-button id="edit-button" class="faded" title="edit" 
             on-mouseover="{{toggleButtonFading}}" on-mouseleave="{{toggleButtonFading}}" 
-            on-pointerup="{{toggleKeyframeEditor}}">✎</wat-button>
+            on-up="{{toggleKeyframeEditor}}">✎</wat-button>
       </template>
     </div>
   </template>
