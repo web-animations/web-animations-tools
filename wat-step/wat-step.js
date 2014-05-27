@@ -14,7 +14,7 @@ Polymer('wat-step', {
   observe: {
     'steps': 'updateTimingFunction',
     'position': 'updateTimingFunction',
-    'timedItem.specified.easing': 'timedItemEasingChanged',
+    'timedItem.timing.easing': 'timedItemEasingChanged',
   },
 
   created: function() {
@@ -210,16 +210,16 @@ Polymer('wat-step', {
   },
   
   updateEasing: function() {
-    if (this.timedItem && this.timedItem.specified) {
-      this.timedItem.specified.easing = 
+    if (this.timedItem && this.timedItem.timing) {
+      this.timedItem.timing.easing = 
           this.propsToString({steps: this.steps, position: this.position});
     }
   },
   
   timedItemEasingChanged: function() {
-    if (this.stepEasings.indexOf(this.timedItem.specified.easing) >= 0 ||
-        this.timedItem.specified.easing.indexOf('steps') >= 0) {
-      var stepsPos = this.stringToProps(this.timedItem.specified.easing);
+    if (this.stepEasings.indexOf(this.timedItem.timing.easing) >= 0 ||
+        this.timedItem.timing.easing.indexOf('steps') >= 0) {
+      var stepsPos = this.stringToProps(this.timedItem.timing.easing);
       
       this.disabled = false;
       this.steps = stepsPos.steps;

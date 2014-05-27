@@ -19,15 +19,15 @@
 document.addEventListener('polymer-ready', function() {
   var linear = new Animation(document.querySelector('#box-linear'),
       {left: '500px'},
-      {duration: 2.5, easing: 'linear'}
+      {duration: 2500, easing: 'linear'}
   );
 
   var step = new Animation(document.querySelector('#box-step'),
       {left: '500px'},
-      {duration: 2.5, easing: 'step-end'}
+      {duration: 2500, easing: 'step-end'}
   );
 
-  var animation = new ParGroup([linear, step]);
+  var animation = new AnimationGroup([linear, step]);
   
   document.querySelector('wat-step').timedItem = step;
 

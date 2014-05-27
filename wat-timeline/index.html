@@ -51,100 +51,100 @@ limitations under the License.
 
     var animations = [{
       name: 'Normal animation',
-      timedItem: new Animation(b, sampleKeyframes, {duration: 1}),
+      timedItem: new Animation(b, sampleKeyframes, {duration: 1000}),
     }, {
       name: 'Positive delay',
-      timedItem: new Animation(b, sampleKeyframes, {delay: 1, duration: 3}),
+      timedItem: new Animation(b, sampleKeyframes, {delay: 1000, duration: 3000}),
     }, {
       name: 'Negative delay',
-      timedItem: new Animation(b, sampleKeyframes, {delay: -2, duration: 3}),
+      timedItem: new Animation(b, sampleKeyframes, {delay: -2000, duration: 3000}),
     }, {
       name: 'Negative delay and invisible animation',
       timedItem: new Animation(b, sampleKeyframes, 
-          {delay: -2, duration: 3, playbackRate: 2}),
+          {delay: -2000, duration: 3000, playbackRate: 2}),
     }, {
       name: 'Positive playbackRate',
       timedItem: new Animation(b, sampleKeyframes,
-          {delay: 1, duration: 3, playbackRate: 2}),
+          {delay: 1000, duration: 3000, playbackRate: 2}),
     }, {
       name: 'Negative playbackRate',
       timedItem: new Animation(b, sampleKeyframes,
-          {delay: 1, duration: 3, playbackRate: -1}),
+          {delay: 1000, duration: 3000, playbackRate: -1}),
     }, {
       name: 'Iteration',
       timedItem: new Animation(b, sampleKeyframes,
-          {delay: 1, duration: 1, iterations: 3}),    
+          {delay: 1000, duration: 1000, iterations: 3}),    
     }, {
       name: 'Iteration with fraction',
       timedItem: new Animation(b, sampleKeyframes,
-          {delay: 1, duration: 1, iterations: 2.3}),
+          {delay: 1000, duration: 1000, iterations: 2.3}),
     }, {
       name: 'Iteration start with positive delay',
        timedItem: new Animation(b, sampleKeyframes,
-          {delay: 1, duration: 1, iterationStart: 0.7}),
+          {delay: 1000, duration: 1000, iterationStart: 0.7}),
     }, {
       name: 'Iteration start with negative delay', 
       timedItem: new Animation(b, sampleKeyframes,
-          {delay: -0.5, duration: 1, iterationStart: 0.5}),
+          {delay: -500, duration: 1000, iterationStart: 0.5}),
     }, {
       name: 'Iteration start with fraction', 
       timedItem: new Animation(b, sampleKeyframes,
-          {delay: 0.5, duration: 1, iterations: 2.3, iterationStart: 0.7}),
+          {delay: 500, duration: 1000, iterations: 2.3, iterationStart: 0.7}),
     }, {
-      name: 'SeqGroup',
-      timedItem: new SeqGroup([
+      name: 'AnimationSequence',
+      timedItem: new AnimationSequence([
         new Animation(b, sampleKeyframes, 
-            {duration: 1, iterations: 2}),
-        new Animation(b, sampleKeyframes1, 2)
+            {duration: 1000, iterations: 2}),
+        new Animation(b, sampleKeyframes1, 2000)
       ]),
     }, {
-      name: 'Positive delay inside SeqGroup',
-      timedItem: new SeqGroup([
-        new Animation(b, sampleKeyframes, 2),
+      name: 'Positive delay inside AnimationSequence',
+      timedItem: new AnimationSequence([
+        new Animation(b, sampleKeyframes, 2000),
         new Animation(b, sampleKeyframes1,
-            {delay: 1, duration: 1, iterations: 2, iterationStart: 0.7}),
+            {delay: 1000, duration: 1000, iterations: 2, iterationStart: 0.7}),
       ]),
     }, {
-      name: 'Negative delay inside SeqGroup',
-      timedItem: new SeqGroup([
-        new Animation(b, sampleKeyframes, 2),
+      name: 'Negative delay inside AnimationSequence',
+      timedItem: new AnimationSequence([
+        new Animation(b, sampleKeyframes, 2000),
         new Animation(b, sampleKeyframes1,
-            {delay: -1, duration: 1}),
+            {delay: -1000, duration: 1000}),
       ]),
     }, {
       name: 'Infinite iterations',
-      timedItem: new SeqGroup([
-        new Animation(b, sampleKeyframes, {duration: 1, iterations: Infinity})
-      ], {duration: 4}),
+      timedItem: new AnimationSequence([
+        new Animation(b, sampleKeyframes, {duration: 1000, iterations: Infinity})
+      ], {duration: 4000}),
     }, {
       name: 'Iteration start and negative delay on group',
-      timedItem: new SeqGroup([
-        new Animation(b, sampleKeyframes, {duration: 2, iterations: 4}),
+      timedItem: new AnimationSequence([
+        new Animation(b, sampleKeyframes, {duration: 2000, iterations: 4}),
         new Animation(b, sampleKeyframes1,
-            {delay: 1, duration: 3, iterations: 2, iterationStart: 0.6}),
-      ], {delay: -1, iterationStart: 0.3}),
+            {delay: 1000, duration: 3000, iterations: 2, iterationStart: 0.6}),
+      ], {delay: -1000, iterationStart: 0.3}),
     }, {
       name: 'Negative playback rate on group',
-      timedItem: new ParGroup([
-        new Animation(b, sampleKeyframes, {delay: 2, duration: 2})
+      timedItem: new AnimationGroup([
+        new Animation(b, sampleKeyframes, {delay: 2000, duration: 2000})
       ], {playbackRate: -1}),
     }, {
       name: 'Complex animation',
-      timedItem: new SeqGroup([
-        new ParGroup([
-          new Animation(b, sampleKeyframes, {duration: 1, delay: 3}), 
+      timedItem: new AnimationSequence([
+        new AnimationGroup([
+          new Animation(b, sampleKeyframes, {duration: 1000, delay: 3000}), 
           new Animation(b, sampleKeyframes1, 
               {
                 delay: -0.5, 
-                duration: 1,
+                duration: 1000,
                 iterationStart: 0.2,
               }),
         ]),
-        new ParGroup([
-          new Animation(b, sampleKeyframes, {duration: 8, iterations: 1}), 
-          new Animation(b, sampleKeyframes1, {duration:2, iterations: 5}),
+        new AnimationGroup([
+          new Animation(b, sampleKeyframes, {duration: 8000, iterations: 1}), 
+          new Animation(b, sampleKeyframes1, {duration:2000, iterations: 5}),
         ], {iterations: 2})
-      ], {playbackRate: 2, iterations: 2, delay: 1}),
+      ], {playbackRate: 2, iterations: 2, delay: 1000}),
     }];
 
     document.addEventListener('polymer-ready', function() {

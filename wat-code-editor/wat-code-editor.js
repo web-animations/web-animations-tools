@@ -192,8 +192,8 @@ Polymer('wat-code-editor', {
         this.$['player-controls'].player = player;
         this.timedItem = player.source;
         window.Animation = w.Animation;
-        window.ParGroup = w.ParGroup;
-        window.SeqGroup = w.SeqGroup;
+        window.AnimationGroup = w.AnimationGroup;
+        window.AnimationSequence = w.AnimationSequence;
         window.KeyframeEffect = w.KeyframeEffect;
         window.MotionPathEffect = w.MotionPathEffect;
       } else {

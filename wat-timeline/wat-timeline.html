@@ -118,7 +118,7 @@ limitations under the License.
         this.$.axis.timespan = this.timespan;
 
         this.parentForRoot.playbackRate = 1;
-        this.parentForRoot.firstIterDuration = this.timespan - Math.min(this.timedItem.specified.delay, 0);
+        this.parentForRoot.firstIterDuration = this.timespan - Math.min(this.timedItem.timing.delay, 0);
         this.parentForRoot.iterStartDuration = 0;
       },
       relayoutTimeline: function() {

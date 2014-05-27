@@ -12,7 +12,12 @@
     "polymer-doc-viewer": "Polymer/polymer-doc-viewer#master",
     "polymer-home-page": "Polymer/polymer-home-page#master",
     "marked-js": "Polymer/marked-js#master",
-    "web-animations-js": "web-animations/web-animations-js#master",
+    "web-animations-js": "web-animations/web-animations-js#experimental",
     "github-js": "michael/github#master"
+  },
+  "resolutions": {
+    "polymer": "master",
+    "web-animations-js": "experimental",
+    "platform": "master"
   }
 }

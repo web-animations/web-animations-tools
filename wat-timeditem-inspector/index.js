@@ -19,15 +19,19 @@
 document.addEventListener('polymer-ready', function() {
   var anim1 = new Animation(document.querySelector('#box1'),
       {left: 'calc(100% - 60px)'},
-      {duration: 2, easing: 'ease-in'}
+      {duration: 2000, easing: 'ease-in'}
   );
 
   var anim2 = new Animation(document.querySelector('#box2'),
       {left: 'calc(100% - 60px)'},
-      {duration: 2, easing: 'ease-out'}
+      {duration: 2000, easing: 'ease-out'}
   );
 
-  var animation = new ParGroup([anim1, anim2]);
+  var animation = new AnimationGroup([anim1, anim2]);
+
+  var previewFrame = document.querySelector(".box-container");
+  document.querySelectorAll('wat-timeditem-inspector')[0].previewFrame = previewFrame;
+  document.querySelectorAll('wat-timeditem-inspector')[1].previewFrame = previewFrame;
 
   document.querySelectorAll('wat-timeditem-inspector')[0].timedItem = anim1;
   document.querySelectorAll('wat-timeditem-inspector')[1].timedItem = anim2;

@@ -127,23 +127,23 @@ limitations under the License.
         this.observer.addPath(this, 'timedItem.startTime');
         this.observer.addPath(this, 'timedItem.endTime');
         this.observer.addPath(this, 'timedItem.duration');
-        this.observer.addPath(this, 'timedItem.specified.delay');
-        this.observer.addPath(this, 'timedItem.specified.endDelay');
-        this.observer.addPath(this, 'timedItem.specified.playbackRate');
-        this.observer.addPath(this, 'timedItem.specified.iterations');
-        this.observer.addPath(this, 'timedItem.specified.iterationStart');
+        this.observer.addPath(this, 'timedItem.timing.delay');
+        this.observer.addPath(this, 'timedItem.timing.endDelay');
+        this.observer.addPath(this, 'timedItem.timing.playbackRate');
+        this.observer.addPath(this, 'timedItem.timing.iterations');
+        this.observer.addPath(this, 'timedItem.timing.iterationStart');
         this.observer.open(this.notifyRelayout.bind(this));
       },
       performLayout: function() {
-        var timingInput = this.timedItem.specified;
+        var timingInput = this.timedItem.timing;
 
         // parentPlaybackRate will affect the delay of this timedItem and this timedItem's 
         // own playbackRate will only affect the duration of the item. Therefore we need both.
         this.parentPlaybackRate = Math.abs(this.parentItem.playbackRate);
         this.playbackRate = this.parentPlaybackRate * timingInput.playbackRate;
 
-        this.delay = (this.timedItem.parent instanceof SeqGroup) ?
-          ((this.timedItem.previousSibling) ? this.timedItem.previousSibling.specified.endDelay : 0) : 
+        this.delay = (this.timedItem.parent instanceof AnimationSequence) ?
+          ((this.timedItem.previousSibling) ? this.timedItem.previousSibling.timing.endDelay : 0) : 
           0;
         this.delay += timingInput.delay - this.parentItem.iterStartDuration + this.timedItem.startTime;
 
