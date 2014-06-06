@@ -13,7 +13,7 @@ Polymer('wat-bezier', {
   },
      
   observe: {
-    'timedItem.specified.easing': 'timedItemEasingChanged',
+    'timedItem.timing.easing': 'timedItemEasingChanged',
   },
 
   created: function() {
@@ -167,18 +167,18 @@ Polymer('wat-bezier', {
   },
  
   updateEasing: function() {
-    if (this.timedItem && this.timedItem.specified) {
-      this.timedItem.specified.easing = 
+    if (this.timedItem && this.timedItem.timing) {
+      this.timedItem.timing.easing = 
           this.coordsToString(this.controlPoints);
     }
   },
   
   timedItemEasingChanged: function() {
-    if (this.bezierEasings.indexOf(this.timedItem.specified.easing) >= 0 || 
-          this.timedItem.specified.easing.indexOf('cubic-bezier') >= 0) {
+    if (this.bezierEasings.indexOf(this.timedItem.timing.easing) >= 0 || 
+          this.timedItem.timing.easing.indexOf('cubic-bezier') >= 0) {
       this.disabled = false;
       this.controlPoints = 
-          this.stringToCoords(this.timedItem.specified.easing).slice();
+          this.stringToCoords(this.timedItem.timing.easing).slice();
       for (var t in this.easing) {
         if (this.easing[t].toString() == this.controlPoints.toString()) {
           this.preset = t;
@@ -186,7 +186,7 @@ Polymer('wat-bezier', {
         }
       }
       this.preset = 'custom';
-    } else if (this.timedItem.specified.easing != '') {
+    } else if (this.timedItem.timing.easing != '') {
       this.disabled = true;
     }
   },
@@ -199,8 +199,8 @@ Polymer('wat-bezier', {
 
   pointers: {},
   pointerDown: function(e) {
+    console.log(e);
     if (!this.disabled) {
-      e.target.setPointerCapture(e.pointerId);
       this.pointers[e.pointerId] = true;
       this.pointerMove(e);
       e.preventDefault();
@@ -209,7 +209,6 @@ Polymer('wat-bezier', {
   
   pointerUp: function(e) {
     this.pointers[e.pointerId] = false;
-    e.target.releasePointerCapture(e.pointerId);
   },
   
   pointerMove: function(e) {

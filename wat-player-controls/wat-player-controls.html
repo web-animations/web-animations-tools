@@ -57,7 +57,7 @@ limitations under the License.
         vertical-align: middle;
       }
 
-      .repeating ^^ button {
+      .repeating::shadow button {
         color: rgba(66,133,244,1);
         background-color: white;
       }
@@ -129,8 +129,8 @@ limitations under the License.
         step="0.1" title="Playback Rate">
     <input class="scrubber" type="range" value="{{player.currentTime}}" 
         step="{{step}}" min="{{player.source.startTime}}"
-        max="{{player.source.endTime}}" on-pointerup="{{resume}}"
-        on-pointerdown="{{pauseWhileSeeking}}" title="Adjust Current Time">
+        max="{{player.source.endTime}}" on-up="{{resume}}"
+        on-down="{{pauseWhileSeeking}}" title="Adjust Current Time">
   </template>
   
   <script>
@@ -168,7 +168,7 @@ limitations under the License.
       },
       
       playerChanged: function() {
-        this.player.paused = true;
+	this.player.pause();
       },
 
       playPause: function() {
@@ -176,7 +176,11 @@ limitations under the License.
             this.player.currentTime > this.player.source.endTime) {
           this.player.currentTime = this.player.source.endTime;
         }
-        this.player.paused = !this.player.paused;
+	if (this.player.paused) {
+	  this.player.play();
+	} else {
+	  this.player.pause();
+	}
         this.paused = this.player.paused;
       },
       

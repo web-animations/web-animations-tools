@@ -20,7 +20,7 @@ limitations under the License.
 
 <polymer-element name="wat-timeline-axis"
     attributes="pixelsPerSecond timespan numMarker minNumMarkers precision"
-    on-pointerdown="{{pointerDown}}" on-pointerup="{{pointerUp}}" on-pointermove="{{pointerMove}}">
+    on-down="{{pointerDown}}" on-up="{{pointerUp}}" on-track="{{pointerMove}}">
   <template>
   <style>
       :host {
@@ -132,7 +132,6 @@ limitations under the License.
         e.stopPropagation();
         this.pointers[e.pointerId] = true;
         this.startPoint = e.x;
-        this.pointerMove(e);
         e.preventDefault();
       },
       pointerUp: function(e) {
@@ -144,8 +143,9 @@ limitations under the License.
         if (!this.pointers[e.pointerId]) {
           return;
         }
-        this.fire('zoom', {delta: e.x - this.startPoint});
-        this.startPoint = e.x;
+	console.log(e.dx);
+        this.fire('zoom', {delta: e.dx});
+        this.startPoint += e.dx;
       },
     });
   </script>

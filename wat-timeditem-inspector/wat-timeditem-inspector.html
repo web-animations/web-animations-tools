@@ -40,17 +40,17 @@ limitations under the License.
       <div class="property">
         <label for="delay">delay:</label>
         <input class="field" id="delay" type="number" 
-            value="{{timedItem.specified.delay}}">
+            value="{{timedItem.timing.delay}}">
       </div>
       <div class="property">
         <label for="endDelay">endDelay:</label>
         <input class="field" id="endDelay" type="number" 
-            value="{{timedItem.specified.endDelay}}">
+            value="{{timedItem.timing.endDelay}}">
       </div>
       <div class="property">
         <label for="direction">direction:</label>
         <select class="field" id="direction" 
-            value="{{timedItem.specified.direction}}">
+            value="{{timedItem.timing.direction}}">
           <template repeat="{{direction in ['normal', 'reverse', 'alternate', 'alternate-reverse']}}">
             <option value="{{direction}}">{{direction}}</option>
           </template>
@@ -59,7 +59,7 @@ limitations under the License.
       <div class="property">
         <label for="duration">duration:</label>
         <input class="field" id="duration" type="number" placeholder="intrinsic"
-            value="{{timedItem.specified.duration}}">
+            value="{{timedItem.timing.duration}}">
       </div>
       <div class="property">
         <label for="easing">easing:</label>
@@ -79,7 +79,7 @@ limitations under the License.
       </div>
       <div class="property">
         <label for="fill">fill:</label>
-        <select class="field" id="fill" value="{{timedItem.specified.fill}}">
+        <select class="field" id="fill" value="{{timedItem.timing.fill}}">
           <template repeat="{{fill in ['none', 'forwards', 'backwards', 'both']}}">
             <option value="{{fill}}">{{fill}}</option>
           </template>
@@ -88,17 +88,17 @@ limitations under the License.
       <div class="property">
         <label for="iterations">iterations:</label>
         <input class="field" id="iterations" type="number" 
-            value="{{timedItem.specified.iterations}}">
+            value="{{timedItem.timing.iterations}}">
       </div>
       <div class="property">
         <label for="iterationStart">iterationStart:</label>
         <input class="field" id="iterationStart" type="number" 
-            value="{{timedItem.specified.iterationStart}}">
+            value="{{timedItem.timing.iterationStart}}">
       </div>
       <div class="property">
         <label for="playbackRate">playbackRate:</label>
         <input class="field" id="playbackRate" type="number" 
-            value="{{timedItem.specified.playbackRate}}">
+            value="{{timedItem.timing.playbackRate}}">
       </div>
     </div>
 

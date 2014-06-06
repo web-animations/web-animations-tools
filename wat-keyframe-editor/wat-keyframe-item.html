@@ -70,18 +70,18 @@ limitations under the License.
   </style>
   <div id="arrow"></div>
   <div id="text-container" class="movable">
-    <span id="text" on-pointerdown="{{pointerDown}}" on-pointermove="{{pointerMove}}"
-        on-pointerup="{{pointerUp}}" on-dblclick="{{enableEdit}}">
+    <span id="text" on-down="{{pointerDown}}" on-track="{{pointerMove}}"
+        on-up="{{pointerUp}}" on-dblclick="{{enableEdit}}">
         {{value}}
     </span>
     <template if="{{!locked}}">
       <button id="delete-button" class="faded" title="delete"
           on-mouseover="{{toggleButton}}" on-mouseleave="{{toggleButton}}"
-          on-pointerup="{{deleteFrame}}">×</button>
+          on-up="{{deleteFrame}}">×</button>
     </template>
   </div>
   <input id="input" type="text" class="movable hidden" 
-      value="{{value}}" on-focus="{{selectAll}}" on-pointerup="{{onInputClick}}"
+      value="{{value}}" on-focus="{{selectAll}}" on-up="{{onInputClick}}"
       on-blur="{{disableEdit}}" on-keydown="{{onKeyUp}}">
   </template>
   <script>
@@ -141,7 +141,6 @@ limitations under the License.
         if (this.locked) {
           return;
         }
-        e.target.setPointerCapture(e.pointerId);
         this.pointers[e.pointerId] = true;
         this.pointerMove(e);
         this.dragging = true;
@@ -150,7 +149,6 @@ limitations under the License.
       pointerUp: function(e) {
         e.stopPropagation();
         this.pointers[e.pointerId] = false;
-        e.target.releasePointerCapture(e.pointerId);
         this.dragging = false;
         e.preventDefault();
       },

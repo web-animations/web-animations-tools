@@ -89,7 +89,7 @@ limitations under the License.
           <span on-click="{{toggleSubtree}}">{{timedItem.collapsed ? '⊞' : '⊟'}}</span>
         </template>
         <span id="name">
-          {{timedItem.name ? timedItem.name : (timedItem.type ? timedItem.type + 'Group' : 'animation')}}
+          {{timedItem.name ? timedItem.name : (timedItem.type ? (timedItem.type == 'par' ? 'AnimationGroup' : 'AnimationSequence') : 'animation')}}
         </span>
         <input class="hidden" id="name-input" type="text" on-keyup="{{changeName}}" on-blur="{{changeName}}">
 
@@ -101,7 +101,7 @@ limitations under the License.
     </div>
 
     <ul id="selection" class="hidden" on-mouseout="{{hideSelectionMenu}}">
-      <template repeat="{{name in ['Animation', 'ParGroup', 'SeqGroup']}}">
+      <template repeat="{{name in ['Animation', 'AnimationGroup', 'AnimationSequence']}}">
         <li on-click="{{addAnimation}}" value="{{name}}">{{name}}</li>
       </template>
     </ul>

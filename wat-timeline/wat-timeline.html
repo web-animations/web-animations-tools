@@ -115,10 +115,11 @@ limitations under the License.
           return;
         }
         this.timespan = Math.max(this.timedItem.endTime - this.timedItem.startTime, 0);
+	this.timespan /= 1000;
         this.$.axis.timespan = this.timespan;
 
         this.parentForRoot.playbackRate = 1;
-        this.parentForRoot.firstIterDuration = this.timespan - Math.min(this.timedItem.specified.delay, 0);
+        this.parentForRoot.firstIterDuration = this.timespan - Math.min(this.timedItem.timing.delay / 1000, 0);
         this.parentForRoot.iterStartDuration = 0;
       },
       relayoutTimeline: function() {

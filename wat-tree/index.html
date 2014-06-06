@@ -25,32 +25,32 @@ limitations under the License.
 <wat-tree id="tree"></wat-tree>
 <script>
   var b = document.querySelector('#test_button');
-  var timedItem = new SeqGroup([
-    new ParGroup([
+  var timedItem = new AnimationSequence([
+    new AnimationGroup([
       new Animation(b, [
         {transform: 'scale(1)', offset: 0},
         {transform: 'scale(1.5)', offset: 0.5}, 
         {transform: 'scale(1)', offset: 1}
-      ], {duration: 1, delay: 3}), 
+      ], {duration: 1000, delay: 3000}), 
       new Animation(b, [
         {opacity: '1', offset: 0},
         {opacity: '0', offset: 0.55},
         {opacity: '1', offset: 1},
-      ], {duration: 1, iterationStart: 0.2}),
+      ], {duration: 1000, iterationStart: 0.2}),
     ]),
-    new ParGroup([
+    new AnimationGroup([
       new Animation(b, [
         {transform: 'scale(1)', offset: 0},
         {transform: 'scale(1.5)', offset: 0.5}, 
         {transform: 'scale(1)', offset: 1}
-      ], {duration: 8, iterations: 1}), 
+      ], {duration: 8000, iterations: 1}), 
       new Animation(b, [
         {opacity: '1', offset: 0},
         {opacity: '0', offset: 0.55},
         {opacity: '1', offset: 1},
-      ], {duration:2, iterations: 5}),
+      ], {duration:2000, iterations: 5}),
     ], {iterations: 2})
-  ], {playbackRate: 2, iterations: 2, delay: 1});
+  ], {playbackRate: 2, iterations: 2000, delay: 1000});
 
   b.addEventListener('click', function() {
     document.timeline.play(timedItem);

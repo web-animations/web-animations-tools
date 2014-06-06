@@ -36,18 +36,18 @@ limitations under the License.
           '}\n' +
           '.selected {' +
               'border: 1px solid red;'+
-          '}</style>' _+
+          '}</style>' +
           '<div id="div1"></div>' +
           '<div id="div2"></div>' +
           '<div id="div3"></div>');
   d.close();
 
-  document.addEventListener('select-target', function(e) {
+  selector.addEventListener('select-target', function(e) {
     var divs = frame.contentDocument.getElementsByTagName('*');
     for (var i = 0; i < divs.length; i++) {
       divs[i].classList.remove('selected');
     }
-    var selectedDiv = frame.contentDocument.getElementById(e.detail);
+    var selectedDiv = frame.contentDocument.getElementById(e.detail.selected);
     selectedDiv.classList.add('selected');
   });
 

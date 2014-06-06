@@ -24,7 +24,7 @@ Polymer('wat-timeditem-inspector', {
       'step-start', 'step-middle', 'step-end'],
 
   observe: {
-    'timedItem.specified.easing': 'timedItemEasingChanged',
+    'timedItem.timing.easing': 'timedItemEasingChanged',
     '$.targetSelector.selected': 'animationTargetChanged',
   },
 
@@ -33,24 +33,24 @@ Polymer('wat-timeditem-inspector', {
   },
   
   ready: function() {
-    this.easing = this.timedItem.specified.easing;
+    this.easing = this.timedItem.timing.easing;
   },
 
   easingChanged: function() {
     if (this.timedItem && this.easing != 'custom') {
-      this.timedItem.specified.easing = this.easing;
+      this.timedItem.timing.easing = this.easing;
     } else {
       this.customEasing = '';
     }
   },
 
   customEasingChanged: function() {
-    this.timedItem.specified.easing = this.customEasing;
+    this.timedItem.timing.easing = this.customEasing;
   },
 
   timedItemChanged: function() {
     if (this.timedItem) {
-      this.easing = this.timedItem.specified.easing;
+      this.easing = this.timedItem.timing.easing;
       this.$['wat-bezier'].timedItem = this.timedItem;
       this.$['wat-step'].timedItem = this.timedItem;
       this.$.targetSelector.selected = this.timedItem.target ?
@@ -64,12 +64,12 @@ Polymer('wat-timeditem-inspector', {
     if (!this.timedItem) {
       return;
     }
-    this.easing = this.timedItem.specified.easing;
-    if (this.presetEasings.indexOf(this.timedItem.specified.easing) >= 0) {
-      this.easing = this.timedItem.specified.easing;
+    this.easing = this.timedItem.timing.easing;
+    if (this.presetEasings.indexOf(this.timedItem.timing.easing) >= 0) {
+      this.easing = this.timedItem.timing.easing;
     } else {
       this.easing = 'custom';
-      this.customEasing = this.timedItem.specified.easing;
+      this.customEasing = this.timedItem.timing.easing;
     }
     this.showAppropriateEasingEditor();
   },
@@ -81,13 +81,18 @@ Polymer('wat-timeditem-inspector', {
   },
 
   animationTargetChanged: function() {
-    var doc = this.previewFrame.contentDocument;
+    if (!this.previewFrame) {
+      // TODO: It should probably not be possible to set the animation target in the
+      // first place if there is no available previewFrame.
+      return;
+    }
+    var doc = this.previewFrame.contentDocument || document;
     var elem = doc.getElementById(this.$.targetSelector.selected);
     if (!elem) {
       return;
     }
     var oldAnim = this.timedItem;
-    var newAnim = new Animation(elem, oldAnim.effect, oldAnim.specified);
+    var newAnim = new Animation(elem, oldAnim.effect, oldAnim.timing);
     newAnim.name = oldAnim.name;
     if (oldAnim.parent) {
       oldAnim.before(newAnim);
@@ -98,12 +103,12 @@ Polymer('wat-timeditem-inspector', {
   },
 
   showAppropriateEasingEditor: function() {
-    if (this.bezierEasings.indexOf(this.timedItem.specified.easing) >= 0 ||
-        this.timedItem.specified.easing.indexOf('cubic-bezier') >= 0) {
+    if (this.bezierEasings.indexOf(this.timedItem.timing.easing) >= 0 ||
+        this.timedItem.timing.easing.indexOf('cubic-bezier') >= 0) {
       this.$['wat-step'].className = 'hidden';
       this.$['wat-bezier'].className = '';
-    } else if (this.stepEasings.indexOf(this.timedItem.specified.easing) >= 0 ||
-        this.timedItem.specified.easing.indexOf('steps') >= 0) {
+    } else if (this.stepEasings.indexOf(this.timedItem.timing.easing) >= 0 ||
+        this.timedItem.timing.easing.indexOf('steps') >= 0) {
       this.$['wat-bezier'].className = 'hidden';
       this.$['wat-step'].className = '';
    }
@@ -122,8 +127,8 @@ Polymer('wat-timeditem-inspector', {
   },
 
   showPropertyContainer: function() {
-    if (this.presetEasings.indexOf(this.timedItem.specified.easing) >= 0) {
-      this.easing = this.timedItem.specified.easing;
+    if (this.presetEasings.indexOf(this.timedItem.timing.easing) >= 0) {
+      this.easing = this.timedItem.timing.easing;
     }
     this.$['easing-editor-container'].className = 'hidden';
     this.$['target-selector-container'].className = 'hidden';

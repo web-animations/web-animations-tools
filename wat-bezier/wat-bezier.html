@@ -58,8 +58,8 @@ limitations under the License.
       }
     </style>
     
-    <canvas on-pointerdown="{{pointerDown}}" on-pointermove="{{pointerMove}}"
-            on-pointerup="{{pointerUp}}" touch-action="none" id="canvas"
+    <canvas on-down="{{pointerDown}}" on-track="{{pointerMove}}"
+            on-up="{{pointerUp}}" touch-action="none" id="canvas"
             height="600" width="330"></canvas>
 
     <div style="padding-top: 5px;">

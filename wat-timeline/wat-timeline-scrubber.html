@@ -41,10 +41,10 @@ limitations under the License.
       border-left:1px solid black;
     }
   </style>
-  <div id="circle" on-pointerup="{{pointerUp}}" on-pointerdown="{{pointerDown}}" 
-      on-pointermove="{{pointerMove}}"></div>
-  <div id="line" on-pointerup="{{pointerUp}}" on-pointerdown="{{pointerDown}}" 
-      on-pointermove="{{pointerMove}}"></div>
+  <div id="circle" on-up="{{pointerUp}}" on-down="{{pointerDown}}" 
+      on-track="{{pointerMove}}"></div>
+  <div id="line" on-up="{{pointerUp}}" on-down="{{pointerDown}}" 
+      on-track="{{pointerMove}}"></div>
   </template>
   <script>
     'use strict';
@@ -59,12 +59,12 @@ limitations under the License.
         var newCurrentTime = this.player.currentTime;
         newCurrentTime = Math.min(newCurrentTime, this.player.source.endTime);
         newCurrentTime = Math.max(newCurrentTime, this.player.source.startTime);
+	newCurrentTime /= 1000;
         this.x = newCurrentTime * this.pixelsPerSecond;
       },
       pointers: {},
       pointerDown: function(e) {
         e.stopPropagation();
-        e.target.setPointerCapture(e.pointerId);
         this.pointers[e.pointerId] = true;
         this.pointerMove(e);
         e.preventDefault();
@@ -72,7 +72,6 @@ limitations under the License.
       pointerUp: function(e) {
         e.stopPropagation();
         this.pointers[e.pointerId] = false;
-        e.target.releasePointerCapture(e.pointerId);
         e.preventDefault();
       },
       pointerMove: function(e) {
@@ -84,9 +83,9 @@ limitations under the License.
           return;
         }
         var x = e.clientX - this.getBoundingClientRect().left;
-        var newCurrentTime = (x / this.pixelsPerSecond) + this.player.source.startTime;
-        this.player.currentTime = newCurrentTime;
-        this.player.paused = true;
+        var newCurrentTime = (x / this.pixelsPerSecond) + this.player.source.startTime / 1000;
+        this.player.currentTime = newCurrentTime * 1000;
+        this.player.pause();
       },
     });
   </script>

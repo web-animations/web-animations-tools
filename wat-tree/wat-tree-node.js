@@ -140,7 +140,7 @@
       // When adding an animation to a non-group timedItem,
       // the tool will automatically create a group to contain it.
       if (this.timedItem instanceof Animation) {
-        var root = new ParGroup([]);
+        var root = new AnimationGroup([]);
 
         if (this.timedItem.parent) {
           this.timedItem.before(root);
@@ -165,11 +165,11 @@
         case 'Animation':
           newItem = new Animation(null, null, null);
           break;
-        case 'ParGroup':
-          newItem = new ParGroup([], null);
+        case 'AnimationGroup':
+          newItem = new AnimationGroup([], null);
           break;
-        case 'SeqGroup':
-          newItem = new SeqGroup([], null);
+        case 'AnimationSequence':
+          newItem = new AnimationSequence([], null);
           break;
       }
       this.timedItem.append(newItem);
