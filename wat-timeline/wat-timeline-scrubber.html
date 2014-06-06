@@ -14,6 +14,20 @@ See the License for the specific language governing permissions and
 
 limitations under the License.
 -->
+<!--
+/**
+ * @module Web Animations Tools
+ */
+/**
+ * `wat-timeline-scrubber` is used in `wat-timeline` for seeking on the timeline.
+ *
+ * Example: (as used in `wat-timeline`)
+ *     <wat-timeline-scrubber id="scrubber" player="{{player}}" pixelsPerSecond="{{pixelsPerSecond}}">
+ *     </wat-timeline-scrubber>
+ *
+ * @class wat-timeline-scrubber
+ */
+-->
 <!DOCTYPE html>
 
 <link rel="import" href="../../polymer/polymer.html">
@@ -49,8 +63,25 @@ limitations under the License.
   <script>
     'use strict';
     Polymer('wat-timeline-scrubber', {
+      /**
+       * The player this scrubber controls.
+       * Possible values are player objects.
+       *
+       * @attribute player
+       * @type Player
+       * @default null
+       */
       player: null,
       x: 0,
+
+      /**
+       * The number of pixels per second.
+       * Possible values are positive integers.
+       *
+       * @attribute pixelsPerSecond
+       * @type Number
+       * @default 0
+       */
       pixelsPerSecond: 0,
       observe: {
         'player.currentTime': 'onPlayerTimeChanged',

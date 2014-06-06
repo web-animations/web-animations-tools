@@ -14,7 +14,25 @@ See the License for the specific language governing permissions and
 
 limitations under the License.
 -->
-
+<!--
+/**
+ * @module Web Animations Tools
+ */
+/**
+ * `wat-keyframe-item` is the element used in `wat-keyframe-editor` to
+ * represent a keyframe.
+ *
+ * Example: (as used in `wat-keyframe-editor`)
+ *    <template repeat="{{frame, i in p.frames}}">
+ *      <wat-keyframe-item property="{{frame.name}}" value="{{frame.value}}"
+ *          position="{{frame.position}}" editor="{{frame.editor}}" index="{{i}}"
+ *          locked="{{frame.locked}}">
+ *      </wat-keyframe-item>
+ *    </template>
+ *
+ * @class wat-keyframe-item
+ */
+-->
 <!DOCTYPE html>
 
 <link rel="import" href="../../polymer/polymer.html">
@@ -88,15 +106,71 @@ limitations under the License.
     'use strict';
 
     Polymer('wat-keyframe-item', {
+      /**
+       * The name of the css property this keyframe corresponds to. Possible 
+       * values are css property names.
+       *
+       * @attribute property
+       * @type String
+       * @default ''
+       */
       property: '',
+
+      /**
+       * The value of the css proerty this keyframe corresponds to. Possible 
+       * values are valid values of the css property.
+       *
+       * @attribute value
+       * @type String
+       * @default ''
+       */
       value: '',
+
+      /**
+       * The index of this keyframe in the list of keyframes for this property.
+       * It is used to index and delete the specific keyframe in the list of keyframes.
+       * Possible values are integers in range [0, length_of_the_list]
+       *
+       * @attribute index
+       * @type Number
+       * @default 0
+       */
       index: 0,
       arrowSize: 5,
+
+      /**
+       * The position (in pixels) of this item in the editor.
+       * Possible values are non-negative integers in range [0, width_of_keyframe_editor].
+       *
+       * @attribute position
+       * @type Number
+       * @default 0
+       */
       position: 0,
       textPos: 0,
       textWidth: 0,
+
+      /**
+       * The keyframe editor this item corresponds to.
+       * Possible values are `wat-keyframe-editor` objects that contain this item.
+       *
+       * @attribute editor
+       * @type wat-keyframe-editor
+       * @default null
+       */
       editor: null,
       dragging: false,
+
+      /**
+       * This boolean value specifies if this item is locked to its position or not.
+       * The keyframe at the start and end point of an animation are locked due to the
+       * assumption that keyframeEffect will have a frame at the start and the end of
+       * an animation in the implementation of web animations. 
+       *
+       * @attribute locked
+       * @type Boolean
+       * @default false
+       */
       locked: false,
       valueChanged: function() {
         // Estimate the width of the text because clientWidth is not initialized yet.

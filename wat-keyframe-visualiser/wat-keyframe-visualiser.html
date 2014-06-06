@@ -14,6 +14,26 @@ See the License for the specific language governing permissions and
 
 limitations under the License.
 -->
+<!--
+/**
+ * @module Web Animations Tools
+ */
+/**
+ * `wat-keyframe-visualiser` can be used to visualise the keyframes of an animation 
+ * that has a KeyframeEffect by showing all the intermediate frames between the start 
+ * of the animation and the end of the animation.
+ *
+ * Example:
+ *     <wat-keyframe-visualiser id="visualiser"></wat-timeline-item>
+ *     <script>
+ *        var animation = new Animation(null, [{opacity: 0}], 2);
+ *        var visualiser = document.getElementById('visualiser');
+ *        visualiser.timedItem = animation;
+ *     </script>
+ *
+ * @class wat-keyframe-visualiser
+ */
+-->
 <link rel="import" href="../../polymer/polymer.html">
 
 <polymer-element name="wat-keyframe-visualiser" attributes="timedItem">
@@ -48,6 +68,13 @@ limitations under the License.
   </template>
   <script>
     Polymer('wat-keyframe-visualiser', {
+      /**
+       * Possible values are animation objects that has a KeyframeEffect.
+       *
+       * @attribute timedItem
+       * @type Animation
+       * @default null
+       */
       timedItem: null,
       posSensitive: false,
       onionSkinning: false,

@@ -14,6 +14,23 @@ See the License for the specific language governing permissions and
 
 limitations under the License.
 -->
+<!--
+/**
+ * @module Web Animations Tools
+ */
+/**
+ * `wat-tree-node` is the data structure used in `wat-tree` to represent
+ *  a node of the tree view.
+ *
+ * Example: (as used in `wat-tree-node` itself)
+ *     <template repeat="{{child in timedItem._children}}">
+ *         <wat-tree-node tree="{{tree}}" timedItem="{{child}}"
+ *            indent="{{indent + tree.tabSize}}"></wat-tree-node>
+ *     </template>
+ *
+ * @class wat-tree-node
+ */
+-->
 <link rel="import" href="../../polymer/polymer.html">
 
 <polymer-element name="wat-tree-node" attributes="tree timedItem indent"

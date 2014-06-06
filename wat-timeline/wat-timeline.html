@@ -14,7 +14,27 @@ See the License for the specific language governing permissions and
 
 limitations under the License.
 -->
-
+<!--
+/**
+ * @module Web Animations Tools
+ */
+/**
+ * `wat-timeline` can be used to display an animation or a group of animations
+ * on a timeline.
+ *
+ * Example:
+ *     <wat-timeline id="timeline"></wat-timeline>
+ *     <script>
+ *        var animation = new Animation(null, [{opacity: 0}], 2);
+ *        var timeline = document.getElementById('timeline');
+ *        timeline.timedItem = animation;
+ *        // You can set it to a child animation that you want to select.
+*        timeline.selected = null;
+ *     </script>
+ *
+ * @class wat-timeline
+ */
+-->
 <!DOCTYPE html>
 
 <link rel="import" href="../../polymer/polymer.html">
@@ -26,7 +46,7 @@ limitations under the License.
 <link rel="import" href="wat-timeline-item.html">
 <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 
-<polymer-element name="wat-timeline" attributes="timedItem player pixelsPerSecond selected">
+<polymer-element name="wat-timeline" attributes="timedItem selected">
   <template>
   <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
   <style>
@@ -78,7 +98,23 @@ limitations under the License.
     'use strict';
     Polymer('wat-timeline', {
       pixelsPerSecond: 1,
+      /**
+       * The timedItem that is being shown on the timeline.
+       * Possible values are animation objects or animation group objects.
+       *
+       * @attribute timedItem
+       * @type TimedItem
+       * @default null
+       */
       timedItem: null,
+      /**
+       * The timedItem that is being selected on the timeline.
+       * Possible values are animation objects or animation group objects.
+       *
+       * @attribute selected
+       * @type TimedItem
+       * @default null
+       */
       selected: null,
       player: null,
       viewStack: [],

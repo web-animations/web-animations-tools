@@ -14,6 +14,27 @@ See the License for the specific language governing permissions and
 
 limitations under the License.
 -->
+<!--
+/**
+ * @module Web Animations Tools
+ */
+/**
+ * `wat-target-selector` can be used to select the id of an element
+ * from a given iframe.
+ *
+ * Example:
+ *     <iframe id="frame"></iframe>
+ *     <wat-target-selector id="selector"></wat-target-selector>
+ *     <script>
+ *        var selector = document.getElementById('selector');
+ *        selector.frame = document.getElemeentById('frame');
+ *        ... After user make a selection ...
+ *        var selection = selector.selected;
+ *     </script>
+ *
+ * @class wat-target-selector
+ */
+-->
 <link rel="import" href="../../polymer/polymer.html">
 
 <polymer-element name="wat-target-selector" attributes="frame selected">
@@ -36,7 +57,22 @@ limitations under the License.
   </template>
   <script>
     Polymer('wat-target-selector', {
+      /**
+       * The iframe object the selector is inspecting.
+       * Possible values are any iframe objects.
+       *
+       * @attribute frame
+       * @type IFrame
+       * @default null
+       */
       frame: null,
+      /**
+       * The selected id of an element in the iframe.
+       *
+       * @attribute selected
+       * @type String
+       * @default null
+       */
       selected: null,
       update: function() {
         if (!this.frame) {

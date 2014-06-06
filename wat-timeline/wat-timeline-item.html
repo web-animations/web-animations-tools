@@ -14,7 +14,23 @@ See the License for the specific language governing permissions and
 
 limitations under the License.
 -->
-
+<!--
+/**
+ * @module Web Animations Tools
+ */
+/**
+ * `wat-timeline-item` is the data structure that is used in `wat-timeline` to
+ * represent an animation or a group of aniamtions.
+ *
+ * Example:
+ *     <template repeat="{{child in timedItem._children}}">
+ *        <wat-timeline-item parentItem="{{}}" timeline="{{timeline}}" timedItem="{{child}}">
+ *        </wat-timeline-item>
+ *     </template>
+ *
+ * @class wat-timeline-item
+ */
+-->
 <!DOCTYPE html>
 <link rel="import" href="../../polymer/polymer.html">
 <link rel="import" href="../wat-keyframe-editor/wat-keyframe-editor.html">
@@ -107,8 +123,33 @@ limitations under the License.
     'use strict';
 
     Polymer('wat-timeline-item', {
+      /**
+       * The `wat-timeline` object this item attaches to.
+       * Possible values are wat-timeline objects that contains
+       * this item.
+       *
+       * @attribute timeline
+       * @type wat-timeline
+       * @default null
+       */
       timeline: null,
+
+      /**
+       * The timedItem it represents on the timeline.
+       *
+       * @attribute timedItem
+       * @type TimedItem
+       * @default null
+       */
       timedItem: null,
+
+      /**
+       * The objects that stores the parent information of this timedItem.
+       *
+       * @attribute parentItem
+       * @type Object
+       * @default null
+       */
       parentItem: null,
       delay: 0,
       playbackRate: 1,

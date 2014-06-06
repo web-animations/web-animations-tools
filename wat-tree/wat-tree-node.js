@@ -4,8 +4,33 @@
   var APPEND = 3;
 
   Polymer('wat-tree-node', {
+    /**
+     * The tree view that this node is attached to. Possible values 
+     * are wat-tree objects that contains this node.
+     *
+     * @attribute tree
+     * @type wat-tree
+     * @default null
+     */
     tree: null,
+
+    /**
+     * The timedItem it represents in the tree view. Possible values
+     * are an animation of a group of animations.
+     *
+     * @attribute timedItem
+     * @type TimedItem
+     * @default null
+     */
     timedItem: null,
+    /**
+     * The number of tabs this item is indenting. Possible values are
+     * any non-negative integers.
+     *
+     * @attribute indent
+     * @type Number
+     * @default 0
+     */
     indent: 0,
     dropBefore: false,
     dropAfter: false,

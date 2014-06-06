@@ -14,7 +14,27 @@ See the License for the specific language governing permissions and
 
 limitations under the License.
 -->
-
+<!--
+/**
+ * @module Web Animations Tools
+ */
+/**
+ * `wat-keyframe-editor` can be used to edit the keyframes of an animation that has a
+ * KeyframeEffect. It allows adding/deleting properties, editing the values and offsets of 
+ * the keyframes of an animation. It is usually used in `wat-timeline-item` element.
+ *
+ * Example: (as used in `wat-timeline-item`)
+ *     <wat-timeline-item>
+ *        ...
+          <wat-keyframe-editor timedItem="{{timedItem}}"
+              width="{{firstIterDuration * timeline.pixelsPerSecond}}">
+          </wat-keyframe-editor>
+          ...
+       </wat-timeline-item>
+ *
+ * @class wat-keyframe-editor
+ */
+-->
 <!DOCTYPE html>
 
 <link rel="import" href="wat-keyframe-item.html">
@@ -105,7 +125,23 @@ limitations under the License.
     'use strict';
 
     Polymer('wat-keyframe-editor', {
+      /**
+       * The timedItem that is being edited. Possible values are animation 
+       * objects that has a KeyframeEffect.
+       *
+       * @attribute timedItem
+       * @type Animation
+       * @default null
+       */
       timedItem: null,
+
+      /**
+       * The width of the editor. Possible values are non-negative integers.
+       *
+       * @attribute width
+       * @type Number
+       * @default 0
+       */
       width: 0,
       properties: null,
       addingProperty: false,

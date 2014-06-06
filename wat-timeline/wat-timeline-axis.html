@@ -14,6 +14,25 @@ See the License for the specific language governing permissions and
 
 limitations under the License.
 -->
+<!--
+/**
+ * @module Web Animations Tools
+ */
+/**
+ * `wat-timeline-axis` is used in `wat-timeline` to display a horizontal time axis.
+ *
+ * Example: (as used in `wat-timeline`)
+ *     <wat-timeline-axis id="axis" pixelsPerSecond="{{pixelsPerSecond}}"></wat-timeline-axis>
+ *     <script>
+ *       // Calculate the timespan of the timedItem.
+ *       timespan = Math.max(timedItem.endTime - timedItem.startTime, 0);
+ *       // Set the timespan of the axis.
+ *       axis.timespan = timespan;
+ *     </script>
+ *
+ * @class wat-timeline-axis
+ */
+-->
 <!DOCTYPE html>
 
 <link rel="import" href="../../polymer/polymer.html">
@@ -49,12 +68,56 @@ limitations under the License.
   <script>
     'use strict';
     Polymer('wat-timeline-axis', {
+      /**
+       * The number of pixels to represent a second on the axis.
+       * Possible values are non-negative integers.
+       *
+       * @attribute pixelsPerSecond
+       * @type Number
+       * @default 0
+       */
       pixelsPerSecond: 0,
       width: 0,
-      timespan: 1,
+
+      /**
+       * The total number of seconds shown on the axis.
+       * Possible values are non-negative numbers.
+       *
+       * @attribute timespan
+       * @type Number
+       * @default 0
+       */
+      timespan: 0,
+
+      /**
+       * The number of markers shown on the axis.
+       * Possible values are positive integers.
+       *
+       * @attribute numMarkers
+       * @type Number
+       * @default 21
+       */
       numMarkers: 21,
+
+      /**
+       * The precision of the numbers on each marker.
+       * Possible values are positive integers.
+       *
+       * @attribute precision
+       * @type Number
+       * @default 2
+       */
       precision: 2,
-      // Need a start and end marker.
+      /**
+       * The minimum number of markers on the axis. The default
+       * minimum number is 2 because we need a start and an end marker.
+       * Possible values are any positive integers greater than 2.
+       *
+       * @attribute minNumMarkers
+       * @type Number
+       * @default 2
+       */
+      //
       minNumMarkers: 2,
       maxNumMarkers: 50,
 
