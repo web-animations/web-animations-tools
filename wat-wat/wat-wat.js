@@ -53,7 +53,11 @@ Polymer('wat-wat', {
       }
 
       this.$['wat-code-editor'].updatePreview();
-    });
+    }.bind(this));
+
+    this.addEventListener('files-saved', function(event) {
+        window.location.hash = event.detail;
+    }.bind(this));
 
     this.addEventListener('token-changed', function(event) {
       this.loadAnimation();

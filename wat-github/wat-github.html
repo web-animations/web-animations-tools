@@ -10,9 +10,42 @@ You may obtain a copy of the License at
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
+See the License for the specific language governing permissions and limitations
+under the License.
+-->
 
-limitations under the License.
+<!--
+/**
+ * @module Web Animations Tools
+ */
+/**
+ * `wat-github` can be used to save and load GitHub gists, either anonymously or
+ * to an existing GitHub account.
+ *
+ * Example:
+ *
+ *     <wat-github></wat-github>
+ *
+ * @class wat-github
+ */
+/**
+ * Fired when a GitHub gist is successfully created. Response object contains
+ * the ID of the gist.
+ *
+ * @event files-saved
+ */
+/**
+ * Fired when a GitHub gist is successfully read. Response object properties are
+ * the files in the gist, named using whatever filenames were specified when the
+ * gist was saved.
+ *
+ * @event files-loaded
+ */
+ /**
+ * Fired when the GitHub personal access token changes.
+ *
+ * @event token-changed
+ */
 -->
 
 <link rel="import" href="../../polymer/polymer.html">
@@ -46,7 +79,7 @@ limitations under the License.
         top: calc(40vh - 60px); 
         width: 250px; 
         height: 120px; 
-        z-index: 10;
+        z-index: 6;
         text-align: center;
         vertical-align: middle;
       }
@@ -97,8 +130,36 @@ limitations under the License.
   
   <script>
     Polymer('wat-github', {
+      /**
+       * The personal access token to use when creating a new `Github` instance.
+       * If left blank, then an anonymous `Github` instance is created. The
+       * token can be set by the user in a form that is displayed when the
+       * `signIn()` function is called. The token is stored in local storage.
+       *
+       * @attribute token
+       * @type string
+       * @default ''
+       */
       token: '',
+      /**
+       * A response or error message relating to the most recently sent GitHub
+       * request. This message is not displayed in `wat-github` but is a
+       * published property, so it may be displayed in the containing element.
+       *
+       * @attribute message
+       * @type string
+       * @default ''
+       */
       message: '',
+      /**
+       * Indicates whether or not the user is signed in. `signedIn` is false if
+       * `token` is not set, else it is true. Note that attempting to use an
+       * invalid token will result in the token being set to an empty string.
+       *
+       * @attribute signedIn
+       * @type boolean
+       * @default false
+       */
       signedIn: false,
       signingIn: false,
 
@@ -117,6 +178,12 @@ limitations under the License.
         }
       },
 
+      /**
+       * Sets the `message` to a given string for 3 seconds, then clears it.
+       *
+       * @method toast
+       * @param {string} message
+       */
       toast: function(message) {
         this.message = message;
         if (this.message) {
@@ -124,6 +191,13 @@ limitations under the License.
         }
       },
 
+      /**
+       * Sets the `message` to an empty string after a specified number of
+       * milliseconds.
+       *
+       * @method clearMessage
+       * @param {number} [delay] The number of milliseconds to wait before clearing the message.
+       */
       clearMessage: function(delay) {
         if (this.messageTimeout) {
           clearTimeout(this.messageTimeout);
@@ -136,6 +210,26 @@ limitations under the License.
         }.bind(this), delay);
       },
 
+      /**
+       * Saves a gist to GitHub containing the files specified. Fires the
+       * `files-saved` event on success, and sends the gist ID back in the event
+       * object. Also calls `toast()` with a success or failure message.
+       *
+       * @method save
+       * @param {string} description A description of the gist.
+       * @param {boolean} publicGist If true, gist is public. Else it is secret.
+       * @param {object} files An object containing file content and file names.
+       *
+       * Example:
+       *     var description = "WAT?!";
+       *     var publicGist = true;
+       *     var files = {
+       *       'filename1': {content: 'content1'},
+       *       'filename2': {content: 'content2'},
+       *       ...
+       *     };
+       *     save(description, publicGist, files);
+       */
       save: function(description, publicGist, files) {
         if (!this.github) {
           return;
@@ -148,7 +242,7 @@ limitations under the License.
           'files': files,
           }, function(error, response) {
             if (!error) {
-              window.location.hash = response.id;
+              this.fire('files-saved', response.id);
               this.toast('Saved files to ' + response.html_url);
             } else {
               if (error.error == 401) { // unauthorized
@@ -164,6 +258,27 @@ limitations under the License.
           }.bind(this));
       },
 
+      /**
+       * Updates a previously saved GitHub gist using the specified ID and then
+       * calls `toast()` with a success or failure message.
+       *
+       * @method update
+       * @param {string} id The ID of the gist.
+       * @param {string} description A description of the gist.
+       * @param {boolean} publicGist If true, gist is public. Else it is secret.
+       * @param {object} files An object containing file content and file names.
+       *
+       * Example:
+       *     var id = window.location.hash.substring(1);
+       *     var description = "WAT?!";
+       *     var publicGist = true;
+       *     var files = {
+       *       'filename1': {content: 'content1'},
+       *       'filename2': {content: 'content2'},
+       *       ...
+       *     };
+       *     update(id, description, publicGist, files);
+       */
       update: function(id, description, publicGist, files) {
         if (!this.github) {
           return;
@@ -175,7 +290,6 @@ limitations under the License.
           'files': files,
           }, function(error, response) {
             if (!error) {
-              window.location.hash = response.id;
               this.toast('Saved files to ' + response.html_url);
             } else {
               if (error.error == 401) { // unauthorized
@@ -194,6 +308,14 @@ limitations under the License.
           }.bind(this));
       },
 
+      /**
+       * Loads a gist from GitHub using the specified ID. Fires the
+       * `files-loaded` event on success, and sends the gist files back in the
+       * event object. Also calls `toast()` with a success or failure message.
+       *
+       * @method load
+       * @param {string} id The ID of the gist.
+       */
       load: function(id) {
         if (!this.github) {
           return;
@@ -221,6 +343,12 @@ limitations under the License.
         }.bind(this));
       },
 
+      /**
+       * Displays a sign-in screen so that the user can enter their GitHub
+       * personal access token.
+       *
+       * @method signIn
+       */
       signIn: function() {
         this.signingIn = true;
         setTimeout(function() {
@@ -228,6 +356,12 @@ limitations under the License.
         }.bind(this), 0);
       },
 
+      /**
+       * Sets the GitHub token to an empty string and then fires the
+       * `token-changed` event.
+       *
+       * @method signOut
+       */
       signOut: function() {
         this.token = '';
         this.github = new Github({token: this.token});
