@@ -15,17 +15,98 @@
  */
 
 Polymer('wat-code-editor', {
+  /**
+   * The message displayed in the top bar of `wat-code-editor`.
+   *
+   * @attribute message
+   * @type string
+   * @default ''
+   */
   message: '',
+  /**
+   * The orientation of the code editor panes. Can be set to `rows` or `columns`.
+   *
+   * @attribute mode
+   * @type string
+   * @default 'rows'
+   */
   mode: 'rows',
   rowsMode: true,
+  /**
+   * The JavaScript that is run to produce the preview in the preview frame.
+   *
+   * @attribute javascript
+   * @type string
+   * @default ''
+   */
   javascript: '',
+  /**
+   * The most recently executed JavaScript.
+   *
+   * @attribute previewJavascript
+   * @type string
+   * @default ''
+   */
   previewJavascript: '',
+  /**
+   * The HTML used to specify the contents of the preview frame.
+   *
+   * @attribute html
+   * @type string
+   * @default ''
+   */
   html: '',
+  /**
+   * The CSS used to style the contents of the preview frame.
+   *
+   * @attribute css
+   * @type string
+   * @default ''
+   */
   css: '',
+  /**
+   * The theme used in the `wat-ace-editor` elements.
+   *
+   * @attribute theme
+   * @type string
+   * @default 'github'
+   */
   theme: 'github',
+  /**
+   * Specifies whether or not line numbers are to be displayed in the
+   * `wat-ace-editor` elements.
+   *
+   * @attribute showGutter
+   * @type boolean
+   * @default true
+   */
   showGutter: true,
+  /**
+   * Specifies the number of spaces per tab to use in the `wat-ace-editor`
+   * elements.
+   *
+   * @attribute tabSize
+   * @type number
+   * @default 2
+   */
   tabSize: 2,
+  /**
+   * Specifies whether or not to wrap lines when they exceed the width of the
+   * `wat-ace-editor` elements.
+   *
+   * @attribute useWrapMode
+   * @type boolean
+   * @default true
+   */
   useWrapMode: true,
+  /**
+   * Specifies whether or not vertical rulers are to be displayed in the
+   * `wat-ace-editor` elements.
+   *
+   * @attribute showPrintMargin
+   * @type boolean
+   * @default true
+   */
   showPrintMargin: true,
   state: 'loading',
   update: null,
@@ -155,6 +236,13 @@ Polymer('wat-code-editor', {
         serializeTimedItem(this.timedItem) + ');';
   },
 
+  /**
+   * Stores the current `javascript` string in `previewJavascript`, then updates
+   * the preview frame and the player of `wat-player-controls` using
+   * `javascript`, `html`, and `css`.
+   *
+   * @method updatePreview
+   */
   updatePreview: function() {
     this.previewJavascript = this.javascript;
     this.updateState('reload', 0);
@@ -202,12 +290,24 @@ Polymer('wat-code-editor', {
     }.bind(this);
   },
 
+  /**
+   * Saves the current `javascript`, `html`, and `css` strings to local storage.
+   *
+   * @method saveFilesToLocalStorage
+   */
   saveFilesToLocalStorage: function() {
     window.localStorage['wat-javascript'] = this.javascript;
     window.localStorage['wat-css'] = this.css;
     window.localStorage['wat-html'] = this.html;
   },
 
+  /**
+   * Loads `wat-javascript`, `wat-html`, and `wat-css` from local storage,
+   * unless they are all empty strings, in which case `timedItem` is set to
+   * `new Animation(null, null, 0)`.
+   *
+   * @method loadFilesFromLocalStorage
+   */
   loadFilesFromLocalStorage: function() {
     if (!window.localStorage['wat-javascript'] && !window.localStorage['wat-html'] &&
         !window.localStorage['wat-css']) {
@@ -222,6 +322,14 @@ Polymer('wat-code-editor', {
     this.reload();
   },
 
+  /**
+   * Sets `timedItem` to `new Animation(null, null, 0)` and sets `javascript` to
+   * the corresponding code. `previewJavascript`, `html`, and `css` are all set
+   * to empty strings, and all the code is removed from local storage.
+   * `token-changed` event.
+   *
+   * @method clearAll
+   */
   clearAll: function() {
     this.previewJavascript = this.css = this.html = '';
     this.javascript = 'document.timeline.play(' +
